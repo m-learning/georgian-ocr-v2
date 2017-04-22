@@ -203,6 +203,9 @@ def train(run_name, start_epoch, stop_epoch, img_w):
     network_model = Model(inputs=input_data, outputs=y_pred)
     network_model.summary()
     model_file = os.path.join(OUTPUT_DIR, os.path.join(run_name, 'model%03d.json' % (img_w)))
+    directory = os.path.dirname(model_file)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     with open(model_file, 'w') as outfile:
       outfile.write(network_model.to_json())
 
