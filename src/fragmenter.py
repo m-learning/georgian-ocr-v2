@@ -40,7 +40,10 @@ def do_fragmentation(file_path):
     # put cropped image on a blank background and write to disk
     for cnt in contours:
         count += 1
-        crop_rectangle(src_img, cnt, FRAGMENTS_DIR + "/" + str(count) + ".png")
+        try:
+            crop_rectangle(src_img, cnt, FRAGMENTS_DIR + "/" + str(count) + ".png")
+        except ValueError:
+            print ("skip fragment")
 
         # text = ''
         # # read images and predict text
@@ -61,7 +64,7 @@ def do_fragmentation(file_path):
 #     if line:
 #         words.append(line)
 
-def create_blank_image(width=256, height=64, rgb_color=(255, 255, 255)):
+def create_blank_image(width=128, height=64, rgb_color=(255, 255, 255)):
     image = np.zeros((height, width, 3), np.uint8)
     
     # Since OpenCV uses BGR, convert the color first

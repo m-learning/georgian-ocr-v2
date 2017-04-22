@@ -17,7 +17,7 @@ import fragmenter as f
 
 
 OUTPUT_DIR = 'results'
-SEPARATOR = '\n'
+SEPARATOR = ' '
 
 
 def ctc_lambda_func(args):
@@ -65,7 +65,7 @@ def predict_text(model, image, w, h):
         X_data[0, 0, 0:w, :] = a[0, :, :].T
     else:
         X_data[0, 0:w, :, 0] = a[0, :, :].T
-    prediction = model.predict(X_data, batch_size=1, verbose=1)
+    prediction = model.predict(X_data, batch_size=1, verbose=0)
 
     return decode_batch(prediction)
 
@@ -78,7 +78,7 @@ def init_arguments():
     parser.add_argument('-W', '--weights', metavar='weights_path', type=str,
                         help='Path to the weights.')
     parser.add_argument('-w', '--width', metavar='image_width', type=int,
-                        help='image width: 128 / 256 / 512 (256 is default)', default=256)
+                        help='image width: 128 / 256 / 512 (256 is default)', default=128)
     parser.add_argument('-m', '--model', metavar='model', type=str,
                         help='Path to model')
     parser.add_argument('-e', '--english', action='store_true',
@@ -86,7 +86,7 @@ def init_arguments():
     return parser.parse_args()
 
 
-def predict(epoch, img_w, image, weight_file_name):
+def get_model(img_w, weight_file_name):
 
     # Input Parameters
     img_h = 64
@@ -151,12 +151,13 @@ def predict(epoch, img_w, image, weight_file_name):
 
     #test_func = K.function([input_data], [y_pred])
 
-    print predict_text(model, image, img_w, img_h)
+    return model
 
 
 if __name__ == '__main__':
     # Download model.
     epoch_version = 19
+    img_h = 64
     weight_file_name = 'weights%02d.h5' % (epoch_version - 1)
     model_url = 'http://data.grid.ge/' + weight_file_name
     get_file(weight_file_name, origin=model_url, cache_dir='.', cache_subdir=OUTPUT_DIR + "/data")
@@ -164,12 +165,13 @@ if __name__ == '__main__':
     args = init_arguments()
 
     f.do_fragmentation(args.image)
-
+    model = get_model(args.width, weight_file_name)
     result = ''
     for (dir_path, dir_names, file_names) in os.walk(f.FRAGMENTS_DIR):
         file_names = sorted(file_names)
         for file_name in file_names:
-            result += predict(epoch_version, 128, os.path.join(dir_path, file_name), weight_file_name)
+            result += predict_text(model, os.path.join(dir_path, file_name), args.width, img_h)[0] + SEPARATOR
         break
+
     print(result)
     # predict(19, 128, args.image)
