@@ -16,6 +16,7 @@ from image_generator import TextImageGenerator
 
 
 OUTPUT_DIR = 'results'
+MODEL_URL = '<TGZ_URL>'
 SEPARATOR = '\n'
 
 
@@ -152,6 +153,8 @@ def predict(epoch, img_w, image):
     
     print predict_text(model, image, img_w, img_h)
 if __name__ == '__main__':
+    # Download model.
+    # get_file('model', origin=MODEL_URL, untar=True, cache_dir='.', cache_subdir=OUTPUT_DIR)
     run_name = 'data'
     args = init_arguments()
     predict(19, 128, args.image)
