@@ -16,7 +16,6 @@ from image_generator import TextImageGenerator
 
 
 OUTPUT_DIR = 'results'
-MODEL_URL = '<TGZ_URL>'
 SEPARATOR = '\n'
 
 
@@ -66,12 +65,12 @@ def predict_text(model, image, w, h):
     else:
         X_data[0, 0:w, :, 0] = a[0, :, :].T
     prediction = model.predict(X_data, batch_size=1, verbose=1)
-    
+
     return decode_batch(prediction)
 
 
 def init_arguments():
-    
+
     parser = argparse.ArgumentParser(description='Georgian OCR')
     parser.add_argument('-i', '--image', metavar='image_path', type=str,
                         help='Path to the image to recognize.')
@@ -86,7 +85,7 @@ def init_arguments():
     return parser.parse_args()
 
 
-def predict(epoch, img_w, image):
+def predict(epoch, img_w, image, weight_file_name):
 
     # Input Parameters
     img_h = 64
@@ -146,15 +145,20 @@ def predict(epoch, img_w, image):
     model = Model(inputs=input_data, outputs=y_pred)
     model.summary()
 
-    weight_file = os.path.join(OUTPUT_DIR, os.path.join(run_name, 'weights%02d.h5' % (epoch - 1)))
+    weight_file = os.path.join(OUTPUT_DIR, os.path.join(run_name, weight_file_name))
     model.load_weights(weight_file)
 
     #test_func = K.function([input_data], [y_pred])
-    
+
     print predict_text(model, image, img_w, img_h)
+
+
 if __name__ == '__main__':
     # Download model.
-    # get_file('model', origin=MODEL_URL, untar=True, cache_dir='.', cache_subdir=OUTPUT_DIR)
+    epoch_version = 19
+    weight_file_name = 'weights%02d.h5' % (epoch_version - 1)
+    model_url = 'http://data.grid.ge/' + weight_file_name
+    get_file(weight_file_name, origin=model_url, cache_dir='.', cache_subdir=OUTPUT_DIR + "/data")
     run_name = 'data'
     args = init_arguments()
-    predict(19, 128, args.image)
+    predict(epoch_version, 128, args.image, weight_file_name)
