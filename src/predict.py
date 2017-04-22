@@ -13,6 +13,7 @@ from keras.layers.recurrent import GRU
 from keras.optimizers import SGD
 from keras.utils.data_utils import get_file
 from image_generator import TextImageGenerator
+import fragmenter as f
 
 
 OUTPUT_DIR = 'results'
@@ -161,4 +162,14 @@ if __name__ == '__main__':
     get_file(weight_file_name, origin=model_url, cache_dir='.', cache_subdir=OUTPUT_DIR + "/data")
     run_name = 'data'
     args = init_arguments()
-    predict(epoch_version, 128, args.image, weight_file_name)
+
+    f.do_fragmentation(args.image)
+
+    result = ''
+    for (dir_path, dir_names, file_names) in os.walk(f.FRAGMENTS_DIR):
+        file_names = sorted(file_names)
+        for file_name in file_names:
+            result += predict(epoch_version, 128, os.path.join(dir_path, file_name), weight_file_name)
+        break
+    print(result)
+    # predict(19, 128, args.image)
