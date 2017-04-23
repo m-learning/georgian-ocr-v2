@@ -17,7 +17,7 @@ import fragmenter as f
 
 
 OUTPUT_DIR = 'results'
-SEPARATOR = ' '
+SEPARATOR = '\n'
 
 
 def ctc_lambda_func(args):
@@ -170,8 +170,8 @@ if __name__ == '__main__':
     for (dir_path, dir_names, file_names) in os.walk(f.FRAGMENTS_DIR):
         file_names = sorted(file_names)
         for file_name in file_names:
-            result += predict_text(model, os.path.join(dir_path, file_name), args.width, img_h)[0] + SEPARATOR
+            print file_name + ': ' + predict_text(model, os.path.join(dir_path, file_name), args.width, img_h)[0] + SEPARATOR
         break
 
-    print(result)
+    #print(result)
     # predict(19, 128, args.image)

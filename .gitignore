@@ -1,5 +1,7 @@
-results
+results/
+logs/
 *.pyc
 .idea
 *.iml
 data/
+

@@ -33,7 +33,7 @@ def do_fragmentation(file_path):
     thresh = cv2.erode(thresh, None, iterations=2)
 
     # Find the contours
-    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     count = 0
     # For each contour, find the bounding rectangle and crop it.

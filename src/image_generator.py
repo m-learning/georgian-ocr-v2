@@ -5,7 +5,8 @@ from scipy import ndimage
 import keras.callbacks
 import cairocffi as cairo
 import numpy as np
-
+import random
+random.seed(55)
 np.random.seed(55)
 
 
@@ -56,7 +57,7 @@ def speckle(img):
 # also uses a random font, a slight random rotation,
 # and a random amount of speckle noise
 
-def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, save=False):
+def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, save=False):
     surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
     with cairo.Context(surface) as context:
         context.set_source_rgb(1, 1, 1)  # White
@@ -68,7 +69,10 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, save=False
                                      np.random.choice([cairo.FONT_WEIGHT_BOLD, cairo.FONT_WEIGHT_NORMAL]))
         else:
             context.select_font_face('Courier', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        context.set_font_size(25)
+        if (multi_sizes):
+          context.set_font_size(random.randint(18, 28))
+        else: 
+          context.set_font_size(25)
         box = context.text_extents(text)
         border_w_h = (4, 4)
         if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
@@ -248,19 +252,23 @@ class TextImageGenerator(keras.callbacks.Callback):
     def on_train_begin(self, logs={}, save=False):
         self.build_word_list(16000, 4, 1)
         self.paint_func = lambda text: paint_text(text, self.img_w, self.img_h,
-                                                  rotate=False, ud=False, multi_fonts=False, save=save)
+                                                  rotate=False, ud=False, multi_fonts=False, multi_sizes = False, save=save)
 
-    def on_epoch_begin(self, epoch, logs={}):
+    def on_epoch_begin(self, epoch, logs={}, save=False):
         # rebind the paint function to implement curriculum learning
         if epoch >= 3 and epoch < 6:
             self.paint_func = lambda text: paint_text(text, self.img_w, self.img_h,
-                                                      rotate=False, ud=True, multi_fonts=False, save=save)
+                                                      rotate=False, ud=True, multi_fonts=False, multi_sizes = False, save=save)
         elif epoch >= 6 and epoch < 9:
             self.paint_func = lambda text: paint_text(text, self.img_w, self.img_h,
-                                                      rotate=False, ud=True, multi_fonts=True, save=save)
-        elif epoch >= 9:
+                                                      rotate=False, ud=True, multi_fonts=True, multi_sizes = False, save=save)
+        elif epoch >= 9 and epoch < 15:
             self.paint_func = lambda text: paint_text(text, self.img_w, self.img_h,
-                                                      rotate=True, ud=True, multi_fonts=True, save=save)
+                                                      rotate=True, ud=True, multi_fonts=True, multi_sizes = False, save=save)
+        elif epoch >= 15:
+            self.paint_func = lambda text: paint_text(text, self.img_w, self.img_h,
+                                                      rotate=True, ud=True, multi_fonts=True, multi_sizes = True, save=save)
+
         if epoch >= 21 and self.max_string_len < 12:
             self.build_word_list(32000, 12, 0.5)
 
