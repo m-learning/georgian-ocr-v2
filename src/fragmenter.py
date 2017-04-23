@@ -41,7 +41,7 @@ def do_fragmentation(file_path):
     for cnt in contours:
         count += 1
         try:
-            crop_rectangle(src_img, cnt, FRAGMENTS_DIR + "/" + str(count) + ".png")
+            crop_rectangle(src_img, cnt, ("%s/%04d.png" % (FRAGMENTS_DIR, count)))
         except ValueError:
             print ("skip fragment")
 
