@@ -147,7 +147,7 @@ if __name__ == '__main__':
     epoch_version = 25
     img_h = 64
     weight_file_name = 'weights%02d.h5' % (epoch_version - 1)
-    model_url = 'http://data.grid.ge/' + weight_file_name
+    model_url = 'http://data.grid.ge/ocr/v2/' + weight_file_name
     get_file(weight_file_name, origin=model_url, cache_dir='.', cache_subdir=OUTPUT_DIR + "/data")
     run_name = 'data'
     args = init_arguments()
