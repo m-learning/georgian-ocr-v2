@@ -12,7 +12,6 @@ from keras.models import Model
 from keras.layers.recurrent import GRU
 from keras.optimizers import SGD
 from keras.utils.data_utils import get_file
-from image_generator import TextImageGenerator
 import fragmenter as f
 
 
@@ -78,7 +77,7 @@ def init_arguments():
     parser.add_argument('-W', '--weights', metavar='weights_path', type=str,
                         help='Path to the weights.')
     parser.add_argument('-w', '--width', metavar='image_width', type=int,
-                        help='image width: 128 / 256 / 512 (256 is default)', default=128)
+                        help='image width: 64 / 128 / 256 / 512 (256 is default)', default=64)
     parser.add_argument('-m', '--model', metavar='model', type=str,
                         help='Path to model')
     parser.add_argument('-e', '--english', action='store_true',
@@ -107,17 +106,6 @@ def get_model(img_w, weight_file_name):
     else:
         input_shape = (img_w, img_h, 1)
 
-    fdir = os.path.dirname(get_file('wordlists.tgz',
-                                    origin='http://www.mythic-ai.com/datasets/wordlists.tgz', untar=True))
-
-    img_gen = TextImageGenerator(monogram_file=os.path.join(fdir, 'wordlist_mono_clean.txt'),
-                                 bigram_file=os.path.join(fdir, 'wordlist_bi_clean.txt'),
-                                 minibatch_size=minibatch_size,
-                                 img_w=img_w,
-                                 img_h=img_h,
-                                 downsample_factor=(pool_size ** 2),
-                                 val_split=words_per_epoch - val_words
-                                 )
     act = 'relu'
     input_data = Input(name='the_input', shape=input_shape, dtype='float32')
     inner = Conv2D(conv_filters, kernel_size, padding='same',
@@ -140,7 +128,7 @@ def get_model(img_w, weight_file_name):
     gru_2 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged)
     gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru2_b')(gru1_merged)
 
-    inner = Dense(img_gen.get_output_size(), kernel_initializer='he_normal',
+    inner = Dense(28, kernel_initializer='he_normal',
                   name='dense2')(concatenate([gru_2, gru_2b]))
     y_pred = Activation('softmax', name='softmax')(inner)
     model = Model(inputs=input_data, outputs=y_pred)
