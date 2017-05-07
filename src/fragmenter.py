@@ -11,37 +11,42 @@ import numpy as np
 # destination directory
 FRAGMENTS_DIR = "results/words"
 META_DIR = "results/meta"
+DEBUG_DIR = "results/debug"
 
+def create_dir_if_missing(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    
 
 def do_fragmentation(file_path):
 
-    if not os.path.exists(FRAGMENTS_DIR):
-        os.makedirs(FRAGMENTS_DIR)
-    if not os.path.exists(META_DIR):
-        os.makedirs(META_DIR)
+    create_dir_if_missing(FRAGMENTS_DIR)
+    create_dir_if_missing(META_DIR)
+    create_dir_if_missing(DEBUG_DIR)
+
     # load source image
     src_img = cv2.imread(file_path)
 
     # convert to grayscale
     gray = cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite(("%s/a1 gray.png" % FRAGMENTS_DIR), gray)
+    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), gray)
 
     # smooth the image to avoid noises
     #gray = cv2.medianBlur(gray, 5)
-    #cv2.imwrite(("%s/a2 medianBlur.png" % FRAGMENTS_DIR), gray)
+    #cv2.imwrite(("%s/a2 medianBlur.png" % DEBUG_DIR), gray)
 
     # Apply adaptive threshold
     thresh = cv2.adaptiveThreshold(gray, 255, 1, 1, 11, 2)
     thresh_color = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
 
-    cv2.imwrite(("%s/a3 treshColor.png" % FRAGMENTS_DIR), thresh_color)
+    cv2.imwrite(("%s/a3 treshColor.png" % DEBUG_DIR), thresh_color)
 
     # apply some dilation and erosion to join the gaps
     #thresh = cv2.dilate(thresh, None, iterations=3)
-    #cv2.imwrite(("%s/a4 deliate.png" % FRAGMENTS_DIR), thresh)
+    #cv2.imwrite(("%s/a4 deliate.png" % DEBUG_DIR), thresh)
 
     #thresh = cv2.erode(thresh, None, iterations=2)
-    #cv2.imwrite(("%s/a5 erode.png" % FRAGMENTS_DIR), thresh)
+    #cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), thresh)
 
     # Find the contours
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -99,7 +104,7 @@ def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
 def crop_rectangle(img, contour, file_name):
     x,y,w,h = cv2.boundingRect(contour)
 
-    if w*h < 50:
+    if x < 5 or y < 5:
       raise ValueError('Character image is too small')
     
     crop_img = img[y:y+h, x:x+w]
