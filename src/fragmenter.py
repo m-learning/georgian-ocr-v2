@@ -4,17 +4,21 @@ import cv2
 import math
 import os
 import sys
+import json
 import numpy as np
 
 
 # destination directory
 FRAGMENTS_DIR = "results/words"
+META_DIR = "results/meta"
 
 
 def do_fragmentation(file_path):
 
     if not os.path.exists(FRAGMENTS_DIR):
         os.makedirs(FRAGMENTS_DIR)
+    if not os.path.exists(META_DIR):
+        os.makedirs(META_DIR)
     # load source image
     src_img = cv2.imread(file_path)
 
@@ -48,7 +52,17 @@ def do_fragmentation(file_path):
     for cnt in contours:
         count += 1
         try:
-            crop_rectangle(src_img, cnt, ("%s/%04d.png" % (FRAGMENTS_DIR, count)))
+            # Create image file
+            imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, count)
+            x,y,w,h = crop_rectangle(src_img, cnt, imageFilename)
+
+            # Create meta file
+            meta = {'x': x, 'y': y, 'w': w, 'h': h}
+            metaFilename = "%s/%04d.json" % (META_DIR, count)
+            f = open(metaFilename, 'w')
+            json.dump(meta, f)
+            f.close()
+
         except ValueError:
             print ("skip fragment")
 
@@ -86,7 +100,7 @@ def crop_rectangle(img, contour, file_name):
     x,y,w,h = cv2.boundingRect(contour)
 
     if w*h < 50:
-      return
+      raise ValueError('Character image is too small')
     
     crop_img = img[y:y+h, x:x+w]
     
@@ -105,6 +119,8 @@ def crop_rectangle(img, contour, file_name):
     result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img
 
     cv2.imwrite(file_name, result_img)
+
+    return x,y,w,h
 
 if __name__ == "__main__":
     # source file path
