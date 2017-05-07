@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''This example uses a convolutional stack followed by a recurrent stack
 and a CTC logloss function to perform optical character recognition
 of generated text images. I have no evidence of whether it actually
@@ -51,9 +54,24 @@ from keras.utils.data_utils import get_file
 from keras.preprocessing import image
 from keras.callbacks import TensorBoard
 import keras.callbacks
-from image_generator import TextImageGenerator
+from image_generator2 import TextImageGenerator
+
+from matplotlib.font_manager import FontProperties
 
 OUTPUT_DIR = 'results'
+
+
+latin_upper = u'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+latin_lower = u'abcdefghijklmnopqrstuvwxyz'
+georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰჱჲჳჴჵ'
+numbers = u'1234567890'
+symbols = u'!@#$%^&*()-+=/\\.,<>?;:"|}{[]'
+blank = u' '
+
+chars = georgian + \
+        numbers + \
+        symbols + \
+        blank
 
 # the actual loss calc occurs here despite it not being
 # an internal Keras loss function
@@ -78,9 +96,9 @@ def decode_batch(test_func, word_batch):
         # 26 is space, 27 is CTC blank char
         outstr = ''
         for c in out_best:
-            if c >= 0 and c < 26:
-                outstr += chr(c + ord('a'))
-            elif c == 26:
+            if c >= 0 and c < len(chars) -3:
+                outstr += chars[c]
+            elif c == len(chars) - 2:
                 outstr += ' '
         ret.append(outstr)
     return ret
@@ -88,7 +106,7 @@ def decode_batch(test_func, word_batch):
 
 class VizCallback(keras.callbacks.Callback):
 
-    def __init__(self, run_name, test_func, text_img_gen, num_display_words=6):
+    def __init__(self, run_name, test_func, text_img_gen, num_display_words=20):
         self.test_func = test_func
         self.output_dir = os.path.join(
             OUTPUT_DIR, run_name)
@@ -121,7 +139,7 @@ class VizCallback(keras.callbacks.Callback):
         word_batch = next(self.text_img_gen)[0]
         res = decode_batch(self.test_func, word_batch['the_input'][0:self.num_display_words])
         if word_batch['the_input'][0].shape[0] < 256:
-            cols = 2
+            cols = 4
         else:
             cols = 1
         for i in range(self.num_display_words):
@@ -130,8 +148,10 @@ class VizCallback(keras.callbacks.Callback):
                 the_input = word_batch['the_input'][i, 0, :, :]
             else:
                 the_input = word_batch['the_input'][i, :, :, 0]
-            pylab.imshow(the_input.T)
-            pylab.xlabel('Truth = \'%s\'\nDecoded = \'%s\'' % (word_batch['source_str'][i], res[i]))
+            pylab.imshow(the_input.T, cmap='gray')
+            prop = FontProperties()
+            prop.set_file('/home/soso/work/georgian-ocr-v2/fonts/bpg_glaho_sylfaen.ttf')
+            pylab.xlabel('Truth: \'%s\'Decoded: \'%s\'' % (word_batch['source_str'][i], res[i]), fontproperties=prop)
         fig = pylab.gcf()
         fig.set_size_inches(10, 13)
         pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % (epoch)))
@@ -240,6 +260,6 @@ def train(run_name, start_epoch, stop_epoch, img_w):
 if __name__ == '__main__':
     run_name = 'data'
 
-    train(run_name, 0, 20, 128)
+    train(run_name, 0, 20, 64)
     # increase to wider images and start at epoch 20. The learned weights are reloaded
-    train(run_name, 20, 25, 512)
+    train(run_name, 20, 25, 64)
