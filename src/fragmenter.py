@@ -20,20 +20,27 @@ def do_fragmentation(file_path):
 
     # convert to grayscale
     gray = cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite(("%s/a1 gray.png" % FRAGMENTS_DIR), gray)
 
     # smooth the image to avoid noises
-    gray = cv2.medianBlur(gray, 5)
+    #gray = cv2.medianBlur(gray, 5)
+    #cv2.imwrite(("%s/a2 medianBlur.png" % FRAGMENTS_DIR), gray)
 
     # Apply adaptive threshold
     thresh = cv2.adaptiveThreshold(gray, 255, 1, 1, 11, 2)
     thresh_color = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
 
+    cv2.imwrite(("%s/a3 treshColor.png" % FRAGMENTS_DIR), thresh_color)
+
     # apply some dilation and erosion to join the gaps
-    thresh = cv2.dilate(thresh, None, iterations=3)
-    thresh = cv2.erode(thresh, None, iterations=2)
+    #thresh = cv2.dilate(thresh, None, iterations=3)
+    #cv2.imwrite(("%s/a4 deliate.png" % FRAGMENTS_DIR), thresh)
+
+    #thresh = cv2.erode(thresh, None, iterations=2)
+    #cv2.imwrite(("%s/a5 erode.png" % FRAGMENTS_DIR), thresh)
 
     # Find the contours
-    _, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     count = 0
     # For each contour, find the bounding rectangle and crop it.
@@ -64,7 +71,7 @@ def do_fragmentation(file_path):
 #     if line:
 #         words.append(line)
 
-def create_blank_image(width=128, height=64, rgb_color=(255, 255, 255)):
+def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
     image = np.zeros((height, width, 3), np.uint8)
     
     # Since OpenCV uses BGR, convert the color first
@@ -77,6 +84,9 @@ def create_blank_image(width=128, height=64, rgb_color=(255, 255, 255)):
 
 def crop_rectangle(img, contour, file_name):
     x,y,w,h = cv2.boundingRect(contour)
+
+    if w*h < 50:
+      return
     
     crop_img = img[y:y+h, x:x+w]
     
