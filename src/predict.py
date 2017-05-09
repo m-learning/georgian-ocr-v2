@@ -90,7 +90,7 @@ def init_arguments():
     parser.add_argument('-W', '--weights', metavar='weights_path', type=str,
                         help='Path to the weights.')
     parser.add_argument('-w', '--width', metavar='image_width', type=int,
-                        help='image width: 64 / 128 / 256 / 512 (256 is default)', default=64)
+                        help='image width: 64 / 128 / 256 / 512 (64 is default)', default=64)
     parser.add_argument('-m', '--model', metavar='model', type=str,
                         help='Path to model')
     parser.add_argument('-e', '--english', action='store_true',
@@ -107,7 +107,7 @@ def get_model(img_w, weight_file_name):
     val_words = int(words_per_epoch * (val_split))
 
     # Network parameters
-    conv_filters = 16
+    conv_filters = 32
     kernel_size = (3, 3)
     pool_size = 2
     time_dense_size = 32
@@ -135,14 +135,14 @@ def get_model(img_w, weight_file_name):
 
     inner = Dense(time_dense_size, activation=act, name='dense1')(inner)
 
-    gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru1')(inner)
-    gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_b')(inner)
-    gru1_merged = add([gru_1, gru_1b])
-    gru_2 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged)
-    gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru2_b')(gru1_merged)
+    # gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru1')(inner)
+    # gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_b')(inner)
+    # gru1_merged = add([gru_1, gru_1b])
+    # gru_2 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged)
+    # gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru2_b')(gru1_merged)
 
-    inner = Dense(28, kernel_initializer='he_normal',
-                  name='dense2')(concatenate([gru_2, gru_2b]))
+    inner = Dense(78, kernel_initializer='he_normal',
+                  name='dense2')(inner)
     y_pred = Activation('softmax', name='softmax')(inner)
     model = Model(inputs=input_data, outputs=y_pred)
     model.summary()
@@ -157,7 +157,7 @@ def get_model(img_w, weight_file_name):
 
 if __name__ == '__main__':
     # Download model.
-    epoch_version = 25
+    epoch_version = 39
     img_h = 64
     weight_file_name = 'weights%02d.h5' % (epoch_version - 1)
     model_url = 'http://data.grid.ge/ocr/v2/' + weight_file_name
