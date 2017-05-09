@@ -13,8 +13,8 @@ def create_char_element(meta_obj):
     fragment_template = fragment_template.replace('{char}', 'a') #meta_obj.char)
     fragment_template = fragment_template.replace('{x}', str(meta_obj['x']))
     fragment_template = fragment_template.replace('{y}', str(meta_obj['y']))
-    # TODO Calculate dynamic size
-    fragment_template = fragment_template.replace('{font-size}', '40px')
+    # TODO Calculate dynamic size correctly
+    fragment_template = fragment_template.replace('{font-size}', str(meta_obj['y'])+'px')
 
     return fragment_template
 
