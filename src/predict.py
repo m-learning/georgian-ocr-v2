@@ -157,7 +157,7 @@ def get_model(img_w, weight_file_name):
 
 if __name__ == '__main__':
     # Download model.
-    epoch_version = 25
+    epoch_version = 39
     img_h = 64
     weight_file_name = 'weights%02d.h5' % (epoch_version - 1)
     model_url = 'http://data.grid.ge/ocr/v2/' + weight_file_name
