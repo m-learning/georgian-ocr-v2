@@ -43,11 +43,10 @@ def ctc_lambda_func(args):
 # For a real OCR application, this should be beam search with a dictionary
 # and language model.  For this example, best path is sufficient.
 
-def decode_batch(test_func, word_batch):
-    out = test_func([word_batch])[0]
+def decode_batch(prediction):
     ret = []
-    for j in range(out.shape[0]):
-        out_best = list(np.argmax(out[j, 2:], 1))
+    for j in range(prediction.shape[0]):
+        out_best = list(np.argmax(prediction[j, 2:], 1))
         out_best = [k for k, g in itertools.groupby(out_best)]
         # 26 is space, 27 is CTC blank char
         outstr = ''
