@@ -114,7 +114,7 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
     a = np.expand_dims(a, 0)
     if rotate:
         a = image.random_rotation(a, 3 * (w - top_left_x) / w + 1)
-    a = speckle(a)
+    # a = speckle(a)
     
     return a
 
@@ -275,6 +275,6 @@ class TextImageGenerator(keras.callbacks.Callback):
             self.paint_func = lambda text: paint_text(text, self.img_w, self.img_h,
                                                       rotate=True, ud=True, multi_fonts=True, multi_sizes = True, save=save)
 
-        if epoch >= 21 and self.max_string_len < 12:
-            self.build_word_list(32000, 12, 0.5)
+        # if epoch >= 21 and self.max_string_len < 12:
+        #     self.build_word_list(32000, 12, 0.5)
 
