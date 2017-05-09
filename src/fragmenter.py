@@ -11,15 +11,16 @@ from skimage import color
 from skimage import filters
 from skimage import img_as_ubyte
 
-
 # destination directory
 FRAGMENTS_DIR = "results/words"
 META_DIR = "results/meta"
 DEBUG_DIR = "results/debug"
 
+
 def create_dir_if_missing(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
 
 def vanish_image(img):
     gray_scale_image = color.rgb2gray(img)
@@ -28,7 +29,6 @@ def vanish_image(img):
 
 
 def do_fragmentation(file_path):
-
     create_dir_if_missing(FRAGMENTS_DIR)
     create_dir_if_missing(META_DIR)
     create_dir_if_missing(DEBUG_DIR)
@@ -39,11 +39,11 @@ def do_fragmentation(file_path):
     gray = vanish_image(src_img)
     # convert to grayscale
     # gray = cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), gray *255)
+    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), gray * 255)
 
     # smooth the image to avoid noises
-    #gray = cv2.medianBlur(gray, 5)
-    #cv2.imwrite(("%s/a2 medianBlur.png" % DEBUG_DIR), gray)
+    # gray = cv2.medianBlur(gray, 5)
+    # cv2.imwrite(("%s/a2 medianBlur.png" % DEBUG_DIR), gray)
 
     # Apply adaptive threshold
     # thresh = cv2.adaptiveThreshold(gray, 255, 1, 1, 11, 2)
@@ -52,11 +52,11 @@ def do_fragmentation(file_path):
     # cv2.imwrite(("%s/a3 treshColor.png" % DEBUG_DIR), thresh_color)
 
     # apply some dilation and erosion to join the gaps
-    #thresh = cv2.dilate(thresh, None, iterations=3)
-    #cv2.imwrite(("%s/a4 deliate.png" % DEBUG_DIR), thresh)
+    # thresh = cv2.dilate(thresh, None, iterations=3)
+    # cv2.imwrite(("%s/a4 deliate.png" % DEBUG_DIR), thresh)
 
-    #thresh = cv2.erode(thresh, None, iterations=2)
-    #cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), thresh)
+    # thresh = cv2.erode(thresh, None, iterations=2)
+    # cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), thresh)
 
     # Find the contours
     cv_image = img_as_ubyte(gray)
@@ -70,7 +70,7 @@ def do_fragmentation(file_path):
         try:
             # Create image file
             imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, count)
-            x,y,w,h = crop_rectangle(cv_image, cnt, imageFilename)
+            x, y, w, h = crop_rectangle(cv_image, cnt, imageFilename)
 
             # Create meta file
             meta = {'x': x, 'y': y, 'w': w, 'h': h}
@@ -82,14 +82,14 @@ def do_fragmentation(file_path):
         except ValueError:
             print ("skip fragment")
 
-        # text = ''
-        # # read images and predict text
-        # for index in range(count):
-        #     img = cv2.imread(destination_dir + "/" + str(index + 1) + ".png")
-        #     text += recognize_image(img) + ' '
-        # text_file = open("result.txt", "w")
-        # text_file.write(text)
-        # text_file.close()
+            # text = ''
+            # # read images and predict text
+            # for index in range(count):
+            #     img = cv2.imread(destination_dir + "/" + str(index + 1) + ".png")
+            #     text += recognize_image(img) + ' '
+            # text_file = open("result.txt", "w")
+            # text_file.write(text)
+            # text_file.close()
 
 
 # read existing words
@@ -103,29 +103,38 @@ def do_fragmentation(file_path):
 
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
     image = np.zeros((height, width, 3), np.uint8)
-    
+
     # Since OpenCV uses BGR, convert the color first
     color = tuple(reversed(rgb_color))
     # Fill image with color
     image[:] = color
-    
+
     return image
 
 
+def create_image_for_recognize(image, width=64, height=64):
+    generated_image = np.ones((height, width)) * 255
+    (image_h, image_w) = image.shape
+    index_w = (width - image_w) / 2
+    index_h = (height - image_h) / 2
+    generated_image[index_h : image_h + index_h, index_w : image_w + index_w] = image
+    return generated_image
+
+
 def crop_rectangle(img, contour, file_name):
-    x,y,w,h = cv2.boundingRect(contour)
+    x, y, w, h = cv2.boundingRect(contour)
 
     if x < 5 or y < 5:
-      raise ValueError('Character image is too small')
-    
-    crop_img = img[y:y+h, x:x+w]
-    
+        raise ValueError('Character image is too small')
+
+    crop_img = img[y:y + h, x:x + w]
+
     # define background image as large image 
     result_img = create_blank_image()
 
     # define small height and width
     s_height, s_width = crop_img.shape[:2]
-    
+
     # define large height and width
     l_height, l_width = result_img.shape[:2]
 
@@ -134,9 +143,11 @@ def crop_rectangle(img, contour, file_name):
 
     # result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img
 
-    cv2.imwrite(file_name, crop_img)
+    image_to_recognize = create_image_for_recognize(crop_img)
+    cv2.imwrite(file_name, image_to_recognize)
 
-    return x,y,w,h
+    return x, y, w, h
+
 
 if __name__ == "__main__":
     # source file path
