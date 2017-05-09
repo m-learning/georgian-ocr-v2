@@ -16,6 +16,7 @@ from keras.layers.recurrent import GRU
 from keras.optimizers import SGD
 from keras.utils.data_utils import get_file
 import fragmenter as f
+import json
 
 OUTPUT_DIR = 'results'
 SEPARATOR = '\n'
@@ -154,10 +155,18 @@ def get_model(img_w, weight_file_name):
 
     return model
 
+def write_meta_char(fragment_filename, char):
+    meta_filename = os.path.join(f.META_DIR, fragment_filename)
+    with open(meta_filename) as json_data:
+        meta_obj = json.load(json_data)
+        meta_obj['char'] = char
+        
+        with open(meta_filename, 'w') as output_file:
+            output_file.write(json.dumps(meta_obj))
 
 if __name__ == '__main__':
     # Download model.
-    epoch_version = 39
+    epoch_version = 40
     img_h = 64
     weight_file_name = 'weights%02d.h5' % (epoch_version - 1)
     model_url = 'http://data.grid.ge/ocr/v2/' + weight_file_name
@@ -171,7 +180,11 @@ if __name__ == '__main__':
     for (dir_path, dir_names, file_names) in os.walk(f.FRAGMENTS_DIR):
         file_names = sorted(file_names)
         for file_name in file_names:
-            print file_name + ': ' + predict_text(model, os.path.join(dir_path, file_name), args.width, img_h)[0] + SEPARATOR
+            predicted_char = predict_text(model, os.path.join(dir_path, file_name), args.width, img_h)[0]
+            print file_name + ': ' + predicted_char + SEPARATOR
+
+            write_meta_char(file_name[:-4]+'.json', predicted_char)
+
         break
 
     #print(result)

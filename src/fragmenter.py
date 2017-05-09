@@ -124,7 +124,7 @@ def create_image_for_recognize(image, width=64, height=64):
 def crop_rectangle(img, contour, file_name):
     x, y, w, h = cv2.boundingRect(contour)
 
-    if x < 5 or y < 5:
+    if x < 20 or y < 20:
         raise ValueError('Character image is too small')
 
     crop_img = img[y:y + h, x:x + w]
