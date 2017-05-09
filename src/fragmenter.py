@@ -49,7 +49,7 @@ def do_fragmentation(file_path):
     #cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), thresh)
 
     # Find the contours
-    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     count = 0
     # For each contour, find the bounding rectangle and crop it.
