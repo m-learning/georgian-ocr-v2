@@ -13,7 +13,8 @@ from keras.layers.recurrent import GRU
 from keras.optimizers import SGD
 from keras.utils.data_utils import get_file
 import fragmenter as f
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 OUTPUT_DIR = 'results'
 SEPARATOR = '\n'
