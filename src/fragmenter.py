@@ -13,6 +13,7 @@ from skimage import img_as_ubyte
 
 # destination directory
 FRAGMENTS_DIR = "results/words"
+RAW_FRAGMENTS_DIR = "results/raw-fragments"
 META_DIR = "results/meta"
 DEBUG_DIR = "results/debug"
 
@@ -70,7 +71,8 @@ def do_fragmentation(file_path):
         try:
             # Create image file
             imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, count)
-            x, y, w, h = crop_rectangle(cv_image, cnt, imageFilename)
+            rawImageFilename = "%s/%04d.png" % (RAW_FRAGMENTS_DIR, count)
+            x, y, w, h = crop_rectangle(cv_image, cnt, imageFilename, rawImageFilename)
 
             # Create meta file
             meta = {'x': x, 'y': y, 'w': w, 'h': h}
@@ -121,13 +123,15 @@ def create_image_for_recognize(image, width=64, height=64):
     return generated_image
 
 
-def crop_rectangle(img, contour, file_name):
+def crop_rectangle(img, contour, file_name, raw_file_name):
     x, y, w, h = cv2.boundingRect(contour)
 
     if x < 20 or y < 20:
         raise ValueError('Character image is too small')
 
     crop_img = img[y:y + h, x:x + w]
+
+    cv2.imwrite(raw_file_name, crop_img)
 
     # define background image as large image 
     result_img = create_blank_image()
