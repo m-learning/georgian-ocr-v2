@@ -84,7 +84,7 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
         else:
             context.select_font_face('Serif', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         if (multi_sizes):
-          context.set_font_size(random.randint(18, 28))
+          context.set_font_size(random.randint(18, 27))
         else: 
           context.set_font_size(25)
         box = context.text_extents(text)

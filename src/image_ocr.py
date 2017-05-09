@@ -151,7 +151,7 @@ class VizCallback(keras.callbacks.Callback):
             pylab.imshow(the_input.T, cmap='gray')
             prop = FontProperties()
             prop.set_file('/home/soso/work/georgian-ocr-v2/fonts/bpg_glaho_sylfaen.ttf')
-            pylab.xlabel('Truth: \'%s\'Decoded: \'%s\'' % (word_batch['source_str'][i], res[i]), fontproperties=prop)
+            pylab.xlabel('Truth: ' + word_batch['source_str'][i] + 'Decoded: ' + res[i], fontproperties=prop)
         fig = pylab.gcf()
         fig.set_size_inches(10, 13)
         pylab.savefig(os.path.join(self.output_dir, 'e%02d.png' % (epoch)))
@@ -208,15 +208,15 @@ def train(run_name, start_epoch, stop_epoch, img_w):
 
     # Two layers of bidirecitonal GRUs
     # GRU seems to work as well, if not better than LSTM:
-    gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru1')(inner)
-    gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_b')(inner)
-    gru1_merged = add([gru_1, gru_1b])
-    gru_2 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged)
-    gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru2_b')(gru1_merged)
+    #gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru1')(inner)
+    #gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_b')(inner)
+    #gru1_merged = add([gru_1, gru_1b])
+    #gru_2 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged)
+    #gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru2_b')(gru1_merged)
 
     # transforms RNN output to character activations:
     inner = Dense(img_gen.get_output_size(), kernel_initializer='he_normal',
-                  name='dense2')(concatenate([gru_2, gru_2b]))
+                  name='dense2')(inner)
     y_pred = Activation('softmax', name='softmax')(inner)
     network_model = Model(inputs=input_data, outputs=y_pred)
     network_model.summary()
@@ -260,6 +260,6 @@ def train(run_name, start_epoch, stop_epoch, img_w):
 if __name__ == '__main__':
     run_name = 'data'
 
-    train(run_name, 0, 20, 64)
+    #train(run_name, 0, 20, 64)
     # increase to wider images and start at epoch 20. The learned weights are reloaded
-    train(run_name, 20, 25, 64)
+    train(run_name, 20, 30, 64)

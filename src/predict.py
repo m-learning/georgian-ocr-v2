@@ -18,6 +18,17 @@ import fragmenter as f
 OUTPUT_DIR = 'results'
 SEPARATOR = '\n'
 
+latin_upper = u'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+latin_lower = u'abcdefghijklmnopqrstuvwxyz'
+georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰჱჲჳჴჵ'
+numbers = u'1234567890'
+symbols = u'!@#$%^&*()-+=/\\.,<>?;:"|}{[]'
+blank = u' '
+
+chars = georgian + \
+        numbers + \
+        symbols + \
+        blank
 
 def ctc_lambda_func(args):
     y_pred, labels, input_length, label_length = args
@@ -30,7 +41,8 @@ def ctc_lambda_func(args):
 # For a real OCR application, this should be beam search with a dictionary
 # and language model.  For this example, best path is sufficient.
 
-def decode_batch(out):
+def decode_batch(test_func, word_batch):
+    out = test_func([word_batch])[0]
     ret = []
     for j in range(out.shape[0]):
         out_best = list(np.argmax(out[j, 2:], 1))
@@ -38,9 +50,9 @@ def decode_batch(out):
         # 26 is space, 27 is CTC blank char
         outstr = ''
         for c in out_best:
-            if c >= 0 and c < 26:
-                outstr += chr(c + ord('a'))
-            elif c == 26:
+            if c >= 0 and c < len(chars) -3:
+                outstr += chars[c]
+            elif c == len(chars) - 2:
                 outstr += ' '
         ret.append(outstr)
     return ret
