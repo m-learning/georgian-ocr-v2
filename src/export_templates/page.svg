@@ -38,18 +38,15 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     id="layer1"
-     transform="translate(0,1939.6378)">
+  <g>
     <image
-       sodipodi:absref="{background-image}"
-       xlink:href="monochrome.png"
+       xlink:href="{background-image}"
        width="{background-image-width}"
        height="{background-image-height}"
        preserveAspectRatio="none"
        id="image3601"
        x="0"
-       y="-1939.6378" />
+       y="0" />
     {content}
   </g>
 </svg>
