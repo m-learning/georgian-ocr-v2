@@ -45,8 +45,9 @@ import pylab
 from keras import backend as K
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers import Input, Dense, Activation
-from keras.layers import Reshape, Lambda
+from keras.layers import Reshape, Lambda, Dropout
 from keras.layers.merge import add, concatenate
+from keras.layers import Flatten
 from keras.models import Model
 from keras.layers.recurrent import GRU
 from keras.optimizers import SGD
@@ -150,7 +151,7 @@ class VizCallback(keras.callbacks.Callback):
                 the_input = word_batch['the_input'][i, :, :, 0]
             pylab.imshow(the_input.T, cmap='gray')
             prop = FontProperties()
-            prop.set_file('/home/soso/work/georgian-ocr-v2/fonts/bpg_glaho_sylfaen.ttf')
+            prop.set_file('fonts/bpg_glaho_sylfaen.ttf')
             pylab.xlabel('Truth: ' + word_batch['source_str'][i] + 'Decoded: ' + res[i], fontproperties=prop)
         fig = pylab.gcf()
         fig.set_size_inches(10, 13)
@@ -166,13 +167,13 @@ def train(run_name, start_epoch, stop_epoch, img_w):
     val_words = int(words_per_epoch * (val_split))
 
     # Network parameters
-    conv_filters = 16
+    conv_filters = 32
     kernel_size = (3, 3)
     pool_size = 2
     time_dense_size = 32
     rnn_size = 512
     minibatch_size=32
-
+    K.set_learning_phase(1)
     if K.image_data_format() == 'channels_first':
         input_shape = (1, img_w, img_h)
     else:
@@ -182,7 +183,8 @@ def train(run_name, start_epoch, stop_epoch, img_w):
                                     origin='http://www.mythic-ai.com/datasets/wordlists.tgz', untar=True))
 
     img_gen = TextImageGenerator(monogram_file=os.path.join(fdir, 'wordlist_mono_clean.txt'),
-                                 bigram_file=os.path.join(fdir, 'wordlist_bi_clean.txt'),
+                                 # bigram_file=os.path.join(fdir, 'wordlist_bi_clean.txt'),
+                                 bigram_file=None,
                                  minibatch_size=minibatch_size,
                                  img_w=img_w,
                                  img_h=img_h,
@@ -193,18 +195,23 @@ def train(run_name, start_epoch, stop_epoch, img_w):
     input_data = Input(name='the_input', shape=input_shape, dtype='float32')
     inner = Conv2D(conv_filters, kernel_size, padding='same',
                    activation=act, kernel_initializer='he_normal',
-                   name='conv1')(input_data)
+                   name='conv1', use_bias=True)(input_data)
     inner = MaxPooling2D(pool_size=(pool_size, pool_size), name='max1')(inner)
     inner = Conv2D(conv_filters, kernel_size, padding='same',
                    activation=act, kernel_initializer='he_normal',
-                   name='conv2')(inner)
+                   name='conv2', use_bias=True)(inner)
     inner = MaxPooling2D(pool_size=(pool_size, pool_size), name='max2')(inner)
+    # inner = Conv2D(conv_filters, kernel_size, padding='same',
+    #                activation=act, kernel_initializer='he_normal',
+    #                name='conv3', use_bias=True)(inner)
+    # inner = MaxPooling2D(pool_size=(pool_size, pool_size), name='max3')(inner)
 
     conv_to_rnn_dims = (img_w // (pool_size ** 2), (img_h // (pool_size ** 2)) * conv_filters)
     inner = Reshape(target_shape=conv_to_rnn_dims, name='reshape')(inner)
 
     # cuts down input size going into RNN:
     inner = Dense(time_dense_size, activation=act, name='dense1')(inner)
+    # inner = Dropout(rate=0.3)(inner)
 
     # Two layers of bidirecitonal GRUs
     # GRU seems to work as well, if not better than LSTM:
@@ -217,6 +224,7 @@ def train(run_name, start_epoch, stop_epoch, img_w):
     # transforms RNN output to character activations:
     inner = Dense(img_gen.get_output_size(), kernel_initializer='he_normal',
                   name='dense2')(inner)
+    # inner = Dropout(rate=0.3)(inner)
     y_pred = Activation('softmax', name='softmax')(inner)
     network_model = Model(inputs=input_data, outputs=y_pred)
     network_model.summary()
@@ -236,12 +244,12 @@ def train(run_name, start_epoch, stop_epoch, img_w):
     loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name='ctc')([y_pred, labels, input_length, label_length])
 
     # clipnorm seems to speeds up convergence
-    sgd = SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)
+    # sgd = SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)
 
     model = Model(inputs=[input_data, labels, input_length, label_length], outputs=loss_out)
 
     # the loss calc occurs elsewhere, so use a dummy lambda func for the loss
-    model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer=sgd)
+    model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer='adadelta')
 
     if start_epoch > 0:
         weight_file = os.path.join(OUTPUT_DIR, os.path.join(run_name, 'weights%02d.h5' % (start_epoch - 1)))
@@ -260,6 +268,6 @@ def train(run_name, start_epoch, stop_epoch, img_w):
 if __name__ == '__main__':
     run_name = 'data'
 
-    #train(run_name, 0, 20, 64)
+    # train(run_name, 0, 20, 64)
     # increase to wider images and start at epoch 20. The learned weights are reloaded
-    train(run_name, 20, 30, 64)
+    train(run_name, 20, 40, 64)
