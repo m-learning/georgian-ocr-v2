@@ -143,7 +143,9 @@ def crop_rectangle(img, contour, file_name):
 
     # result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img
 
+    # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
+
     cv2.imwrite(file_name, image_to_recognize)
 
     return x, y, w, h
