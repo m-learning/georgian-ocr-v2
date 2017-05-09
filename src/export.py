@@ -4,9 +4,13 @@ def create_char_element(meta):
     return '<span '
 
 def export_svg(original_image, meta_dir, output_html):
+    
     # Read template
     # Replace values
-    # 
+    # Loop in characters
+    #   Remove from original image
+    #   Put new one
+    
     
 
 
