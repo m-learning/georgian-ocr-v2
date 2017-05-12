@@ -38,6 +38,9 @@ def train():
 	print('test score: ', score[0])
 	print('test accuracy: ', score[1])
 
+
+	if not os.path.exists('results/data'):
+		os.makedirs('results/data')
 	model.save_weights('results/data/model.h5')
 
 
