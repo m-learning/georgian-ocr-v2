@@ -4,6 +4,8 @@ from keras.callbacks import TensorBoard
 import image_generator3 as ig
 import network
 
+import os
+
 img_w = img_h = 64
 nb_epoch = 30
 TRAINING_SET_SIZE = 100000
