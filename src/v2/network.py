@@ -27,7 +27,7 @@ def init_model(nb_classes, input_shape):
 
 	model.add(Dense(256))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.5))
+	model.add(Dropout(0.15))
 
 	# model.add(Dense(256, kernel_regularizer=regularizers.l2(0.1)))
 	# model.add(Activation('relu'))
@@ -35,7 +35,7 @@ def init_model(nb_classes, input_shape):
 
 	model.add(Dense(128))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.5))
+	model.add(Dropout(0.15))
 
 	model.add(Dense(nb_classes))
 	model.add(Activation('softmax'))
