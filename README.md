@@ -42,3 +42,22 @@ convert test/Ciskari_1852_N12-004.png -threshold 70% test/monochrome.png
 rm -f results/words/* && python src/fragmenter.py test/monochrome.png
 ```
 
+## v2 learning
+
+```
+optirun python src/v2/learning.py
+```
+
+## v2 test (predict)
+
+```
+optirun python src/v2/image_generator3.py ა ბ გ
+optirun python src/v2/predict.py -i results/gen_img/test/img-ა.jpg
+```
+
+or
+
+without generating images
+```
+optirun python src/v2/test.py ა ბ გ დ ე ვ ზ
+```
