@@ -29,8 +29,6 @@ def export_svg(original_image, meta_dir, output_svg):
     with open(os.path.join(dir_path, 'export_templates/page.svg'), 'r') as content_file:
         page_template = content_file.read()
 
-
-		# TODO: Fix the address
     image_height, image_width, _ = cv2.imread(original_image).shape
     # Replace values
     page_template = page_template.replace('{width}', str(image_width))
