@@ -147,8 +147,9 @@ def crop_rectangle(img, contour, file_name, raw_file_name):
 
     # result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img
 		
-    kernel = np.ones((3,3),np.float32)/9
-    crop_img = cv2.filter2D(crop_img,-1,kernel)
+#    kernel = np.ones((3,3),np.float32)/9
+#    crop_img = cv2.filter2D(crop_img,-1,kernel)
+    crop_img = cv2.GaussianBlur(crop_img,(3,3),0)
 
     # Blur a little
 #    crop_img = cv2.medianBlur(crop_img, 1)

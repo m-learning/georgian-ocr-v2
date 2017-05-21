@@ -10,6 +10,7 @@ from keras.preprocessing import image
 import os
 import argparse
 import matplotlib.image as mpimg
+import cv2
 
 random.seed(55)
 np.random.seed(55)
@@ -84,7 +85,7 @@ def speckle(img):
 img_counter = 0
 
 
-def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, save=False, spackle=False):
+def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, save=False, spackle=False, blur=False):
 	surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
 	with cairo.Context(surface) as context:
 		context.set_source_rgb(1, 1, 1)  # White
@@ -132,6 +133,8 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
 		a = image.random_rotation(a, 3 * (w - top_left_x) / w + 1)
 	if spackle:
 		a = speckle(a)
+	if blur:
+		a = cv2.GaussianBlur(a,(3,3),0)
 	return a
 
 
@@ -157,7 +160,7 @@ def next_batch(size):
 	for i in range(size):
 		char = chars[random.randint(0, LABEL_SIZE - 1)]
 		save = i % 100 == 0
-		img = paint_text(char, img_w, img_h, save=save, rotate=True, ud=True, multi_fonts=True, multi_sizes=True)
+		img = paint_text(char, img_w, img_h, save=save, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, blur=True)
 		x_train[i] = 1 - img
 		y_train[i] = y[chars.index(char)]
 	x_train = np.expand_dims(x_train, 3)
@@ -184,7 +187,7 @@ def init_arguments():
 if __name__ == '__main__':
 	args = init_arguments()
 	for word in args.text:
-		img = paint_text(word.decode('utf-8'), args.width, args.height, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, save=False)
+		img = paint_text(word.decode('utf-8'), args.width, args.height, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, blur=True, save=False)
 
 		img = img[0]
 
