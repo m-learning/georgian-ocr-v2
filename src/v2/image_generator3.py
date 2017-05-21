@@ -10,7 +10,6 @@ from keras.preprocessing import image
 import os
 import argparse
 import matplotlib.image as mpimg
-import cv2
 
 random.seed(55)
 np.random.seed(55)
@@ -134,7 +133,7 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
 	if spackle:
 		a = speckle(a)
 	if blur:
-		a = cv2.GaussianBlur(a,(3,3),0)
+		ndimage.gaussian_filter(a, 1, output=a)
 	return a
 
 

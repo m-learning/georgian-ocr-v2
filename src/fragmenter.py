@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import numpy as np
+from scipy import ndimage
 
 from skimage import color
 from skimage import filters
@@ -147,12 +148,7 @@ def crop_rectangle(img, contour, file_name, raw_file_name):
 
     # result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img
 		
-#    kernel = np.ones((3,3),np.float32)/9
-#    crop_img = cv2.filter2D(crop_img,-1,kernel)
-    crop_img = cv2.GaussianBlur(crop_img,(3,3),0)
-
-    # Blur a little
-#    crop_img = cv2.medianBlur(crop_img, 1)
+    ndimage.gaussian_filter(crop_img, 1, output=crop_img)
 
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
