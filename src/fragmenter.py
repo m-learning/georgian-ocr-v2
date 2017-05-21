@@ -42,8 +42,13 @@ def delete_subcrops(allMeta):
                   m1['y']+m1['h'] < m2['y']+m2['h']):
               imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, m1['id'])
               metaFilename = "%s/%04d.json" % (META_DIR, m1['id'])
-              os.remove(imageFilename)
-              os.remove(metaFilename)
+
+              print 'Deleting enclosed fragment', imageFilename
+              try:
+                  os.remove(imageFilename)
+                  os.remove(metaFilename)
+              except Exception, e:
+                  print e
 
 def do_fragmentation(file_path):
     create_dir_if_missing(FRAGMENTS_DIR)
@@ -100,29 +105,11 @@ def do_fragmentation(file_path):
 
             allMeta.append(meta)
 
-        except ValueError:
-            print ("skip fragment")
-
-            # text = ''
-            # # read images and predict text
-            # for index in range(count):
-            #     img = cv2.imread(destination_dir + "/" + str(index + 1) + ".png")
-            #     text += recognize_image(img) + ' '
-            # text_file = open("result.txt", "w")
-            # text_file.write(text)
-            # text_file.close()
+        except ValueError, ve:
+            print "skip fragment", ve
 
     delete_subcrops(allMeta)
 
-
-# read existing words
-# words = []
-# words_file = open('data/words', 'r')
-# content = words_file.read()
-# lines = content.split('\n')
-# for line in lines:
-#     if line:
-#         words.append(line)
 
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
     image = np.zeros((height, width, 3), np.uint8)
