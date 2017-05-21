@@ -93,7 +93,6 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
 		if multi_fonts:
 			# fonts = ['FreeMono', 'Serif', 'FreeSerif', 'FreeSans', 'BPG Glakho', 'Monospace']
 			fonts = ['AcadNusx', 'AcadMtavr', 'Acad Nusx Geo', 'LitNusx', 'Chveulebrivi TT', 'DumbaNusx']
-			fonts = ['AcadNusx', 'AcadMtavr', 'LitNusx']
 			context.select_font_face(np.random.choice(fonts), cairo.FONT_SLANT_NORMAL,
 			                         np.random.choice([cairo.FONT_WEIGHT_BOLD, cairo.FONT_WEIGHT_NORMAL]))
 		else:
