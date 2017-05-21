@@ -9,7 +9,7 @@ import cgi
 import cv2
 
 # FIXME This is a relative path depended on output parameter
-RAW_FRAGMENTS_DIR='../results/raw-fragments/'
+RAW_FRAGMENTS_DIR='results/raw-fragments/'
 
 
 def create_char_element(meta_obj, fragment_name):
