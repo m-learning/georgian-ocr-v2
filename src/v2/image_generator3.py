@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
 		img *= 255.0
 
-		mpimg.imsave(os.path.join(create_dir_if_missing(args.save_path), 'img-%s.jpg' % word.decode('utf-8')), img, cmap="Greys_r")
+		mpimg.imsave(os.path.join(create_dir_if_missing(args.save_path), 'img-%s.png' % word.decode('utf-8')), img, cmap="Greys_r")
 
 
 

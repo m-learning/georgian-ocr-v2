@@ -49,7 +49,7 @@ def export_svg(original_image, meta_dir, output_svg):
             # Put new one
             with open(fullpath) as json_data:
                 meta_obj = json.load(json_data)
-                if meta_obj['accuracy'] == 0: continue
+#                if meta_obj['accuracy'] == 0: continue
 
                 page_template = page_template.replace('{content}', 
                     create_char_element(meta_obj)+'{content}')

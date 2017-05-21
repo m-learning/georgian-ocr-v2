@@ -52,7 +52,7 @@ optirun python src/v2/learning.py
 
 ```
 optirun python src/v2/image_generator3.py ა ბ გ
-optirun python src/v2/predict.py -i results/gen_img/test/img-ა.jpg
+optirun python src/v2/predict.py -i results/gen_img/test/img-ა.png
 ```
 
 or

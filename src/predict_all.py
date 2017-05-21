@@ -38,7 +38,7 @@ def score_of(model, image_array, char):
 	evaluate_test_y = np.append(evaluate_test_y, evaluate_test_y, 0)
 
 #	model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
-	score = model.evaluate(evaluate_test_x, evaluate_test_y)
+	score = model.evaluate(evaluate_test_x, evaluate_test_y, verbose=0)
 	return score
 
 def recognize_image(image_path):
@@ -75,6 +75,6 @@ if __name__ == '__main__':
 		for file_name in file_names:
 			[char, score, accuracy] = recognize_image(os.path.join(dir_path, file_name))
 
-			print char, accuracy, score
+			print file_name, char, accuracy, score
 			write_meta_char(file_name[:-4]+'.json', char, score, accuracy)
 
