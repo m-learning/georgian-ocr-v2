@@ -29,6 +29,21 @@ def vanish_image(img):
     val = filters.threshold_li(gray_scale_image)
     return (gray_scale_image > val)
 
+def find_enclosing_meta(allMeta, meta):
+    for m in allMeta:
+       print m
+
+def delete_subcrops(allMeta):
+    for m1 in allMeta:
+       for m2 in allMeta:
+           if (m1['x'] > m2['x'] and
+                  m1['y'] > m2['y'] and
+                  m1['x']+m1['w'] < m2['x']+m2['w'] and
+                  m1['y']+m1['h'] < m2['y']+m2['h']):
+              imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, m1['id'])
+              metaFilename = "%s/%04d.json" % (META_DIR, m1['id'])
+              os.remove(imageFilename)
+              os.remove(metaFilename)
 
 def do_fragmentation(file_path):
     create_dir_if_missing(FRAGMENTS_DIR)
@@ -64,6 +79,7 @@ def do_fragmentation(file_path):
     cv_image = img_as_ubyte(gray)
     _, contours, hierarchy = cv2.findContours(cv_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
+    allMeta = []
     count = 0
     # For each contour, find the bounding rectangle and crop it.
     # put cropped image on a blank background and write to disk
@@ -76,11 +92,13 @@ def do_fragmentation(file_path):
             x, y, w, h = crop_rectangle(cv_image, cnt, imageFilename, rawImageFilename)
 
             # Create meta file
-            meta = {'x': x, 'y': y, 'w': w, 'h': h}
+            meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
             metaFilename = "%s/%04d.json" % (META_DIR, count)
             f = open(metaFilename, 'w')
             json.dump(meta, f)
             f.close()
+
+            allMeta.append(meta)
 
         except ValueError:
             print ("skip fragment")
@@ -93,6 +111,8 @@ def do_fragmentation(file_path):
             # text_file = open("result.txt", "w")
             # text_file.write(text)
             # text_file.close()
+
+    delete_subcrops(allMeta)
 
 
 # read existing words
@@ -126,6 +146,9 @@ def create_image_for_recognize(image, width=64, height=64):
 
 def crop_rectangle(img, contour, file_name, raw_file_name):
     x, y, w, h = cv2.boundingRect(contour)
+
+    if w * h < 100:
+			raise ValueError('Cropping rectangle is too small')
 
     crop_img = img[y:y + h, x:x + w]
 
