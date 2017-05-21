@@ -13,7 +13,7 @@ from skimage import filters
 from skimage import img_as_ubyte
 
 # destination directory
-FRAGMENTS_DIR = "results/letters"
+FRAGMENTS_DIR = "results/words"
 RAW_FRAGMENTS_DIR = "results/raw-fragments"
 META_DIR = "results/meta"
 DEBUG_DIR = "results/debug"
@@ -27,7 +27,7 @@ def create_dir_if_missing(path):
 def vanish_image(img):
     gray_scale_image = color.rgb2gray(img)
     val = filters.threshold_li(gray_scale_image)
-    return (gray_scale_image > val)
+    return img_as_ubyte((gray_scale_image > val))
 
 def find_enclosing_meta(allMeta, meta):
     for m in allMeta:
@@ -58,33 +58,34 @@ def do_fragmentation(file_path):
     # load source image
     src_img = cv2.imread(file_path)
 
-    gray = vanish_image(src_img)
+    src_img = vanish_image(src_img)
+    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), src_img * 255)
+
     # convert to grayscale
-    # gray = cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), gray * 255)
+    #src_img = cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
 
     # smooth the image to avoid noises
-    # gray = cv2.medianBlur(gray, 5)
-    # cv2.imwrite(("%s/a2 medianBlur.png" % DEBUG_DIR), gray)
+    #gray = cv2.medianBlur(src_img, 5)
+    #cv2.imwrite(("%s/a2 medianBlur.png" % DEBUG_DIR), src_img)
 
     # Apply adaptive threshold
-    # thresh = cv2.adaptiveThreshold(gray, 255, 1, 1, 11, 2)
-    # thresh_color = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
-
-    # cv2.imwrite(("%s/a3 treshColor.png" % DEBUG_DIR), thresh_color)
+    #src_img = cv2.adaptiveThreshold(src_img, 255, 1, 1, 11, 2)
+    #cv2.imwrite(("%s/a3 treshColor.png" % DEBUG_DIR), src_img)
 
     # apply some dilation and erosion to join the gaps
-    # thresh = cv2.dilate(thresh, None, iterations=3)
-    # cv2.imwrite(("%s/a4 deliate.png" % DEBUG_DIR), thresh)
+    #deliated = cv2.dilate(src_img, None, iterations=3)
+    #cv2.imwrite(("%s/a4 deliate.png" % DEBUG_DIR), deliated)
 
-    # thresh = cv2.erode(thresh, None, iterations=2)
-    # cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), thresh)
+    src_img = cv2.erode(src_img, None, iterations=4)
+    cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), src_img)
+
+    #ndimage.gaussian_filter(src_img, 6, output=src_img)
+    #cv2.imwrite(("%s/a5 gausian filtered.png" % DEBUG_DIR), src_img)
 
     # Find the contours
-    cv_image = img_as_ubyte(gray)
-    _, contours, hierarchy = cv2.findContours(cv_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-    allMeta = []
+#    allMeta = []
     count = 0
     # For each contour, find the bounding rectangle and crop it.
     # put cropped image on a blank background and write to disk
@@ -94,21 +95,21 @@ def do_fragmentation(file_path):
             # Create image file
             imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, count)
             rawImageFilename = "%s/%04d.png" % (RAW_FRAGMENTS_DIR, count)
-            x, y, w, h = crop_rectangle(cv_image, cnt, imageFilename, rawImageFilename)
+            x, y, w, h = crop_rectangle(src_img, cnt, imageFilename, rawImageFilename)
 
             # Create meta file
-            meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
-            metaFilename = "%s/%04d.json" % (META_DIR, count)
-            f = open(metaFilename, 'w')
-            json.dump(meta, f)
-            f.close()
+#            meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
+#            metaFilename = "%s/%04d.json" % (META_DIR, count)
+#            f = open(metaFilename, 'w')
+#            json.dump(meta, f)
+#            f.close()
 
-            allMeta.append(meta)
+#            allMeta.append(meta)
 
         except ValueError, ve:
             print "skip fragment", ve
 
-    delete_subcrops(allMeta)
+#    delete_subcrops(allMeta)
 
 
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
@@ -158,10 +159,10 @@ def crop_rectangle(img, contour, file_name, raw_file_name):
     ndimage.gaussian_filter(crop_img, 1, output=crop_img)
 
     # Convert image to 64x64
-    image_to_recognize = create_image_for_recognize(crop_img)
+    #image_to_recognize = create_image_for_recognize(crop_img)
 
 
-    cv2.imwrite(file_name, image_to_recognize)
+    cv2.imwrite(file_name, crop_img)
 
     return x, y, w, h
 
