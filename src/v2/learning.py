@@ -7,7 +7,7 @@ import network
 import os
 
 img_w = img_h = 64
-nb_epoch = 30
+nb_epoch = 10
 TRAINING_SET_SIZE = 100000
 TEST_SET_SIZE = TRAINING_SET_SIZE / 5
 

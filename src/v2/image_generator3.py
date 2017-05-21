@@ -98,7 +98,7 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
 		else:
 			context.select_font_face('AcadNusx', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
 		if (multi_sizes):
-			context.set_font_size(random.randint(20, 55))
+			context.set_font_size(random.randint(20, 50))
 		else:
 			context.set_font_size(40)
 		box = context.text_extents(translate(text))
