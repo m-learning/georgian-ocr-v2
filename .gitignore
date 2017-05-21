@@ -7,4 +7,5 @@ data/
 tmp/
 
 exported-fragments.svg
+exported-no-bg.svg
 exported.svg

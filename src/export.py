@@ -23,7 +23,7 @@ def create_char_element(meta_obj):
 
     return fragment_template
 
-def export_svg(original_image, meta_dir, output_svg):
+def export_svg(original_image, meta_dir, output_svg, background=False):
     # Read template
     dir_path = os.path.dirname(os.path.realpath(__file__))
     with open(os.path.join(dir_path, 'export_templates/page.svg'), 'r') as content_file:
@@ -33,9 +33,11 @@ def export_svg(original_image, meta_dir, output_svg):
     # Replace values
     page_template = page_template.replace('{width}', str(image_width))
     page_template = page_template.replace('{height}', str(image_height))
-    page_template = page_template.replace('{background-image}', original_image)
-    page_template = page_template.replace('{background-image-width}', str(image_width))
-    page_template = page_template.replace('{background-image-height}', str(image_height))
+	
+    if background:
+        page_template = page_template.replace('{background-image}', original_image)
+        page_template = page_template.replace('{background-image-width}', str(image_width))
+        page_template = page_template.replace('{background-image-height}', str(image_height))
 
     # Loop in characters
     for root, _, files in os.walk(meta_dir):
@@ -59,9 +61,11 @@ if __name__ == "__main__":
     if len(sys.argv) > 3:
         original_image = sys.argv[1]
         meta_dir = sys.argv[2]
-        output_html = sys.argv[3]
+        output_svg = sys.argv[3]
+        output_svg_no_bg = sys.argv[4]
 
-        export_svg(original_image, meta_dir, output_html)
+        export_svg(original_image, meta_dir, output_svg_no_bg)
+        export_svg(original_image, meta_dir, output_svg, background=True)
     else:
-        print ("Invalid argument: <original image>, <meta dir>, <output svg>")
+        print ("Invalid argument: <original image>, <meta dir>, <output svg> <output svg without background>")
 
