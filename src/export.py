@@ -6,7 +6,7 @@ import os, os.path
 import json
 import codecs
 import cgi
-
+import cv2
 
 def create_char_element(meta_obj):
     # Read template
@@ -23,17 +23,15 @@ def create_char_element(meta_obj):
 
     return fragment_template
 
-def get_image_shape(image_path):
-    # TODO
-    return 1874, 2992
-
 def export_svg(original_image, meta_dir, output_svg):
     # Read template
     dir_path = os.path.dirname(os.path.realpath(__file__))
     with open(os.path.join(dir_path, 'export_templates/page.svg'), 'r') as content_file:
         page_template = content_file.read()
 
-    image_width, image_height = get_image_shape(original_image)
+
+		# TODO: Fix the address
+    image_height, image_width, _ = cv2.imread('tmp/'+original_image).shape
     # Replace values
     page_template = page_template.replace('{width}', str(image_width))
     page_template = page_template.replace('{height}', str(image_height))

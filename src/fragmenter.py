@@ -146,9 +146,16 @@ def crop_rectangle(img, contour, file_name, raw_file_name):
     x_offset = int(math.floor((l_width - s_width) / 2))
 
     # result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img
+		
+    kernel = np.ones((3,3),np.float32)/9
+    crop_img = cv2.filter2D(crop_img,-1,kernel)
+
+    # Blur a little
+#    crop_img = cv2.medianBlur(crop_img, 1)
 
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
+
 
     cv2.imwrite(file_name, image_to_recognize)
 

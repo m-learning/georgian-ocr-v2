@@ -84,7 +84,7 @@ def speckle(img):
 img_counter = 0
 
 
-def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, save=False):
+def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, save=False, spackle=False):
 	surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
 	with cairo.Context(surface) as context:
 		context.set_source_rgb(1, 1, 1)  # White
@@ -93,14 +93,15 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
 		if multi_fonts:
 			# fonts = ['FreeMono', 'Serif', 'FreeSerif', 'FreeSans', 'BPG Glakho', 'Monospace']
 			fonts = ['AcadNusx', 'AcadMtavr', 'Acad Nusx Geo', 'LitNusx', 'Chveulebrivi TT', 'DumbaNusx']
+			fonts = ['AcadNusx', 'AcadMtavr', 'LitNusx']
 			context.select_font_face(np.random.choice(fonts), cairo.FONT_SLANT_NORMAL,
 			                         np.random.choice([cairo.FONT_WEIGHT_BOLD, cairo.FONT_WEIGHT_NORMAL]))
 		else:
 			context.select_font_face('AcadNusx', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
 		if (multi_sizes):
-			context.set_font_size(random.randint(14, 32))
+			context.set_font_size(random.randint(20, 55))
 		else:
-			context.set_font_size(25)
+			context.set_font_size(40)
 		box = context.text_extents(translate(text))
 		border_w_h = (4, 4)
 		if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
@@ -130,7 +131,8 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
 	a = np.expand_dims(a, 0)
 	if rotate:
 		a = image.random_rotation(a, 3 * (w - top_left_x) / w + 1)
-	a = speckle(a)
+	if spackle:
+		a = speckle(a)
 	return a
 
 
