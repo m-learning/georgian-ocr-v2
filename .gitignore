@@ -5,3 +5,6 @@ logs/
 *.iml
 data/
 tmp/
+
+exported-fragments.svg
+exported.svg
