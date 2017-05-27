@@ -7,9 +7,9 @@ import network
 import os
 
 img_w = img_h = 64
-nb_epoch = 2
-TRAINING_SET_SIZE = 8000
-TEST_SET_SIZE = 8000
+nb_epoch = 1
+TRAINING_SET_SIZE = 100000
+TEST_SET_SIZE = 10000
 
 K.set_learning_phase(1)
 if K.image_data_format() == 'channels_first':
@@ -27,30 +27,10 @@ def train():
   tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=True)
 
 
-  epoch = 0
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE)
-  model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
-            verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
-
-  epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True)
-  model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
-            verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
-
-  epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True, multi_sizes=True)
-  model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
-            verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
-
-  epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True, multi_sizes=True, multi_fonts=True)
-  model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
-            verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
-
-  epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True, multi_sizes=True, multi_fonts=True, rotate=True)
-  model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
-            verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
+  for epoch in range(0,10):
+    (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, blur=True)
+    model.fit(x_train, y_train, batch_size=32, epochs=epoch + 1,
+              verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
 
   if not os.path.exists('results/data'):
     os.makedirs('results/data')
