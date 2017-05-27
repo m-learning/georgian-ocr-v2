@@ -38,23 +38,45 @@ def speckle(img):
 # and a random amount of speckle noise
 img_counter = 0
 
+latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
+georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
+numbers = u'1234567890'
+symbols = u'!*()-+=.,?;:"'
+
 def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, save=False, spackle=False, blur=False):
   surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
   with cairo.Context(surface) as context:
     context.set_source_rgb(1, 1, 1)  # White
     context.paint()
-    # this font list works in Centos 7
+    fonts = [
+             {'name':'AcadNusx',                  'type':'latin'},
+             {'name':'AcadMtavr',                 'type':'latin'},
+             {'name':'Acad Nusx Geo',             'type':'latin'},
+             {'name':'LitNusx',                   'type':'latin'},
+             {'name':'Chveulebrivi TT',           'type':'latin'},
+             {'name':'DumbaNusx',                 'type':'latin'},
+             #{'name':'BPG ParaGraph Chveulebrivi','type':'unicode'}, 
+             #{'name':'BPG Venuri 2010',           'type':'unicode'}, 
+             #{'name':'BPG Ucnobi',                'type':'unicode'}, 
+             #{'name':'BPG Glakho',                'type':'unicode'}, 
+             #{'name':'BPG Nino Elite',            'type':'unicode'},
+             #{'name':'BPG SuperSquare',           'type':'unicode'},
+    ]
     if multi_fonts:
-      fonts = ['BPG ParaGraph Chveulebrivi', 'BPG Venuri 2010', 'BPG Ucnobi', 'BPG Glakho', 'BPG Nino Elite', 'BPG SuperSquare']
-      #fonts = ['AcadNusx', 'AcadMtavr', 'Acad Nusx Geo', 'LitNusx', 'Chveulebrivi TT', 'DumbaNusx']
-      context.select_font_face(np.random.choice(fonts), cairo.FONT_SLANT_NORMAL,
+      font = np.random.choice(fonts)
+      context.select_font_face(font['name'], cairo.FONT_SLANT_NORMAL,
                                np.random.choice([cairo.FONT_WEIGHT_BOLD, cairo.FONT_WEIGHT_NORMAL]))
     else:
-      context.select_font_face('BPG Glakho', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+      font = fonts[0]
+      context.select_font_face(font['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
     if (multi_sizes):
-      context.set_font_size(random.randint(20, 45))
+      context.set_font_size(random.randint(20, 48))
     else:
       context.set_font_size(40)
+    
+    if font['type'] == 'latin' and text in georgian:
+      text = latingeo[georgian.index(text)]
+    
     box = context.text_extents(text)
     border_w_h = (4, 4)
     #if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
@@ -90,14 +112,7 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
     ndimage.gaussian_filter(a, 1, output=a)
   return a
 
-
-#latin_upper = u'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-#latin_lower = u'abcdefghijklmnopqrstuvwxyz'
-georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰჱჲჳჴჵ'
-numbers = u'1234567890'
-symbols = u'!@#$%^&*()-+=/\.,<>?;:"|}{[]'
-
-chars = georgian  + numbers + symbols
+chars = georgian # + numbers + symbols
 LABEL_SIZE = len(chars)
 
 img_w = 64
@@ -106,15 +121,36 @@ img_h = 64
 y = list_eye(LABEL_SIZE)
 
 
-def next_batch(size, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, blur=True):
+def next_batch(size, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, blur=False, save=False):
   print "Generating {0:d} images...".format(size)
   x_train = np.zeros((size, img_w, img_h))
   y_train = [None] * size
   for i in range(size):
     char = chars[random.randint(0, LABEL_SIZE - 1)]
-    img = paint_text(char, img_w, img_h, rotate=rotate, ud=ud, multi_fonts=multi_fonts, multi_sizes=multi_sizes, blur=blur)
+    img = paint_text(char, img_w, img_h, rotate=rotate, ud=ud, multi_fonts=multi_fonts, multi_sizes=multi_sizes, blur=blur, save=save)
     x_train[i] = 1 - img
     y_train[i] = y[chars.index(char)]
   x_train = np.expand_dims(x_train, 3)
   return x_train, y_train
+
+
+def init_arguments():
+  parser = argparse.ArgumentParser(description='random image generator')
+  parser.add_argument('text', metavar='text', type=str, nargs='+',
+            help='text to generate.')
+  parser.add_argument('-w', '--width', metavar='image_width', type=int,
+            help='image width (64 is default)', default=64)
+  parser.add_argument('--height', metavar='image_height', type=int,
+            help='image width (64 is default)', default=64)
+  parser.add_argument('-s', '--save_path', metavar='save_path', type=str, default='results/gen_img/test/',
+            help='path to save generated images')
+  return parser.parse_args()
+
+
+if __name__ == '__main__':
+  args = init_arguments()
+  for word in args.text:
+    img = paint_text(word.decode('utf-8'), args.width, args.height, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, blur=False, save=False)
+    mpimg.imsave(os.path.join(create_dir_if_missing(args.save_path), 'img-%s.png' % word.decode('utf-8')), img[0], cmap="Greys_r")
+
 

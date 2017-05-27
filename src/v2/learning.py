@@ -7,9 +7,9 @@ import network
 import os
 
 img_w = img_h = 64
-nb_epoch = 4
-TRAINING_SET_SIZE = 32000
-TEST_SET_SIZE = 16000
+nb_epoch = 2
+TRAINING_SET_SIZE = 8000
+TEST_SET_SIZE = 8000
 
 K.set_learning_phase(1)
 if K.image_data_format() == 'channels_first':
@@ -28,27 +28,27 @@ def train():
 
 
   epoch = 0
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE, blur=True)
+  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE)
   model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
             verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
 
   epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE, blur=True, ud = True)
+  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True)
   model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
             verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
 
   epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE, blur=True, ud = True, multi_sizes=True)
+  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True, multi_sizes=True)
   model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
             verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
 
   epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE, blur=True, ud = True, multi_sizes=True, multi_fonts=True)
+  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True, multi_sizes=True, multi_fonts=True)
   model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
             verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
 
   epoch += nb_epoch
-  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE, blur=True, ud = True, multi_sizes=True, multi_fonts=True, rotate=True)
+  (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE * 4, ud = True, multi_sizes=True, multi_fonts=True, rotate=True)
   model.fit(x_train, y_train, batch_size=32, epochs=epoch + nb_epoch,
             verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
 
@@ -56,7 +56,7 @@ def train():
     os.makedirs('results/data')
   model.save_weights('results/data/model.h5')
 
-  (x_test, y_test) = ig.next_batch(TEST_SET_SIZE, blur=True, ud = True, multi_sizes=True, multi_fonts=True, rotate=True)
+  (x_test, y_test) = ig.next_batch(TEST_SET_SIZE)
   score = model.evaluate(x_test, y_test)
   print "\n"
   print 'Test score: {0:.4g}'.format(score[0]) 
