@@ -38,7 +38,6 @@ def speckle(img):
 # and a random amount of speckle noise
 img_counter = 0
 
-
 def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_sizes=False, save=False, spackle=False, blur=False):
   surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
   with cairo.Context(surface) as context:
@@ -46,20 +45,20 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
     context.paint()
     # this font list works in Centos 7
     if multi_fonts:
-      fonts = ['FreeMono', 'Serif', 'FreeSerif', 'FreeSans', 'BPG Glakho', 'Monospace']
+      fonts = ['BPG ParaGraph Chveulebrivi', 'BPG Venuri 2010', 'BPG Ucnobi', 'BPG Glakho', 'BPG Nino Elite', 'BPG SuperSquare']
       #fonts = ['AcadNusx', 'AcadMtavr', 'Acad Nusx Geo', 'LitNusx', 'Chveulebrivi TT', 'DumbaNusx']
       context.select_font_face(np.random.choice(fonts), cairo.FONT_SLANT_NORMAL,
                                np.random.choice([cairo.FONT_WEIGHT_BOLD, cairo.FONT_WEIGHT_NORMAL]))
     else:
-      context.select_font_face('Serif', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+      context.select_font_face('BPG Glakho', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     if (multi_sizes):
-      context.set_font_size(random.randint(20, 50))
+      context.set_font_size(random.randint(20, 45))
     else:
       context.set_font_size(40)
     box = context.text_extents(text)
     border_w_h = (4, 4)
-    if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
-      raise IOError('Could not fit string into image. Max char count is too large for given image width.')
+    #if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
+    #  raise IOError('Could not fit string into image. Max char count is too large for given image width.')
 
     # teach the RNN translational invariance by
     # fitting text box randomly on canvas, with some room to rotate
@@ -94,11 +93,11 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
 
 #latin_upper = u'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 #latin_lower = u'abcdefghijklmnopqrstuvwxyz'
-georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ' #ჱჲჳჴჵ'
+georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰჱჲჳჴჵ'
 numbers = u'1234567890'
 symbols = u'!@#$%^&*()-+=/\.,<>?;:"|}{[]'
 
-chars = georgian  + numbers #+ symbols
+chars = georgian  + numbers + symbols
 LABEL_SIZE = len(chars)
 
 img_w = 64
@@ -113,43 +112,9 @@ def next_batch(size, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, b
   y_train = [None] * size
   for i in range(size):
     char = chars[random.randint(0, LABEL_SIZE - 1)]
-    save = i % 100 == 0
     img = paint_text(char, img_w, img_h, rotate=rotate, ud=ud, multi_fonts=multi_fonts, multi_sizes=multi_sizes, blur=blur)
     x_train[i] = 1 - img
     y_train[i] = y[chars.index(char)]
   x_train = np.expand_dims(x_train, 3)
   return x_train, y_train
-
-
-def get_test_set(size):
-  return next_batch(size)
-
-
-def init_arguments():
-  parser = argparse.ArgumentParser(description='random image generator')
-  parser.add_argument('text', metavar='text', type=str, nargs='+',
-            help='text to generate.')
-  parser.add_argument('-w', '--width', metavar='image_width', type=int,
-            help='image width (64 is default)', default=64)
-  parser.add_argument('--height', metavar='image_height', type=int,
-            help='image width (64 is default)', default=64)
-  parser.add_argument('-s', '--save_path', metavar='save_path', type=str, default='results/gen_img/test/',
-            help='path to save generated images')
-  return parser.parse_args()
-
-
-if __name__ == '__main__':
-  args = init_arguments()
-  for word in args.text:
-    img = paint_text(word.decode('utf-8'), args.width, args.height, rotate=True, ud=True, multi_fonts=True, multi_sizes=True, blur=True, save=False)
-
-    img = img[0]
-
-    img *= 255.0
-
-    mpimg.imsave(os.path.join(create_dir_if_missing(args.save_path), 'img-%s.png' % word.decode('utf-8')), img, cmap="Greys_r")
-
-
-
-
 
