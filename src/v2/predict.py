@@ -34,6 +34,8 @@ def recognize(array):
 		model = network.init_model(ig.LABEL_SIZE, learning.input_shape)
 		model.load_weights('results/data/model.h5')
 
+	print model.predict(array, batch_size=1, verbose=0)
+
 	pred = model.predict_classes(array, batch_size=1, verbose=0)
 	ch = ig.chars[pred[0]]
 	return ch
