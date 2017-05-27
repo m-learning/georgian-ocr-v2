@@ -1,7 +1,7 @@
 import argparse
 from PIL import Image
 import numpy as np
-import image_generator3 as ig
+import image_generator as ig
 import network
 import learning
 
