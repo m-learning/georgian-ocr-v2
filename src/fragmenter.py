@@ -29,10 +29,6 @@ def vanish_image(img):
     val = filters.threshold_li(gray_scale_image)
     return (gray_scale_image > val)
 
-def find_enclosing_meta(allMeta, meta):
-    for m in allMeta:
-       print m
-
 def delete_subcrops(allMeta):
     for m1 in allMeta:
        for m2 in allMeta:
