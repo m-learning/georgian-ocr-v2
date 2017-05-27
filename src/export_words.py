@@ -61,6 +61,7 @@ def get_all_chars_from_line(all_meta, char_meta, avg_line_height):
   return sorted_line_chars
 
 def split_line_with_words(line_chars, avg_char_width):
+  next_char = None
   words = ['']
   for i in range(0, len(line_chars)-1):
     char = line_chars[i]
@@ -72,7 +73,7 @@ def split_line_with_words(line_chars, avg_char_width):
       # New word is starting here
       words.append('')
 
-  words[-1]+=next_char['char']
+  if next_char is not None: words[-1]+=next_char['char']
   return words
 
 if __name__ == "__main__":
