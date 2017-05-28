@@ -35,7 +35,7 @@ def train():
 
     if not os.path.exists('results/data'):
       os.makedirs('results/data')
-    model.save_weights('results/data/model%d.h5', % (epoch))
+    model.save_weights('results/data/model%d.h5' % (epoch))
 
   (x_test, y_test) = ig.next_batch(TEST_SET_SIZE)
   score = model.evaluate(x_test, y_test)
