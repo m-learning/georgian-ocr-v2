@@ -55,12 +55,11 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
              {'name':'LitNusx',                   'type':'latin'},
              {'name':'Chveulebrivi TT',           'type':'latin'},
              {'name':'DumbaNusx',                 'type':'latin'},
-             #{'name':'BPG ParaGraph Chveulebrivi','type':'unicode'}, 
-             #{'name':'BPG Venuri 2010',           'type':'unicode'}, 
-             #{'name':'BPG Ucnobi',                'type':'unicode'}, 
-             #{'name':'BPG Glakho',                'type':'unicode'}, 
-             #{'name':'BPG Nino Elite',            'type':'unicode'},
-             #{'name':'BPG SuperSquare',           'type':'unicode'},
+             {'name':'BPG ParaGraph Chveulebrivi','type':'unicode'}, 
+             {'name':'BPG Venuri 2010',           'type':'unicode'}, 
+             {'name':'BPG Glakho',                'type':'unicode'}, 
+             {'name':'BPG Nino Elite',            'type':'unicode'},
+             {'name':'BPG SuperSquare',           'type':'unicode'},
     ]
     if multi_fonts:
       font = np.random.choice(fonts)
