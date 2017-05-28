@@ -8,7 +8,7 @@ import os
 
 img_w = img_h = 64
 nb_epoch = 1
-iterations = 100
+iterations = 25
 TRAINING_SET_SIZE = 50000
 TEST_SET_SIZE = 10000
 

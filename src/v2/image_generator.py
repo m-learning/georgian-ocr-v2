@@ -60,10 +60,6 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
              {'name':'BPG Venuri 2010',           'type':'unicode'}, 
              {'name':'BPG Glakho',                'type':'unicode'}, 
              {'name':'BPG Nino Elite',            'type':'unicode'},
-             {'name':'BPG SuperSquare',           'type':'unicode'},
-             {'name':'BPG Serif',                 'type':'unicode'},
-             {'name':'BPG Sans',                  'type':'unicode'},
-             {'name':'BPG Paata',                 'type':'unicode'},
              {'name':'BPG Arial',                 'type':'unicode'},
     ]
     if multi_fonts:
