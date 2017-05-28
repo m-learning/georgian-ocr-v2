@@ -9,7 +9,7 @@ import os
 img_w = img_h = 64
 nb_epoch = 1
 iterations = 100
-TRAINING_SET_SIZE = 100000
+TRAINING_SET_SIZE = 50000
 TEST_SET_SIZE = 10000
 
 K.set_learning_phase(1)
@@ -33,9 +33,9 @@ def train():
     model.fit(x_train, y_train, batch_size=32, epochs=epoch + 1,
               verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
 
-  if not os.path.exists('results/data'):
-    os.makedirs('results/data')
-  model.save_weights('results/data/model.h5')
+    if not os.path.exists('results/data'):
+      os.makedirs('results/data')
+    model.save_weights('results/data/model%d.h5', % (epoch))
 
   (x_test, y_test) = ig.next_batch(TEST_SET_SIZE)
   score = model.evaluate(x_test, y_test)
