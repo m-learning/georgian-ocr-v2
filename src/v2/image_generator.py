@@ -55,12 +55,12 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
              {'name':'LitNusx',                   'type':'latin'},
              {'name':'Chveulebrivi TT',           'type':'latin'},
              {'name':'DumbaNusx',                 'type':'latin'},
-             #{'name':'BPG ParaGraph Chveulebrivi','type':'unicode'}, 
-             #{'name':'BPG Venuri 2010',           'type':'unicode'}, 
-             #{'name':'BPG Ucnobi',                'type':'unicode'}, 
-             #{'name':'BPG Glakho',                'type':'unicode'}, 
-             #{'name':'BPG Nino Elite',            'type':'unicode'},
-             #{'name':'BPG SuperSquare',           'type':'unicode'},
+             {'name':'Avaza',                     'type':'latin'},
+             {'name':'BPG ParaGraph Chveulebrivi','type':'unicode'}, 
+             {'name':'BPG Venuri 2010',           'type':'unicode'}, 
+             {'name':'BPG Glakho',                'type':'unicode'}, 
+             {'name':'BPG Nino Elite',            'type':'unicode'},
+             {'name':'BPG Arial',                 'type':'unicode'},
     ]
     if multi_fonts:
       font = np.random.choice(fonts)
@@ -70,9 +70,9 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
       font = fonts[0]
       context.select_font_face(font['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
     if (multi_sizes):
-      context.set_font_size(random.randint(20, 48))
+      context.set_font_size(random.randint(20, 52))
     else:
-      context.set_font_size(40)
+      context.set_font_size(44)
     
     if font['type'] == 'latin' and text in georgian:
       text = latingeo[georgian.index(text)]
@@ -112,7 +112,7 @@ def paint_text(text, w, h, rotate=False, ud=False, multi_fonts=False, multi_size
     ndimage.gaussian_filter(a, 1, output=a)
   return a
 
-chars = georgian # + numbers + symbols
+chars = georgian + numbers + symbols
 LABEL_SIZE = len(chars)
 
 img_w = 64
