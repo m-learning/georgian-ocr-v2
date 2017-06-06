@@ -93,5 +93,5 @@ if __name__ == "__main__":
 
     final_text+= '\n'
 
-  print final_text
+  print final_text.encode('utf-8')
 
