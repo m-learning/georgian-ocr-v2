@@ -30,3 +30,6 @@ bin/learn.sh
 bin/ocr.sh tests/mnatobi-line.png
 ```
 
+## Model and Test files
+
+see releases page
