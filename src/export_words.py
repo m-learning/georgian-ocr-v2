@@ -76,6 +76,30 @@ def split_line_with_words(line_chars, avg_char_width):
   if next_char is not None: words[-1]+=next_char['char']
   return words
 
+
+def test(all_meta):
+
+  avg_line_height = 40
+  avg_char_width = 24
+  line_first_chars = get_line_first_chars(all_meta, avg_line_height)
+
+  final_text = ''
+  for first_char in line_first_chars:
+    all_line_chars = get_all_chars_from_line(all_meta, first_char, avg_line_height)
+
+    words = split_line_with_words(all_line_chars, avg_char_width)
+    for w in words:
+      final_text += w + ' '
+
+    final_text+= '\n'
+
+  print final_text.encode('utf-8')
+
+
+
+
+
+
 if __name__ == "__main__":
   all_meta = read_meta('results/meta/')
 
@@ -94,4 +118,5 @@ if __name__ == "__main__":
     final_text+= '\n'
 
   print final_text.encode('utf-8')
+
 
