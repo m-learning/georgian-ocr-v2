@@ -33,20 +33,20 @@ def vanish_image(img):
 
 def delete_subcrops(allMeta):
     for m1 in allMeta:
-       for m2 in allMeta:
-           if (m1['x'] > m2['x'] and
-                  m1['y'] > m2['y'] and
-                  m1['x']+m1['w'] < m2['x']+m2['w'] and
-                  m1['y']+m1['h'] < m2['y']+m2['h']):
-              imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, m1['id'])
-              metaFilename = "%s/%04d.json" % (META_DIR, m1['id'])
+        for m2 in allMeta:
+            if (m1['x'] > m2['x'] and
+                m1['y'] > m2['y'] and
+                m1['x']+m1['w'] < m2['x']+m2['w'] and
+                m1['y']+m1['h'] < m2['y']+m2['h']):
+                imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, m1['id'])
+                metaFilename = "%s/%04d.json" % (META_DIR, m1['id'])
 
-              print 'Deleting enclosed fragment', imageFilename
-              try:
-                  os.remove(imageFilename)
-                  os.remove(metaFilename)
-              except Exception, e:
-                  raise e#print e
+            print 'Deleting enclosed fragment', imageFilename
+            try:
+                os.remove(imageFilename)
+                os.remove(metaFilename)
+            except Exception, e:
+                print e
 
 def do_fragmentation(file_path):
     create_dir_if_missing(FRAGMENTS_DIR)
@@ -138,6 +138,7 @@ def create_image_for_recognize(image, width=64, height=64):
 
 def crop_rectangle(img, contour, file_name, raw_file_name):
     #print('RAW FILE NAME:', raw_file_name)
+    print(type(img))
     x, y, w, h = cv2.boundingRect(contour)
     
     if w * h < 100:
@@ -157,13 +158,13 @@ def crop_rectangle(img, contour, file_name, raw_file_name):
     
     y_offset = int(math.floor((l_height - s_height) / 2))
     x_offset = int(math.floor((l_width - s_width) / 2))
-
+    
     # result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img		
     ndimage.gaussian_filter(crop_img, 1, output=crop_img)
     
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
-
+    
     #print('**********************', file_name)
     
     #print('IMAGE TYPE FOR:', image_to_recognize)
