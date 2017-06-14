@@ -20,33 +20,20 @@ META_DIR = "results/meta"
 DEBUG_DIR = "results/debug"
 
 
-
 def create_dir_if_missing(path):
     if not os.path.exists(path):
         os.makedirs(path)
-
 
 def vanish_image(img):
     gray_scale_image = color.rgb2gray(img)
     val = filters.threshold_li(gray_scale_image)
     return (gray_scale_image > val)
-
-def delete_subcrops(allMeta):
-    for m1 in allMeta:
-        for m2 in allMeta:
-            if (m1['x'] > m2['x'] and
-                m1['y'] > m2['y'] and
-                m1['x']+m1['w'] < m2['x']+m2['w'] and
-                m1['y']+m1['h'] < m2['y']+m2['h']):
-                imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, m1['id'])
-                metaFilename = "%s/%04d.json" % (META_DIR, m1['id'])
-
-            print 'Deleting enclosed fragment', imageFilename
-            try:
-                os.remove(imageFilename)
-                os.remove(metaFilename)
-            except Exception, e:
-                print e
+              
+def find_noise(data):
+    width = data["meta"]["w"]
+    if width < 13:
+        return True
+    return False
 
 def do_fragmentation(file_path):
     create_dir_if_missing(FRAGMENTS_DIR)
@@ -82,38 +69,27 @@ def do_fragmentation(file_path):
     cv_image = img_as_ubyte(gray)
     _, contours, hierarchy = cv2.findContours(cv_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     
-    allMeta = {}
+    allMeta = []
     count = 0
 
-    img_arrays = {}
+    img_arrays = []
     # For each contour, find the bounding rectangle and crop it.
     # put cropped image on a blank background and write to disk
     for cnt in contours:
-        count += 1
         try:
             # Create image file
-            imageFilename = "%s/%04d.png" % (FRAGMENTS_DIR, count)
-            rawImageFilename = "%s/%04d.png" % (RAW_FRAGMENTS_DIR, count)
-            x, y, w, h, img_arr = crop_rectangle(cv_image, cnt, imageFilename, rawImageFilename)
-            img_arrays[count] = img_arr
+            x, y, w, h, img_arr = crop_rectangle(cv_image, cnt)
             
             # Create meta file
             meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
             
-            '''
-            metaFilename = "%s/%04d.json" % (META_DIR, count)
-            f = open(metaFilename, 'w')
-            json.dump(meta, f)
-            f.close()
-            '''
-            
-            allMeta[count] = meta
-            
+            image_data = {'arr':img_arr, "meta": meta}
+            if not find_noise(image_data):
+                img_arrays.append(image_data)
+                count += 1
         except ValueError, ve:
             print "skip fragment", ve
-            
-    #delete_subcrops(allMeta)
-    return img_arrays, allMeta
+    return img_arrays
     
     
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
@@ -136,16 +112,15 @@ def create_image_for_recognize(image, width=64, height=64):
     return generated_image
 
 
-def crop_rectangle(img, contour, file_name, raw_file_name):
+def crop_rectangle(img, contour):
     #print('RAW FILE NAME:', raw_file_name)
-    print(type(img))
+    #print(type(img))
     x, y, w, h = cv2.boundingRect(contour)
     
     if w * h < 100:
 	raise ValueError('Cropping rectangle is too small')
     
     crop_img = img[y:y + h, x:x + w]
-    cv2.imwrite(raw_file_name, crop_img)
     
     # define background image as large image 
     result_img = create_blank_image()
@@ -165,11 +140,7 @@ def crop_rectangle(img, contour, file_name, raw_file_name):
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
     
-    #print('**********************', file_name)
-    
-    #print('IMAGE TYPE FOR:', image_to_recognize)
     #cv2.imwrite(file_name, image_to_recognize)
-    
     return x, y, w, h, image_to_recognize
 
 

@@ -53,12 +53,12 @@ def get_line_first_chars(all_meta, avg_line_height):
   return sorted_first_chars
 
 def get_all_chars_from_line(all_meta, char_meta, avg_line_height):
-  line_chars = []
-  for meta in all_meta:
-    if is_same_line(meta, char_meta): line_chars.append(meta)
+    line_chars = []
+    for meta in all_meta:
+        if is_same_line(meta, char_meta): line_chars.append(meta)
 
-  sorted_line_chars =  sorted(line_chars, key=lambda ch: ch['x'])
-  return sorted_line_chars
+    sorted_line_chars =  sorted(line_chars, key=lambda ch: ch['x'])
+    return sorted_line_chars
 
 def split_line_with_words(line_chars, avg_char_width):
   next_char = None
@@ -78,31 +78,27 @@ def split_line_with_words(line_chars, avg_char_width):
 
 
 def test(all_meta):
+    avg_line_height = 40
+    avg_char_width = 24
+    line_first_chars = get_line_first_chars(all_meta, avg_line_height)
 
-  avg_line_height = 40
-  avg_char_width = 24
-  line_first_chars = get_line_first_chars(all_meta, avg_line_height)
+    final_text = ''
+    for first_char in line_first_chars:
+        all_line_chars = get_all_chars_from_line(all_meta, first_char, avg_line_height)
 
-  final_text = ''
-  for first_char in line_first_chars:
-    all_line_chars = get_all_chars_from_line(all_meta, first_char, avg_line_height)
+        words = split_line_with_words(all_line_chars, avg_char_width)
+        for w in words:
+            final_text += w + ' '
 
-    words = split_line_with_words(all_line_chars, avg_char_width)
-    for w in words:
-      final_text += w + ' '
+        final_text+= '\n'
 
-    final_text+= '\n'
-
-  print final_text.encode('utf-8')
-
-
-
+    print final_text.encode('utf-8')
 
 
 
 if __name__ == "__main__":
   all_meta = read_meta('results/meta/')
-
+  
   avg_line_height = 40
   avg_char_width = 24
   line_first_chars = get_line_first_chars(all_meta, avg_line_height)
@@ -110,7 +106,7 @@ if __name__ == "__main__":
   final_text = ''
   for first_char in line_first_chars:
     all_line_chars = get_all_chars_from_line(all_meta, first_char, avg_line_height)
-
+  
     words = split_line_with_words(all_line_chars, avg_char_width)
     for w in words:
       final_text += w + ' '
