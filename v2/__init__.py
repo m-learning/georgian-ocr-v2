@@ -2,8 +2,6 @@ from learning import *
 from predict_all import *
 import os
 
-print "cat"
-
 def learning(path=os.getcwd()):
     train(path)
 
