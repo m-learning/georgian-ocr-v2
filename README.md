@@ -26,6 +26,8 @@ bin/learn.sh
 
 ## Predict
 
+save model file model.h5 to results/data from release page
+then
 ```
 bin/ocr.sh tests/mnatobi-line.png
 ```
