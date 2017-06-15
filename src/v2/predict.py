@@ -4,6 +4,7 @@ import numpy as np
 import image_generator as ig
 import network
 import learning
+import os
 
 model = None
 
@@ -15,7 +16,7 @@ def init_arguments():
 	return parser.parse_args()
 
 
-def recognize_image(image_path):
+def recognize_image(image_path,model_path=os.getcwd()):
 	img = Image.open(image_path)
 	img = img.convert("L")
 	array = np.asarray(img.getdata(), dtype=np.float32)
@@ -23,16 +24,16 @@ def recognize_image(image_path):
 	array = array.reshape(learning.input_shape)
 
 	array = np.expand_dims(array, 0)
-	return recognize(array)
+	return recognize(array,model_path)
 
 
-def recognize(array):
+def recognize(array,model_path=os.getcwd()):
 	array = 1 - array
 	global model
 
 	if model is None:
 		model = network.init_model(ig.LABEL_SIZE, learning.input_shape)
-		model.load_weights('results/data/model.h5')
+		model.load_weights(model_path+'/results/data/model.h5')
 
 	print model.predict(array, batch_size=1, verbose=0)
 
