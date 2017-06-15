@@ -29,6 +29,7 @@ bin/learn.sh
 ```
 bin/ocr.sh tests/mnatobi-line.png
 ```
+save model file model.h5 to results/data from release page
 
 ## Model and Test files
 
