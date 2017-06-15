@@ -1,6 +1,7 @@
 from django.conf.urls import url
-from views import upload
+from views import *
 
 urlpatterns = [
-  url(r'^upload', upload)
+  url(r'^$', index),
+  url(r'^upload$', upload)
 ]

@@ -7,6 +7,9 @@ import tempfile
 
 work_dir = os.path.dirname(os.path.realpath(__file__))
 
+def index(request):
+  return HttpResponseRedirect("/static/index.html")
+
 def upload(request):
   image_file = tempfile.NamedTemporaryFile(delete=False)
   image_path = image_file.name
