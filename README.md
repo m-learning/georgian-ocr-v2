@@ -36,14 +36,5 @@ bin/ocr.sh tests/mnatobi-line.png
 
 see releases page
 
-##Using library
-
-cd georgian-ocr-v2
-pip install .
-
-
-import v2
-v2.learning(model_path)
-v2.predict(image_path, model_path)
-
+```
 
