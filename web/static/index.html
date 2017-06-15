@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html leng="en">
+
+<head>
+  <title>ქართული ტექსტის ამომცნობი</title>
+  <meta charset = "utf-8" />
+  <link rel="stylesheet" type="text/css" href="index.css" />
+</head>
+
+<body class = "body" style ="background-color:#f6f6f6" >
+  <h1>ქართული ტექსტის ამომცნობი</h1>
+  <input type="file" id="file" style="display:none" onchange="upload(this)" accept="image/jpeg|image/png"></input>
+  <button onclick="document.getElementById('file').click()">ფაილის ატვირთვა</button>
+  <pre id="result">
+  </pre>
+  <script src="index.js"></script>
+</body>
+</html>

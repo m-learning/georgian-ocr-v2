@@ -74,7 +74,7 @@ if __name__ == '__main__':
 			full_score += score
 			full_count += 1
 
-			print file_name, char, score
+			print file_name, char.encode('utf8'), score
 			write_meta_char(file_name[:-4]+'.json', char, score)
 	print 'Avg score: %d' % (full_score * 100 /full_count)
 
