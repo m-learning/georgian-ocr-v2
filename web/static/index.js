@@ -1,7 +1,21 @@
 upload = function(el){
+  //Wait status, empty old data
   document.getElementById('loading').style.display="block"
   document.getElementById('result').innerHTML = ''
+
+  //Show image before upload
   var file = el.files[0]
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    document.getElementById('source').innerHTML = ''
+    
+    var img = document.createElement('img')
+        img.src = e.target.result
+        img.style.width = '100%'
+    document.getElementById('source').appendChild(img)
+  }
+  reader.readAsDataURL(file);
+
   var fd = new FormData();
   fd.append("file", file);
   var url = '../upload'
