@@ -19,10 +19,7 @@ def upload(request):
 
   ocr_executable = os.path.join(work_dir, '../../bin/ocr.sh')
   export_executable = os.path.join(work_dir, '../../bin/export_words.sh')
-  print ocr_executable
-  print export_executable
-  subprocess.check_output([ocr_executable, image_path])
-  recognized_text = subprocess.check_output([export_executable, image_path])
+  recognized_text = subprocess.check_output([ocr_executable, image_path, '--nolog'])
 
   os.remove(image_path)
 

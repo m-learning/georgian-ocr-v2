@@ -35,7 +35,7 @@ def find_noise(data):
         return True
     return False
 
-def do_fragmentation(file_path):
+def do_fragmentation(file_path, nolog = False):
     create_dir_if_missing(FRAGMENTS_DIR)
     create_dir_if_missing(META_DIR)
     create_dir_if_missing(DEBUG_DIR)
@@ -88,7 +88,8 @@ def do_fragmentation(file_path):
                 img_arrays.append(image_data)
                 count += 1
         except ValueError, ve:
-            print "skip fragment", ve
+            if not nolog:
+                print "skip fragment", ve
     return img_arrays
     
     

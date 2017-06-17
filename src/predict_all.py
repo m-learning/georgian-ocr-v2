@@ -16,6 +16,7 @@ def init_arguments():
     parser = argparse.ArgumentParser(description='Georgian OCR')
     parser.add_argument('-i', '--image', metavar='image_path', type=str,
                         help='Path to the image to recognize.')
+    parser.add_argument('-n', '--nolog', help='Disable logging.', action='store_true')
     return parser.parse_args()
 
 def choose_char(scores, chars):
@@ -32,19 +33,13 @@ def recognize(array):
     
     if model is None:
         model = network.init_model(ig.LABEL_SIZE, learning.input_shape)
-	model.load_weights('results/data/model.h5')
+        model.load_weights('results/data/model.h5')
     
     pred = model.predict(array, batch_size=1, verbose=0)
     return choose_char(pred[0], ig.chars)
     
-def recognize_image(img_arr): #image_path):
-    #print type(img)
-    #img = img.convert("L")
-    #test_array = np.asarray(img.getdata(), dtype=np.float32)
-    #test_array /= 255.0
-    # -------------------------
-    #img_arr[img_arr > ]=255.
-    img_arr /= 255.0 #array /= 255.0
+def recognize_image(img_arr):
+    img_arr /= 255.0
     array = img_arr.reshape(learning.input_shape)
     
     array = np.expand_dims(array, 0)
@@ -52,7 +47,7 @@ def recognize_image(img_arr): #image_path):
 
 if __name__ == '__main__':
     args = init_arguments()
-    image_arrays = fragmenter.do_fragmentation(args.image)
+    image_arrays = fragmenter.do_fragmentation(args.image, nolog = args.nolog)
 
     result = ''
     full_score = 0
@@ -62,14 +57,15 @@ if __name__ == '__main__':
         img_arr = n["arr"]
         meta_data = n["meta"]
         img_arr = img_arr.flatten()
-	[char, score] = recognize_image(img_arr)
+        [char, score] = recognize_image(img_arr)
         full_score += score
-	full_count += 1
-        print meta_data, char, score
+        full_count += 1
+        if not args.nolog:
+            print meta_data, char.encode('utf8'), score
         meta_data['char'] = char
-	meta_data['score'] = score
-            
-    print 'Avg score: %d' % (full_score * 100 /full_count)
+        meta_data['score'] = score
+    if not args.nolog:
+        print 'Avg score: %d' % (full_score * 100 /full_count)
 
     # ----- for testing --------
     # use export_word as a module

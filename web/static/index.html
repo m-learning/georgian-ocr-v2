@@ -10,8 +10,9 @@
 
 <body class = "body" style ="background-color:#f6f6f6" >
   <h1>ქართული ტექსტის ამომცნობი</h1>
-  <input type="file" id="file" style="display:none" onchange="upload(this)" accept="image/jpeg|image/png"></input>
+  <input type="file" id="file" style="display:none" onchange="upload(this)" accept="image/*"></input>
   <button onclick="document.getElementById('file').click()">ფაილის ატვირთვა</button>
+  <img src="images/loading.gif" style="height:40px;display:none" id="loading">
   <pre id="result">
   </pre>
   <script src="index.js"></script>
