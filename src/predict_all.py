@@ -70,7 +70,6 @@ if __name__ == '__main__':
 	meta_data['score'] = score
             
     print 'Avg score: %d' % (full_score * 100 /full_count)
-    
 
     # ----- for testing --------
     # use export_word as a module
