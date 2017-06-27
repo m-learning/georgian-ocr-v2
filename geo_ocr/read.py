@@ -3,7 +3,7 @@ from predict_all import *
 	
 def read(image_path,nolog=False):	
 
-    image_arrays = fragmenter.do_fragmentation(image_path, nolog)
+    image_arrays = fragmenter.do_fragmentation(image_path, nolog=nolog)
     result = ''
     full_score = 0
     full_count = 0
