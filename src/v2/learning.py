@@ -20,12 +20,14 @@ else:
 
 
 def train():
+  
+  path=os.getcwd();
 
   model = network.init_model(ig.LABEL_SIZE, input_shape)
   
   model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
   
-  tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=True)
+  tensorboard = TensorBoard(log_dir=os.path.join(path,'logs'), histogram_freq=0, write_graph=True, write_images=True)
   
   
   for epoch in range(0, iterations):
@@ -33,9 +35,9 @@ def train():
     model.fit(x_train, y_train, batch_size=32, epochs=epoch + 1,
             verbose=1, validation_split=0.1, callbacks=[tensorboard], initial_epoch = epoch)
     
-    if not os.path.exists('results/data'):
-      os.makedirs('results/data')
-    model.save_weights('results/data/model%d.h5' % (epoch))
+    if not os.path.exists(os.path.join(path,'results/data')):
+      os.makedirs(os.path.join(path,'results/data'))
+    model.save_weights(os.path.join(path,'results/data/model%d.h5') % (epoch))
 
   (x_test, y_test) = ig.next_batch(TEST_SET_SIZE)
   score = model.evaluate(x_test, y_test)
