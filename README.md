@@ -35,3 +35,15 @@ bin/ocr.sh tests/mnatobi-line.png
 ## Model and Test files
 
 see releases page
+
+## Use as module
+
+```bash
+pip install .
+```
+
+```python
+import geo_ocr
+geo_ocr.train()
+geo_ocr.read(path)
+```
