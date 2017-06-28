@@ -97,7 +97,7 @@ def test(all_meta):
 
 
 if __name__ == "__main__":
-  all_meta = read_meta(os.path.join(os.getcwd(),'results/meta/'))
+  all_meta = read_meta('results/meta/')
   
   avg_line_height = 40
   avg_char_width = 24

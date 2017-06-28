@@ -28,13 +28,12 @@ def choose_char(scores, chars):
 
 
 def recognize(array):
-    path=os.getcwd()
     array = 1 - array
     global model
     
     if model is None:
         model = network.init_model(ig.LABEL_SIZE, learning.input_shape)
-        model.load_weights(os.path.join(path,'results/data/model.h5'))
+        model.load_weights('results/data/model.h5')
     
     pred = model.predict(array, batch_size=1, verbose=0)
     return choose_char(pred[0], ig.chars)
