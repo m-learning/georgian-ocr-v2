@@ -29,7 +29,7 @@ bin/learn.sh
 save model file model.h5 to results/data from release page
 then
 ```
-bin/ocr.sh tests/mnatobi-line.png
+python geo_ocr/read.py -i tests/mnatobi-lines.png --debug
 ```
 
 ## Model and Test files
