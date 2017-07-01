@@ -2,7 +2,5 @@
 
 cd `dirname $BASH_SOURCE`/..
 
-python src/v2/learning.py
-
-
+python2 src/export_words.py
 

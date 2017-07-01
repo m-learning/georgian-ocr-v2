@@ -8,3 +8,5 @@ rm -f results/words/*
 
 python src/predict_all.py -i tests/Mnatobi-009-cropped.png
 
+
+
