@@ -24,22 +24,25 @@ def create_dir_if_missing(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
 def vanish_image(img):
     gray_scale_image = color.rgb2gray(img)
     val = filters.threshold_li(gray_scale_image)
     return (gray_scale_image > val)
-              
+
+
 def find_noise(data):
     width = data["meta"]["w"]
     if width < 13:
         return True
     return False
 
-def do_fragmentation(file_path, nolog = False):
+
+def do_fragmentation(file_path, nolog=False):
     create_dir_if_missing(FRAGMENTS_DIR)
     create_dir_if_missing(META_DIR)
     create_dir_if_missing(DEBUG_DIR)
-    
+
     # load source image
     src_img = cv2.imread(file_path)
 
@@ -51,24 +54,26 @@ def do_fragmentation(file_path, nolog = False):
     # smooth the image to avoid noises
     # gray = cv2.medianBlur(gray, 5)
     # cv2.imwrite(("%s/a2 medianBlur.png" % DEBUG_DIR), gray)
-    
+
     # Apply adaptive threshold
     # thresh = cv2.adaptiveThreshold(gray, 255, 1, 1, 11, 2)
     # thresh_color = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
 
     # cv2.imwrite(("%s/a3 treshColor.png" % DEBUG_DIR), thresh_color)
-    
+
     # apply some dilation and erosion to join the gaps
     # thresh = cv2.dilate(thresh, None, iterations=3)
     # cv2.imwrite(("%s/a4 deliate.png" % DEBUG_DIR), thresh)
-    
+
     # thresh = cv2.erode(thresh, None, iterations=2)
     # cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), thresh)
-    
+
     # Find the contours
     cv_image = img_as_ubyte(gray)
-    _, contours, hierarchy = cv2.findContours(cv_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    
+    _, contours, hierarchy = cv2.findContours(cv_image,
+                                              cv2.RETR_LIST,
+                                              cv2.CHAIN_APPROX_SIMPLE)
+
     allMeta = []
     count = 0
 
@@ -79,28 +84,28 @@ def do_fragmentation(file_path, nolog = False):
         try:
             # Create image file
             x, y, w, h, img_arr = crop_rectangle(cv_image, cnt)
-            
+
             # Create meta file
             meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
-            
-            image_data = {'arr':img_arr, "meta": meta}
+
+            image_data = {'arr': img_arr, "meta": meta}
             if not find_noise(image_data):
                 img_arrays.append(image_data)
                 count += 1
-        except ValueError, ve:
+        except ValueError as ve:
             if not nolog:
                 print "skip fragment", ve
     return img_arrays
-    
-    
+
+
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
     image = np.zeros((height, width, 3), np.uint8)
-    
+
     # Since OpenCV uses BGR, convert the color first
     color = tuple(reversed(rgb_color))
     # Fill image with color
     image[:] = color
-    
+
     return image
 
 
@@ -109,39 +114,41 @@ def create_image_for_recognize(image, width=64, height=64):
     (image_h, image_w) = image.shape
     index_w = (width - image_w) / 2
     index_h = (height - image_h) / 2
-    generated_image[index_h : image_h + index_h, index_w : image_w + index_w] = image
+    generated_image[index_h: image_h + index_h,
+                    index_w: image_w + index_w] = image
     return generated_image
 
 
 def crop_rectangle(img, contour):
-    #print('RAW FILE NAME:', raw_file_name)
-    #print(type(img))
+    # print('RAW FILE NAME:', raw_file_name)
+    # print(type(img))
     x, y, w, h = cv2.boundingRect(contour)
-    
+
     if w * h < 100:
-	raise ValueError('Cropping rectangle is too small')
-    
+        raise ValueError('Cropping rectangle is too small')
+
     crop_img = img[y:y + h, x:x + w]
-    
-    # define background image as large image 
+
+    # define background image as large image
     result_img = create_blank_image()
 
     # define small height and width
     s_height, s_width = crop_img.shape[:2]
-    
+
     # define large height and width
     l_height, l_width = result_img.shape[:2]
-    
+
     y_offset = int(math.floor((l_height - s_height) / 2))
     x_offset = int(math.floor((l_width - s_width) / 2))
-    
-    # result_img[y_offset:y_offset + s_height, x_offset:x_offset + s_width] = crop_img		
+
+    # result_img[y_offset:y_offset + s_height,
+    #            x_offset:x_offset + s_width] = crop_img
     ndimage.gaussian_filter(crop_img, 1, output=crop_img)
-    
+
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
-    
-    #cv2.imwrite(file_name, image_to_recognize)
+
+    # cv2.imwrite(file_name, image_to_recognize)
     return x, y, w, h, image_to_recognize
 
 
@@ -151,4 +158,4 @@ if __name__ == "__main__":
         source_file_path = sys.argv[1]
         do_fragmentation(source_file_path)
     else:
-        print ("Invalid argument: <source file>")
+        print("Invalid argument: <source file>")
