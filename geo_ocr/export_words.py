@@ -51,8 +51,8 @@ def get_line_first_chars(all_meta, avg_line_height):
     first_chars = []
     for meta in all_meta:
         sorted_chars = get_all_chars_from_line(all_meta, meta, avg_line_height)
-    if sorted_chars[0] not in first_chars:
-        first_chars.append(sorted_chars[0])
+        if sorted_chars[0] not in first_chars:
+            first_chars.append(sorted_chars[0])
     sorted_first_chars = sorted(first_chars, key=lambda ch: ch['y'])
     return sorted_first_chars
 
