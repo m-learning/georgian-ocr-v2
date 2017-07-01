@@ -1,12 +1,11 @@
-import random
 import cv2
 # import cv as cv2
-import math
 import os
 import sys
-import json
+import shutil
 import numpy as np
 from scipy import ndimage
+
 
 from skimage import color
 from skimage import filters
@@ -20,9 +19,11 @@ META_DIR = "results/meta"
 DEBUG_DIR = "results/debug"
 
 
-def create_dir_if_missing(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+def create_clean_dir(path):
+    if os.path.exists(path):
+        shutil.rmtree(path, ignore_errors=True)
+
+    os.makedirs(path)
 
 
 def vanish_image(img):
@@ -38,10 +39,10 @@ def find_noise(data):
     return False
 
 
-def do_fragmentation(file_path, nolog=False):
-    create_dir_if_missing(FRAGMENTS_DIR)
-    create_dir_if_missing(META_DIR)
-    create_dir_if_missing(DEBUG_DIR)
+def do_fragmentation(file_path, debug=True):
+    create_clean_dir(FRAGMENTS_DIR)
+    create_clean_dir(META_DIR)
+    create_clean_dir(DEBUG_DIR)
 
     # load source image
     src_img = cv2.imread(file_path)
@@ -85,6 +86,9 @@ def do_fragmentation(file_path, nolog=False):
             # Create image file
             x, y, w, h, img_arr = crop_rectangle(cv_image, cnt)
 
+            if debug:
+                cv2.imwrite(("%s/%s.png" % (FRAGMENTS_DIR, count)), img_arr)
+
             # Create meta file
             meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
 
@@ -92,8 +96,9 @@ def do_fragmentation(file_path, nolog=False):
             if not find_noise(image_data):
                 img_arrays.append(image_data)
                 count += 1
+
         except ValueError as ve:
-            if not nolog:
+            if debug:
                 print "skip fragment", ve
     return img_arrays
 
@@ -120,12 +125,7 @@ def create_image_for_recognize(image, width=64, height=64):
 
 
 def crop_rectangle(img, contour):
-    # print('RAW FILE NAME:', raw_file_name)
-    # print(type(img))
     x, y, w, h = cv2.boundingRect(contour)
-
-    if w * h < 100:
-        raise ValueError('Cropping rectangle is too small')
 
     crop_img = img[y:y + h, x:x + w]
 
@@ -138,17 +138,11 @@ def crop_rectangle(img, contour):
     # define large height and width
     l_height, l_width = result_img.shape[:2]
 
-    y_offset = int(math.floor((l_height - s_height) / 2))
-    x_offset = int(math.floor((l_width - s_width) / 2))
-
-    # result_img[y_offset:y_offset + s_height,
-    #            x_offset:x_offset + s_width] = crop_img
     ndimage.gaussian_filter(crop_img, 1, output=crop_img)
 
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
 
-    # cv2.imwrite(file_name, image_to_recognize)
     return x, y, w, h, image_to_recognize
 
 
