@@ -35,8 +35,8 @@ def vanish_image(img):
               
 def find_noise(data):
     width = data["meta"]["w"]
-    if width < 13:
-        return True
+#    if width < 13:
+#        return True
     return False
 
 def do_fragmentation(file_path, debug = True):
@@ -77,6 +77,8 @@ def do_fragmentation(file_path, debug = True):
     count = 0
 
     img_arrays = []
+
+    print 'Number of contures', len(contours)
     # For each contour, find the bounding rectangle and crop it.
     # put cropped image on a blank background and write to disk
     for cnt in contours:
@@ -95,6 +97,7 @@ def do_fragmentation(file_path, debug = True):
                 img_arrays.append(image_data)
                 count += 1
         except ValueError, ve:
+            print 'Except'
             if debug:
                 print "skip fragment", ve
     return img_arrays
