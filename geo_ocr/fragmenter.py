@@ -14,7 +14,8 @@ from scipy import ndimage
 from skimage import color
 from skimage import filters
 from skimage import img_as_ubyte
-
+from skimage import util
+from skimage import img_as_float
 
 # destination directory
 FRAGMENTS_DIR = "results/letters"
@@ -29,11 +30,13 @@ def create_clean_dir(path):
 
     os.makedirs(path)
 
-def vanish_image(img):
+def vanish_image(img,invert=False):
     gray_scale_image = color.rgb2gray(img)
-    val = filters.threshold_li(gray_scale_image)
+    if invert:
+        gray_scale_image = util.invert(gray_scale_image)
+    val = filters.threshold_local(gray_scale_image,101,mode="wrap",offset=0.1)
     return (gray_scale_image > val)
-              
+#          
 def find_noise(data):
     width = data["meta"]["w"]
     if width < 13:
@@ -63,6 +66,7 @@ def do_fragmentation(file_path, debug = True):
     src_img = cv2.imread(file_path)
 
     gray = vanish_image(src_img)
+    #gray=util.invert(gray)
     # convert to grayscale
     # gray = cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
     cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), gray * 255)

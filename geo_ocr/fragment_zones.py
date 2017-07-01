@@ -20,10 +20,12 @@ def create_dir_if_missing(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
 def vanish_image(img):
     gray_scale_image = color.rgb2gray(img)
     val = filters.threshold_li(gray_scale_image)
     return img_as_ubyte(gray_scale_image > val)
+
 
 def do_fragmentation(file_path):
     create_dir_if_missing(ZONES_DIR)
@@ -55,7 +57,9 @@ def do_fragmentation(file_path):
     cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), src_img)
 
     # Find the contours
-    _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, hierarchy = cv2.findContours(src_img,
+                                              cv2.RETR_LIST,
+                                              cv2.CHAIN_APPROX_SIMPLE)
 
     count = 0
     # For each contour, find the bounding rectangle and crop it.
@@ -67,8 +71,7 @@ def do_fragmentation(file_path):
             imageFilename = "%s/%04d.png" % (ZONES_DIR, count)
             x, y, w, h = crop_rectangle(src_img, cnt, imageFilename)
 
-
-        except ValueError, ve:
+        except ValueError as ve:
             print "skip fragment", ve
 
 
@@ -87,7 +90,7 @@ def crop_rectangle(img, contour, file_name):
     x, y, w, h = cv2.boundingRect(contour)
 
     if w * h < 2000:
-			raise ValueError('Cropping rectangle is too small')
+        raise ValueError('Cropping rectangle is too small')
 
     crop_img = img[y:y + h, x:x + w]
 
@@ -102,4 +105,4 @@ if __name__ == "__main__":
         source_file_path = sys.argv[1]
         do_fragmentation(source_file_path)
     else:
-        print ("Invalid argument: <source file>")
+        print("Invalid argument: <source file>")
