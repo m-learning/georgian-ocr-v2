@@ -9,8 +9,7 @@ kernel_size = (3, 3)
 
 
 def init_model(nb_classes, input_shape):
-	model = Sequential()
-	
+
 	model = Sequential()
 	
 	model.add(Convolution2D(16, kernel_size, padding='valid', input_shape=input_shape, use_bias=True))
