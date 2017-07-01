@@ -46,7 +46,8 @@ def find_noise(data):
     return False
 
 
-def delete_subcrops(allMeta, img_arrays):
+def delete_subcrops(allMeta, img_arrays, debug = True):
+
     for m1 in allMeta:
        for m2 in allMeta:
            if (m1['x'] > m2['x'] and
@@ -54,9 +55,13 @@ def delete_subcrops(allMeta, img_arrays):
                   m1['x']+m1['w'] < m2['x']+m2['w'] and
                   m1['y']+m1['h'] < m2['y']+m2['h']):
 
-              print 'before', len(img_arrays), m1['id']
               img_arrays = [s for s in img_arrays if not s['meta']['id'] == m1['id']]
-              print 'deleting', len(img_arrays)
+
+              if debug:
+                imageFilename = "%s/%d.png" % (FRAGMENTS_DIR, m1['id'])
+                os.remove(imageFilename)
+
+    return img_arrays
 
 
 def do_fragmentation(file_path, debug = True):
@@ -94,6 +99,7 @@ def do_fragmentation(file_path, debug = True):
     cv_image = img_as_ubyte(gray)
     _, contours, hierarchy = cv2.findContours(cv_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     
+    # TODO: allMeta is not required because img_arrays contains meta any way
     allMeta = []
     count = 0
 
@@ -123,8 +129,10 @@ def do_fragmentation(file_path, debug = True):
                 traceback.print_exc(file=sys.stdout)
                 print "skip fragment:", ve
 
-# TODO
-#    delete_subcrops(allMeta, img_arrays)
+    # TODO: Last contour is the whole image. It has to be deleted nicely
+    img_arrays = img_arrays[:-1]
+    allMeta = allMeta[:-1]
+    img_arrays = delete_subcrops(allMeta, img_arrays, debug)
     return img_arrays
     
     
@@ -160,7 +168,10 @@ def downscale_proportionally(image, max_w, max_h):
       target_w = int(max_w * (float(max_h) / h) * 1.5)
       target_h = max_h
 
-    print 'new shape', w, h, target_w, target_h, (float(max_w) / w), (float(max_h) / h)
+    # FIXME: This must not happen
+    if target_w == 0 or target_h == 0:
+      return image
+
     crop_img = cv2.resize(image, (target_w, target_h))
     return crop_img
 
