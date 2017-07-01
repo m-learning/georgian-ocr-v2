@@ -7,6 +7,7 @@ import sys
 import json
 import shutil
 import numpy as np
+import traceback
 from scipy import ndimage
 
 
@@ -35,9 +36,23 @@ def vanish_image(img):
               
 def find_noise(data):
     width = data["meta"]["w"]
-#    if width < 13:
-#        return True
+    if width < 13:
+        return True
     return False
+
+def delete_subcrops(allMeta, img_arrays):
+    for m1 in allMeta:
+       for m2 in allMeta:
+           if (m1['x'] > m2['x'] and
+                  m1['y'] > m2['y'] and
+                  m1['x']+m1['w'] < m2['x']+m2['w'] and
+                  m1['y']+m1['h'] < m2['y']+m2['h']):
+
+              print 'before', len(img_arrays), m1['id']
+              img_arrays = [s for s in img_arrays if not s['meta']['id'] == m1['id']]
+              print 'deleting', len(img_arrays)
+
+
 
 def do_fragmentation(file_path, debug = True):
     create_clean_dir(FRAGMENTS_DIR)
@@ -95,11 +110,15 @@ def do_fragmentation(file_path, debug = True):
             image_data = {'arr':img_arr, "meta": meta}
             if not find_noise(image_data):
                 img_arrays.append(image_data)
+                allMeta.append(meta)
                 count += 1
         except ValueError, ve:
-            print 'Except'
             if debug:
-                print "skip fragment", ve
+                traceback.print_exc(file=sys.stdout)
+                print "skip fragment:", ve
+
+# TODO
+#    delete_subcrops(allMeta, img_arrays)
     return img_arrays
     
     
@@ -119,8 +138,25 @@ def create_image_for_recognize(image, width=64, height=64):
     (image_h, image_w) = image.shape
     index_w = (width - image_w) / 2
     index_h = (height - image_h) / 2
+
     generated_image[index_h : image_h + index_h, index_w : image_w + index_w] = image
     return generated_image
+
+
+def downscale_proportionally(image, max_w, max_h):
+    h, w = image.shape[:2]
+
+    if w > h:
+      target_w = max_w
+      # TODO: Remove magic numbers (1.5)
+      target_h = int(max_h * (float(max_w) / w) * 1.5) 
+    else:
+      target_w = int(max_w * (float(max_h) / h) * 1.5)
+      target_h = max_h
+
+    print 'new shape', w, h, target_w, target_h, (float(max_w) / w), (float(max_h) / h)
+    crop_img = cv2.resize(image, (target_w, target_h))
+    return crop_img
 
 
 def crop_rectangle(img, contour):
@@ -128,12 +164,16 @@ def crop_rectangle(img, contour):
     
     crop_img = img[y:y + h, x:x + w]
     
+    # define small height and width
+    s_height, s_width = crop_img.shape[:2]
+
+    # Shrink if cropped image is oversized
+    if s_height > 64 or s_width > 64:
+      crop_img = downscale_proportionally(crop_img, 40, 40)
+
     # define background image as large image 
     result_img = create_blank_image()
 
-    # define small height and width
-    s_height, s_width = crop_img.shape[:2]
-    
     # define large height and width
     l_height, l_width = result_img.shape[:2]
     
