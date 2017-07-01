@@ -30,18 +30,21 @@ def create_clean_dir(path):
 
     os.makedirs(path)
 
+
 def vanish_image(img,invert=False):
     gray_scale_image = color.rgb2gray(img)
     if invert:
         gray_scale_image = util.invert(gray_scale_image)
     val = filters.threshold_local(gray_scale_image,101,mode="wrap",offset=0.1)
     return (gray_scale_image > val)
-#          
+
+       
 def find_noise(data):
     width = data["meta"]["w"]
     if width < 13:
         return True
     return False
+
 
 def delete_subcrops(allMeta, img_arrays):
     for m1 in allMeta:
@@ -54,7 +57,6 @@ def delete_subcrops(allMeta, img_arrays):
               print 'before', len(img_arrays), m1['id']
               img_arrays = [s for s in img_arrays if not s['meta']['id'] == m1['id']]
               print 'deleting', len(img_arrays)
-
 
 
 def do_fragmentation(file_path, debug = True):
