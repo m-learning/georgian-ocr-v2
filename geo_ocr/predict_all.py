@@ -16,7 +16,7 @@ def init_arguments():
     parser = argparse.ArgumentParser(description='Georgian OCR')
     parser.add_argument('-i', '--image', metavar='image_path', type=str,
                         help='Path to the image to recognize.')
-    parser.add_argument('-n', '--nolog', help='Disable logging.', action='store_true')
+    parser.add_argument('-d', '--debug', help='Debug mode. Show logs and dump images.', action='store_true')
     return parser.parse_args()
 
 def choose_char(scores, chars):
@@ -48,7 +48,7 @@ def recognize_image(img_arr):
 
 if __name__ == '__main__':
     args = init_arguments()
-    image_arrays = fragmenter.do_fragmentation(args.image, nolog = args.nolog)
+    image_arrays = fragmenter.do_fragmentation(args.image, debug = args.debug)
 
     result = ''
     full_score = 0
@@ -61,11 +61,11 @@ if __name__ == '__main__':
         [char, score] = recognize_image(img_arr)
         full_score += score
         full_count += 1
-        if not args.nolog:
+        if args.debug:
             print meta_data, char.encode('utf8'), score
         meta_data['char'] = char
         meta_data['score'] = score
-    if not args.nolog:
+    if args.debug:
         print 'Avg score: %d' % (full_score * 100 /full_count)
 
     # ----- for testing --------
