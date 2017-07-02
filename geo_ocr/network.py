@@ -8,15 +8,13 @@ kernel_size = (3, 3)
 
 
 def init_model(nb_classes, input_shape):
-    model = Sequential()
 
-    model = Sequential()
-
-    model.add(Convolution2D(16, kernel_size,
-                            padding='valid',
-                            input_shape=input_shape, use_bias=True))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=pool_size))
+	
+	model = Sequential()
+	
+	model.add(Convolution2D(16, kernel_size, padding='valid', input_shape=input_shape, use_bias=True))
+	model.add(Activation('relu'))
+	model.add(MaxPooling2D(pool_size=pool_size))
 
     model.add(Convolution2D(nb_filters,
                             kernel_size, use_bias=True, padding='valid'))

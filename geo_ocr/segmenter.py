@@ -1,44 +1,74 @@
 import cv2
-# import cv as cv2
 import os
 import sys
 import numpy as np
 
 DEBUG_DIR = "results/debug"
 
+DILATE_ITERATIONS = 3
+
+
+def calculate_image_roughness(img):
+	# todo calculate text roughness in image
+	return 1
+
+
+def get_dilate_iterations(roughness):
+	# todo calculate iteration number based on roughness
+	return DILATE_ITERATIONS
+
+
 def create_dir_if_missing(path):
 	if not os.path.exists(path):
 		os.makedirs(path)
 
 
-def do_segmentation(file_path):
-	create_dir_if_missing(DEBUG_DIR)
-	img = cv2.imread(file_path, 0)
-	img2 = img
+def vanish_image(img):
+	img = cv2.bilateralFilter(img, 50, 40, 40)
+	# val = filters.threshold_li(gray)
+	kernel = np.ones((2, 2), np.float32) / 10
+	img = cv2.filter2D(img, -1, kernel)
+	img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+	return img
 
-	ret, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)
 
-	kernel = np.ones((15, 15), np.uint8)
-
+def dilate_image(img):
+	kernel = np.ones((4, 4), np.uint8)
 	img = cv2.fastNlMeansDenoising(img, None, 40, 40, 15)
-
-	# img_erosion = cv2.erode(img, kernel, iterations=1)
-	img = cv2.dilate(img, kernel, iterations=1)
-
+	roughness = calculate_image_roughness(img)
+	img = cv2.dilate(img, kernel, iterations=get_dilate_iterations(roughness))
 	ret, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+	return img
 
+
+def find_contours(img, original_img):
 	im2, contours, hierarchy = cv2.findContours(img, 1, 2)
-
+	cont = []
 	for contour in contours:
 		if cv2.contourArea(contour) < 1000:
 			continue
 		rect = cv2.minAreaRect(contour)
 		box = cv2.boxPoints(rect)
 		box = np.int0(box)
-		cv2.drawContours(img2, [box], 0, (0, 0, 255), 2)
+		cv2.drawContours(original_img, [box], 0, (0, 0, 255), 2)
+		cont.append(contour)
+	return cont, original_img
 
-	cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), img2)
+
+def do_segmentation(file_path):
+	create_dir_if_missing(DEBUG_DIR)
+	img = cv2.imread(file_path, 0)
+	original_img = img
+
+	img = vanish_image(img)
+
+	img = dilate_image(img)
+
+	contours, original_img = find_contours(img, original_img)
+
+	cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), original_img)
 	cv2.imwrite(("%s/a2 gray.png" % DEBUG_DIR), img)
+
 
 if __name__ == "__main__":
 	# source file path
