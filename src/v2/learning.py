@@ -42,7 +42,7 @@ def train():
   (x_test, y_test) = ig.next_batch(TEST_SET_SIZE)
   score = model.evaluate(x_test, y_test)
   print "\n"
-  print 'Test score: {0:.4g}'.format(score[0]) 
+  print 'Test score: {0:.4g}'.format(score[0])
   print 'Test accur: {0:.4g}'.format(score[1])
 
 

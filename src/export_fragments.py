@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from PIL import Image
 import os, os.path
 import json
 import codecs

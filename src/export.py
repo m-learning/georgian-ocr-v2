@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from PIL import Image
 import os, os.path
 import json
 import codecs
@@ -33,7 +34,7 @@ def export_svg(original_image, meta_dir, output_svg, background=False):
     # Replace values
     page_template = page_template.replace('{width}', str(image_width))
     page_template = page_template.replace('{height}', str(image_height))
-	
+
     if background:
         page_template = page_template.replace('{background-image}', original_image)
         page_template = page_template.replace('{background-image-width}', str(image_width))
@@ -49,7 +50,7 @@ def export_svg(original_image, meta_dir, output_svg, background=False):
                 meta_obj = json.load(json_data)
 #                if meta_obj['accuracy'] == 0: continue
 
-                page_template = page_template.replace('{content}', 
+                page_template = page_template.replace('{content}',
                     create_char_element(meta_obj)+'{content}')
 
     # Write output
