@@ -59,7 +59,7 @@ def delete_subcrops(allMeta, img_arrays, debug = True):
 
               if debug:
                 imageFilename = "%s/%d.png" % (FRAGMENTS_DIR, m1['id'])
-                os.remove(imageFilename)
+                if os.path.isfile(imageFilename): os.remove(imageFilename)
 
     return img_arrays
 
@@ -166,7 +166,11 @@ def downscale_proportionally(image, max_w, max_h):
     else:
        downscale_ratio = float(max_h) / h
 
-    crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
+    try:
+      crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
+    except:
+      print "Could not downscale image"
+      crop_img = image
     return crop_img
 
 

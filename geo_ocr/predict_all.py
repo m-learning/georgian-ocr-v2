@@ -26,6 +26,7 @@ def choose_char(scores, chars):
     for i in range(0, len(scores)):
         pairs.append({'char': chars[i], 'score': scores[i]})
     pairs = sorted(pairs, key=lambda pair: pair['score'], reverse=True)
+
     return pairs[0]['char'], pairs[0]['score'].item()
 
 
