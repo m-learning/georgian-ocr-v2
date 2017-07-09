@@ -9,7 +9,7 @@ import os
 img_w = img_h = 64
 nb_epoch = 1
 iterations = 25
-TRAINING_SET_SIZE = 50000
+TRAINING_SET_SIZE = 5000
 TEST_SET_SIZE = 10000
 
 K.set_learning_phase(1)

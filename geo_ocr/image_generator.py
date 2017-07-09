@@ -10,6 +10,7 @@ from keras.preprocessing import image
 import os
 import argparse
 import matplotlib.image as mpimg
+from PIL import ImageFont
 
 random.seed(55)
 np.random.seed(55)
@@ -45,27 +46,59 @@ numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:"'
 
 
+def parse_fonts_directory(fonts_path):
+    font_files = os.listdir(fonts_path)
+
+    in_font_names = []
+    for f in font_files:
+        parsed_font = ImageFont.truetype(os.path.join(fonts_path, f))
+        in_font_names.append(parsed_font.font.family)
+
+    return in_font_names
+
+
+def create_font_record(name, font_type):
+    return { 'name': name, 'type': font_type }
+
+font_names = []
+def list_available_fonts():
+    global font_names
+
+    if font_names: return font_names
+
+    # TODO: Make directory paths configurable
+    font_names += [create_font_record(name, 'latin') 
+        for name in parse_fonts_directory('bulk_fonts/latin')]
+
+    font_names += [create_font_record(name, 'unicode') 
+        for name in parse_fonts_directory('bulk_fonts/utf-8')]
+
+    return font_names
+    
+
 def paint_text(text, w, h,
                rotate=False, ud=False, multi_fonts=False,
                multi_sizes=False, save=False, spackle=False, blur=False):
+
     surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
     with cairo.Context(surface) as context:
         context.set_source_rgb(1, 1, 1)  # White
         context.paint()
-        fonts = [
-                 {'name': 'AcadNusx',                  'type': 'latin'},
-                 {'name': 'AcadMtavr',                 'type': 'latin'},
-                 {'name': 'Acad Nusx Geo',             'type': 'latin'},
-                 {'name': 'LitNusx',                   'type': 'latin'},
-                 {'name': 'Chveulebrivi TT',           'type': 'latin'},
-                 {'name': 'DumbaNusx',                 'type': 'latin'},
-                 {'name': 'Avaza',                     'type': 'latin'},
-                 {'name': 'BPG ParaGraph Chveulebrivi', 'type': 'unicode'},
-                 {'name': 'BPG Venuri 2010',           'type': 'unicode'},
-                 {'name': 'BPG Glakho',                'type': 'unicode'},
-                 {'name': 'BPG Nino Elite',            'type': 'unicode'},
-                 {'name': 'BPG Arial',                 'type': 'unicode'},
-        ]
+        fonts = list_available_fonts()
+#              [
+#                 {'name': 'AcadNusx',                  'type': 'latin'},
+#                 {'name': 'AcadMtavr',                 'type': 'latin'},
+#                 {'name': 'Acad Nusx Geo',             'type': 'latin'},
+#                 {'name': 'LitNusx',                   'type': 'latin'},
+#                 {'name': 'Chveulebrivi TT',           'type': 'latin'},
+#                 {'name': 'DumbaNusx',                 'type': 'latin'},
+#                 {'name': 'Avaza',                     'type': 'latin'},
+#                 {'name': 'BPG ParaGraph Chveulebrivi', 'type': 'unicode'},
+#                 {'name': 'BPG Venuri 2010',           'type': 'unicode'},
+#                 {'name': 'BPG Glakho',                'type': 'unicode'},
+#                 {'name': 'BPG Nino Elite',            'type': 'unicode'},
+#                 {'name': 'BPG Arial',                 'type': 'unicode'},
+#        ]
     if multi_fonts:
         font = np.random.choice(fonts)
         context.select_font_face(font['name'],
@@ -75,6 +108,8 @@ def paint_text(text, w, h,
     else:
         font = fonts[0]
         context.select_font_face(font['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+
+
     if (multi_sizes):
         context.set_font_size(random.randint(20, 52))
     else:
@@ -93,11 +128,20 @@ def paint_text(text, w, h,
     # fitting text box randomly on canvas, with some room to rotate
     max_shift_x = w - box[2] - border_w_h[0]
     max_shift_y = h - box[3] - border_w_h[1]
-    top_left_x = np.random.randint(0, int(max_shift_x))
-    if ud:
-        top_left_y = np.random.randint(0, int(max_shift_y))
+
+    if max_shift_y <= 0 or max_shift_x <= 0:
+      # FIXME: This is a workaround for oversized font
+      print font['name'], 'Font oversized', text
+      top_left_x = 0
+      top_left_y = 0
+    
     else:
-        top_left_y = h // 2
+      top_left_x = np.random.randint(0, int(max_shift_x))
+      if ud:
+          top_left_y = np.random.randint(0, int(max_shift_y))
+      else:
+          top_left_y = h // 2
+
     context.move_to(top_left_x - int(box[0]), top_left_y - int(box[1]))
     context.set_source_rgb(0, 0, 0)
     context.show_text(text)
@@ -166,6 +210,7 @@ def init_arguments():
 
 if __name__ == '__main__':
     args = init_arguments()
+
     for word in args.text:
         img = paint_text(word.decode('utf-8'),
                          args.width, args.height,
