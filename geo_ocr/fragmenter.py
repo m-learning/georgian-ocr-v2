@@ -160,19 +160,13 @@ def create_image_for_recognize(image, width=64, height=64):
 def downscale_proportionally(image, max_w, max_h):
     h, w = image.shape[:2]
 
+    downscale_ratio = 1
     if w > h:
-      target_w = max_w
-      # TODO: Remove magic numbers (1.5)
-      target_h = int(max_h * (float(max_w) / w) * 1.5) 
+       downscale_ratio = float(max_w) / w
     else:
-      target_w = int(max_w * (float(max_h) / h) * 1.5)
-      target_h = max_h
+       downscale_ratio = float(max_h) / h
 
-    # FIXME: This must not happen
-    if target_w == 0 or target_h == 0:
-      return image
-
-    crop_img = cv2.resize(image, (target_w, target_h))
+    crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
     return crop_img
 
 
