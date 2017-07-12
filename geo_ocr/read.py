@@ -3,7 +3,7 @@ from predict_all import *
 import word_corrector as wr
 
 
-def read(image_path, debug=True, correct_words=False):
+def read(image_path, word_list_path, debug=True):
     if not os.path.isfile(image_path):
         print("Files does not exists")
         return
@@ -27,13 +27,16 @@ def read(image_path, debug=True, correct_words=False):
         print 'Avg score: %d' % (full_score * 100 / full_count)
 
     read_text = export_words.export([n["meta"] for n in image_arrays])
-    if correct_words:
+
+    if word_list_path:
+      print 'Correcting words with number of words: ' + str(len(wr.parse_word_list_file(word_list_path)))
       read_text = wr.correct_words(read_text, 
-          wr.parse_word_list_file('./tmp/word_list_dest.txt'))
+          wr.parse_word_list_file(word_list_path))
 
     print read_text
+    return read_text
 
 
 if __name__ == '__main__':
     args = init_arguments()
-    read(args.image, args.debug)
+    read(args.image, args.word_list, args.debug)

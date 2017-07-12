@@ -22,7 +22,7 @@ def find_matching_word(word, correct_words):
     chosen_word = distance_sorted[0]
 #    print 'Chosen word '+ chosen_word['word'] + ' ' + str(chosen_word['distance']), str(len(word.decode('utf-8'))/2)
     # If distance is enough close we alter the word
-    if chosen_word['distance'] < len(word.decode('utf-8'))/3:
+    if chosen_word['distance'] < len(word.decode('utf-8'))/3 or chosen_word['distance'] == 1:
       print 'Word was corrected ' + word + ' with ' + chosen_word['word']
       return chosen_word['word']
     else: return word

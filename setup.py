@@ -16,6 +16,7 @@ setup(name='geo_ocr',
         'h5py',
         'pillow',
         'opencv-python',
-        'scikit-image', 'cv2'
+        'scikit-image',
+#        'cv2'
       ])
 
