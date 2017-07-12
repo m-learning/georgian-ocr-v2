@@ -2,6 +2,8 @@
 
 ## Requierments
 
+### Ubuntu
+
 ```bash
 apt install python-tk
 apt install libffi-dev
@@ -16,6 +18,23 @@ pip install nose2
 pip install h5py
 
 cp fonts/* /usr/share/fonts/truetype
+```
+
+### Arch Linux
+
+```bash
+pacman -Sy opencv
+
+pip2 install tensorflow
+pip2 install keras
+pip2 install cairocffi
+pip2 install matplotlib
+pip2 install image
+pip2 install h5py
+
+mkdir -f ~/.fonts
+cp bulk_fonts/latin/* ~/.fonts/
+cp bulk_fonts/utf-8/* ~/.fonts/
 ```
 
 ## Learn

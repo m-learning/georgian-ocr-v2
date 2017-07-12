@@ -11,6 +11,7 @@ import os
 import argparse
 import matplotlib.image as mpimg
 from PIL import ImageFont
+import cv2
 
 random.seed(55)
 np.random.seed(55)
@@ -45,6 +46,7 @@ georgian = u'აბგდევზთიკლმნოპჟრსტუფქ�
 numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:"'
 
+GENERATED_IMAGES_DIR = "results/gen_imgs/"
 
 def parse_fonts_directory(fonts_path):
     font_files = os.listdir(fonts_path)
@@ -77,7 +79,7 @@ def list_available_fonts():
     
 
 def paint_text(text, w, h,
-               rotate=False, ud=False, multi_fonts=False,
+               rotate=False, ud=False, lr=False, multi_fonts=False,
                multi_sizes=False, save=False, spackle=False, blur=False):
 
     surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
@@ -85,20 +87,7 @@ def paint_text(text, w, h,
         context.set_source_rgb(1, 1, 1)  # White
         context.paint()
         fonts = list_available_fonts()
-#              [
-#                 {'name': 'AcadNusx',                  'type': 'latin'},
-#                 {'name': 'AcadMtavr',                 'type': 'latin'},
-#                 {'name': 'Acad Nusx Geo',             'type': 'latin'},
-#                 {'name': 'LitNusx',                   'type': 'latin'},
-#                 {'name': 'Chveulebrivi TT',           'type': 'latin'},
-#                 {'name': 'DumbaNusx',                 'type': 'latin'},
-#                 {'name': 'Avaza',                     'type': 'latin'},
-#                 {'name': 'BPG ParaGraph Chveulebrivi', 'type': 'unicode'},
-#                 {'name': 'BPG Venuri 2010',           'type': 'unicode'},
-#                 {'name': 'BPG Glakho',                'type': 'unicode'},
-#                 {'name': 'BPG Nino Elite',            'type': 'unicode'},
-#                 {'name': 'BPG Arial',                 'type': 'unicode'},
-#        ]
+
     if multi_fonts:
         font = np.random.choice(fonts)
         context.select_font_face(font['name'],
@@ -111,7 +100,7 @@ def paint_text(text, w, h,
 
 
     if (multi_sizes):
-        context.set_font_size(random.randint(20, 52))
+        context.set_font_size(random.randint(25, 60))
     else:
         context.set_font_size(44)
 
@@ -119,6 +108,8 @@ def paint_text(text, w, h,
         text = latingeo[georgian.index(text)]
 
     box = context.text_extents(text)
+    text_w = box[2]
+    text_h = box[3]
     border_w_h = (4, 4)
     # if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
     #     raise IOError('Could not fit string into image. \
@@ -129,41 +120,67 @@ def paint_text(text, w, h,
     max_shift_x = w - box[2] - border_w_h[0]
     max_shift_y = h - box[3] - border_w_h[1]
 
-    if max_shift_y <= 0 or max_shift_x <= 0:
+    if int(max_shift_y) <= 0 or int(max_shift_x) <= 0:
       # FIXME: This is a workaround for oversized font
       print font['name'], 'Font oversized', text
       top_left_x = 0
       top_left_y = 0
     
     else:
-      top_left_x = np.random.randint(0, int(max_shift_x))
+      if lr:
+          top_left_x = np.random.randint(0, int(max_shift_x))
+      else:
+          top_left_x = w // 2 - text_w // 2
+
       if ud:
           top_left_y = np.random.randint(0, int(max_shift_y))
       else:
-          top_left_y = h // 2
+          top_left_y = h // 2 - text_h // 2
 
     context.move_to(top_left_x - int(box[0]), top_left_y - int(box[1]))
-    context.set_source_rgb(0, 0, 0)
+    #context.set_source_rgb(0, 0, 0)
     context.show_text(text)
     if save:
         global img_counter
         img_counter += 1
         surface.write_to_png(
-            create_dir_if_missing('results/gen_imgs/') + 'img_%04d.png' % img_counter
+            create_dir_if_missing(GENERATED_IMAGES_DIR) + 'img_%04d.png' % img_counter
         )
     buf = surface.get_data()
     a = np.frombuffer(buf, np.uint8)
     a.shape = (h, w, 4)
     a = a[:, :, 0]  # grab single channel
-    a = a.astype(np.float32) / 255
     a = np.expand_dims(a, 0)
     if rotate:
-        a = image.random_rotation(a, 3 * (w - top_left_x) / w + 1)
+        a = image.random_rotation(a, 7 * (w - top_left_x) / w + 1)
     if spackle:
         a = speckle(a)
+
+    a = np.squeeze(a)
+
     if blur:
-        ndimage.gaussian_filter(a, 1, output=a)
+        ndimage.gaussian_filter(a, np.random.randint(0, 2), output=a)
+
+
+#    global img_counter
+#    img_counter += 1
+#    print img_counter, text
+#    cv2.imwrite((u"%s/%s-%s.png" % (GENERATED_IMAGES_DIR, img_counter, font['name'])), a)
+
+    a = a.astype(np.float32) / 255
     return a
+
+
+def log_image(image, width=64, height=64):
+    global img_counter
+    img_counter += 1
+
+    generated_image = np.ones((height, width)) * 255
+    (image_h, image_w) = image.shape
+    index_w = (width - image_w) / 2
+    index_h = (height - image_h) / 2
+    generated_image[index_h : image_h + index_h, index_w : image_w + index_w] = image
+    cv2.imwrite(("%s/%s.png" % (GENERATED_IMAGES_DIR, img_counter)), generated_image)
 
 
 chars = georgian + numbers + symbols
@@ -175,15 +192,18 @@ img_h = 64
 y = list_eye(LABEL_SIZE)
 
 
-def next_batch(size, rotate=False, ud=False,
+def next_batch(size, rotate=False, ud=False, lr=False,
                multi_fonts=False, multi_sizes=False, blur=False, save=False):
+
+    create_dir_if_missing(GENERATED_IMAGES_DIR)
+
     print "Generating {0:d} images...".format(size)
     x_train = np.zeros((size, img_w, img_h))
     y_train = [None] * size
     for i in range(size):
         char = chars[random.randint(0, LABEL_SIZE - 1)]
         img = paint_text(char, img_w, img_h,
-                         rotate=rotate, ud=ud, multi_fonts=multi_fonts,
+                         rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
                          multi_sizes=multi_sizes, blur=blur, save=save)
         x_train[i] = 1 - img
         y_train[i] = y[chars.index(char)]

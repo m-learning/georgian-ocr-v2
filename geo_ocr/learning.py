@@ -9,8 +9,8 @@ import os
 img_w = img_h = 64
 nb_epoch = 1
 iterations = 25
-TRAINING_SET_SIZE = 5000
-TEST_SET_SIZE = 10000
+TRAINING_SET_SIZE = 50000
+TEST_SET_SIZE = 1000
 
 K.set_learning_phase(1)
 if K.image_data_format() == 'channels_first':
@@ -33,7 +33,7 @@ def train():
 
     for epoch in range(0, iterations):
         (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE,
-                                           rotate=True, ud=True,
+                                           rotate=True, ud=True, lr=True,
                                            multi_fonts=True,
                                            multi_sizes=True, blur=True)
         model.fit(x_train, y_train,
