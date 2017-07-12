@@ -85,7 +85,7 @@ def split_line_with_words(line_chars, avg_char_width):
     return words
 
 
-def test(all_meta):
+def export(all_meta):
     avg_line_height = 40
     avg_char_width = 24
     line_first_chars = get_line_first_chars(all_meta, avg_line_height)
@@ -101,7 +101,7 @@ def test(all_meta):
 
         final_text += '\n'
 
-    print final_text.encode('utf-8')
+    return final_text.encode('utf-8')
 
 
 if __name__ == "__main__":

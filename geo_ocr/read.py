@@ -1,8 +1,9 @@
 import os
 from predict_all import *
+import word_corrector as wr
 
 
-def read(image_path, debug=True):
+def read(image_path, debug=True, correct_words=False):
     if not os.path.isfile(image_path):
         print("Files does not exists")
         return
@@ -25,9 +26,12 @@ def read(image_path, debug=True):
     if debug:
         print 'Avg score: %d' % (full_score * 100 / full_count)
 
-    # ----- for testing --------
-    # use export_word as a module
-    export_words.test([n["meta"] for n in image_arrays])
+    read_text = export_words.export([n["meta"] for n in image_arrays])
+    if correct_words:
+      read_text = wr.correct_words(read_text, 
+          wr.parse_word_list_file('./tmp/word_list_dest.txt'))
+
+    print read_text
 
 
 if __name__ == '__main__':

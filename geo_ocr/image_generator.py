@@ -12,6 +12,7 @@ import argparse
 import matplotlib.image as mpimg
 from PIL import ImageFont
 import cv2
+import random
 
 random.seed(55)
 np.random.seed(55)
@@ -122,7 +123,7 @@ def paint_text(text, w, h,
 
     if int(max_shift_y) <= 0 or int(max_shift_x) <= 0:
       # FIXME: This is a workaround for oversized font
-      print font['name'], 'Font oversized', text
+#      print font['name'], 'Font oversized', text
       top_left_x = 0
       top_left_y = 0
     
@@ -161,6 +162,9 @@ def paint_text(text, w, h,
     if blur:
         ndimage.gaussian_filter(a, np.random.randint(0, 2), output=a)
 
+    # Randomly reverse colors
+    #if bool(random.getrandbits(1)):
+    #  a = 255-a
 
 #    global img_counter
 #    img_counter += 1
@@ -169,18 +173,6 @@ def paint_text(text, w, h,
 
     a = a.astype(np.float32) / 255
     return a
-
-
-def log_image(image, width=64, height=64):
-    global img_counter
-    img_counter += 1
-
-    generated_image = np.ones((height, width)) * 255
-    (image_h, image_w) = image.shape
-    index_w = (width - image_w) / 2
-    index_h = (height - image_h) / 2
-    generated_image[index_h : image_h + index_h, index_w : image_w + index_w] = image
-    cv2.imwrite(("%s/%s.png" % (GENERATED_IMAGES_DIR, img_counter)), generated_image)
 
 
 chars = georgian + numbers + symbols

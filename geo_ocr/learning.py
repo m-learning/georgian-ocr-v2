@@ -35,7 +35,7 @@ def train():
         (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE,
                                            rotate=True, ud=True, lr=True,
                                            multi_fonts=True,
-                                           multi_sizes=True, blur=True)
+                                           multi_sizes=True, blur=False)
         model.fit(x_train, y_train,
                   batch_size=32, epochs=epoch + 1,
                   verbose=1, validation_split=0.1,
