@@ -41,7 +41,7 @@ def vanish_image(img,invert=False):
        
 def find_noise(data):
     width = data["meta"]["w"]
-    if width < 13:
+    if width < 6:
         return True
     return False
 
@@ -73,27 +73,7 @@ def do_fragmentation(file_path, debug = True):
     src_img = cv2.imread(file_path)
 
     gray = vanish_image(src_img)
-    #gray=util.invert(gray)
-    # convert to grayscale
-    # gray = cv2.cvtColor(src_img, cv2.COLOR_BGR2GRAY)
     cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), gray * 255)
-
-    # smooth the image to avoid noises
-    # gray = cv2.medianBlur(gray, 5)
-    # cv2.imwrite(("%s/a2 medianBlur.png" % DEBUG_DIR), gray)
-    
-    # Apply adaptive threshold
-    # thresh = cv2.adaptiveThreshold(gray, 255, 1, 1, 11, 2)
-    # thresh_color = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
-
-    # cv2.imwrite(("%s/a3 treshColor.png" % DEBUG_DIR), thresh_color)
-    
-    # apply some dilation and erosion to join the gaps
-    # thresh = cv2.dilate(thresh, None, iterations=3)
-    # cv2.imwrite(("%s/a4 deliate.png" % DEBUG_DIR), thresh)
-    
-    # thresh = cv2.erode(thresh, None, iterations=2)
-    # cv2.imwrite(("%s/a5 erode.png" % DEBUG_DIR), thresh)
     
     # Find the contours
     cv_image = img_as_ubyte(gray)
@@ -183,8 +163,9 @@ def crop_rectangle(img, contour):
     s_height, s_width = crop_img.shape[:2]
 
     # Shrink if cropped image is oversized
-    if s_height > 64 or s_width > 64:
-      crop_img = downscale_proportionally(crop_img, 40, 40)
+    if s_height > 64 or s_width > 64 or s_height < 20 or s_width < 20:
+        print 'Rescaling'
+        crop_img = downscale_proportionally(crop_img, 40, 40)
 
     # define background image as large image 
     result_img = create_blank_image()
