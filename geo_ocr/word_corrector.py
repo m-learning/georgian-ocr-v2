@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import Levenshtein as lev
 import re
+import urllib2
+import json
 
 def parse_word_list_file(path):
     with open(path, 'r') as myfile:
@@ -9,22 +10,19 @@ def parse_word_list_file(path):
 
 
 def find_matching_word(word, correct_words):
-    distances = []
-    for w in correct_words:
-      distance = lev.distance(word, w)
-      if distance == 0:
-        return w
-
-      else: distances.append({'word': w, 'distance': distance})
-
-    distance_sorted = sorted(distances, key=lambda d: d['distance'])
-
-    chosen_word = distance_sorted[0]
+    url = "http://localhost:9200/_search"
+    data = {'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
+    req = urllib2.Request(url, json.dumps(data), {'Content-Type': 'application/json'})
+    f = urllib2.urlopen(req)
+    response = f.read()
+    f.close()
+    json_data = json.loads(response)
+    chosen_word = json_data['hits']['hits'][0]['_source']['word']
 #    print 'Chosen word '+ chosen_word['word'] + ' ' + str(chosen_word['distance']), str(len(word.decode('utf-8'))/2)
     # If distance is enough close we alter the word
-    if chosen_word['distance'] < len(word.decode('utf-8'))/3 or chosen_word['distance'] == 1:
-      print 'Word was corrected ' + word + ' with ' + chosen_word['word']
-      return chosen_word['word']
+    if chosen_word != word:
+      print 'Word was corrected ' + word + ' with ' + chosen_word
+      return chosen_word
     else: return word
 
 
@@ -35,9 +33,7 @@ def correct_words(text, correct_words):
         replaced_word = find_matching_word(match.group(2), correct_words)
         return match.group(1) + replaced_word
 
-    replaced_text = re.compile(r'(^|\s)(.*?)(?=\s|$)', 
+    replaced_text = re.compile(r'(^|\s)(.*?)(?=\s|$)',
         flags=re.M).sub(replace_callback, text)
 
     return replaced_text
-    
-
