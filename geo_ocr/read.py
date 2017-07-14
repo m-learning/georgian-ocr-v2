@@ -4,7 +4,7 @@ from predict_all import *
 import word_corrector as wr
 
 
-def read(image_path, correct_words, debug=True):
+def read(image_path, correct_words=False, debug=True):
     if not os.path.isfile(image_path):
         print("Files does not exists")
         return
