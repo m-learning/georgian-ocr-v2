@@ -31,6 +31,7 @@ pip2 install cairocffi
 pip2 install matplotlib
 pip2 install image
 pip2 install h5py
+pip2 install elasticsearch
 
 mkdir -f ~/.fonts
 cp bulk_fonts/latin/* ~/.fonts/

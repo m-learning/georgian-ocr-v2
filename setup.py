@@ -17,7 +17,7 @@ setup(name='geo_ocr',
         'pillow',
         'opencv-python',
         'scikit-image',
-        'python-Levenshtein',
+        'elasticsearch'
 #        'cv2'
       ])
 

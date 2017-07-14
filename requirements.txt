@@ -9,4 +9,5 @@
         pillow
         opencv-python
         scikit-image
+        elasticsearch
  
