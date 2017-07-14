@@ -91,7 +91,7 @@ def do_fragmentation(file_path, debug = True):
     for cnt in contours:
         try:
             # Create image file
-            x, y, w, h, img_arr = crop_rectangle(cv_image, cnt)
+            x, y, w, h, img_arr = crop_rectangle(cv_image, cnt, debug)
 
             if debug:
                 cv2.imwrite(("%s/%s.png" % (FRAGMENTS_DIR, count)), img_arr)
@@ -154,7 +154,7 @@ def downscale_proportionally(image, max_w, max_h):
     return crop_img
 
 
-def crop_rectangle(img, contour):
+def crop_rectangle(img, contour, debug):
     x, y, w, h = cv2.boundingRect(contour)
     
     crop_img = img[y:y + h, x:x + w]
@@ -164,7 +164,7 @@ def crop_rectangle(img, contour):
 
     # Shrink if cropped image is oversized
     if s_height > 64 or s_width > 64 or s_height < 20 or s_width < 20:
-        print 'Rescaling'
+        if debug: print 'Rescaling'
         crop_img = downscale_proportionally(crop_img, 40, 40)
 
     # define background image as large image 

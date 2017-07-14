@@ -15,8 +15,9 @@ def init_arguments():
     parser = argparse.ArgumentParser(description='Georgian OCR')
     parser.add_argument('-i', '--image', metavar='image_path', type=str,
                         help='Path to the image to recognize.')
-    parser.add_argument('-w', '--word-list', metavar='word_list_path', type=str,
-                        help='Path to the word list file.')
+    parser.add_argument('-w', '--correct-words', 
+                        help='To use elasticsearch for correcting words.',
+                        action='store_true')
     parser.add_argument('-d', '--debug',
                         help='Debug mode. Show logs and dump images.',
                         action='store_true')

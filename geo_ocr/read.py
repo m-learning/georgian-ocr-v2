@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import os
 from predict_all import *
 import word_corrector as wr
 
 
-def read(image_path, word_list_path, debug=True):
+def read(image_path, correct_words, debug=True):
     if not os.path.isfile(image_path):
         print("Files does not exists")
         return
@@ -28,10 +29,8 @@ def read(image_path, word_list_path, debug=True):
 
     read_text = export_words.export([n["meta"] for n in image_arrays])
 
-    if word_list_path:
-      print 'Correcting words with number of words: ' + str(len(wr.parse_word_list_file(word_list_path)))
-      read_text = wr.correct_words(read_text, 
-          wr.parse_word_list_file(word_list_path))
+    if correct_words:
+      read_text = wr.correct_words(read_text)
 
     print read_text
     return read_text
@@ -39,4 +38,4 @@ def read(image_path, word_list_path, debug=True):
 
 if __name__ == '__main__':
     args = init_arguments()
-    read(args.image, args.word_list, args.debug)
+    read(args.image, args.correct_words, args.debug)

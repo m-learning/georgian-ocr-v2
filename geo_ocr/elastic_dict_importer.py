@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch,helpers
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-path = "path/to/word_list_dest.txt"
+path = "tmp/word_list_dest.txt"
 
 def parse_word_list_file():
     with open(path, 'r') as myfile:
