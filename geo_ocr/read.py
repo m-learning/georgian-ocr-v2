@@ -2,6 +2,7 @@
 import os
 from predict_all import *
 import word_corrector as wr
+import noise
 
 
 def read(image_path, correct_words=False, debug=True):
@@ -13,6 +14,7 @@ def read(image_path, correct_words=False, debug=True):
     full_score = 0
     full_count = 0
 
+    
     for n in image_arrays:
         img_arr = n["arr"]
         meta_data = n["meta"]
@@ -27,6 +29,7 @@ def read(image_path, correct_words=False, debug=True):
     if debug:
         print 'Avg score: %d' % (full_score * 100 / full_count)
 
+    image_arrays=noise.noise(image_arrays,0.2)
     read_text = export_words.export([n["meta"] for n in image_arrays])
 
     if correct_words:

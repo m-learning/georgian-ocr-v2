@@ -41,7 +41,7 @@ def vanish_image(img,invert=False):
        
 def find_noise(data):
     width = data["meta"]["w"]
-    if width < 6:
+    if width < 5:
         return True
     return False
 
