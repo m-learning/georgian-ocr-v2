@@ -10,7 +10,7 @@ def parse_word_list_file(path):
 
 
 def find_matching_word(word):
-    url = "http://localhost:9200/_search"
+    url = "http://ocr.mlearning.ge:9200/_search"
     data = {'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
     req = urllib2.Request(url, json.dumps(data), {'Content-Type': 'application/json'})
     f = urllib2.urlopen(req)
@@ -20,9 +20,6 @@ def find_matching_word(word):
     if not json_data['hits']['hits']: return word
 
     chosen_word = json_data['hits']['hits'][0]['_source']['word']
-#    print 'Chosen word '+ chosen_word['word'] + ' ' + str(chosen_word['distance']), str(len(word.decode('utf-8'))/2)
-    # If distance is enough close we alter the word
-    #uword = unicode(word, 'utf-8')
     if chosen_word != word:
       print 'Word was corrected ' + word + ' with ' + chosen_word
       return chosen_word

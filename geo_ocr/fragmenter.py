@@ -72,12 +72,23 @@ def do_fragmentation(file_path, debug = True):
     # load source image
     src_img = cv2.imread(file_path)
 
-    gray = vanish_image(src_img)
-    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), gray * 255)
+    #src_img = cv2.resize(src_img, (0, 0), fx = 6, fy = 6)
+    #cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
+
+    src_img = img_as_ubyte(vanish_image(src_img))
+    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), src_img)
+
+    #src_img = cv2.bitwise_not(src_img)
+    #cv2.imwrite(("%s/a2 inverted.png" % DEBUG_DIR), src_img * 255)
+
+    #src_img = cv2.erode(src_img, None, iterations=1)
+    #cv2.imwrite(("%s/a3 eroded.png" % DEBUG_DIR), src_img)
+
+    #src_img = cv2.bitwise_not(src_img)
+    #cv2.imwrite(("%s/a4 uninvert.png" % DEBUG_DIR), src_img)
     
     # Find the contours
-    cv_image = img_as_ubyte(gray)
-    _, contours, hierarchy = cv2.findContours(cv_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     
     # TODO: allMeta is not required because img_arrays contains meta any way
     allMeta = []
@@ -91,7 +102,7 @@ def do_fragmentation(file_path, debug = True):
     for cnt in contours:
         try:
             # Create image file
-            x, y, w, h, img_arr = crop_rectangle(cv_image, cnt, debug)
+            x, y, w, h, img_arr = crop_rectangle(src_img, cnt, debug)
 
             if debug:
                 cv2.imwrite(("%s/%s.png" % (FRAGMENTS_DIR, count)), img_arr)
@@ -165,7 +176,7 @@ def crop_rectangle(img, contour, debug):
     # Shrink if cropped image is oversized
     if s_height > 64 or s_width > 64 or s_height < 20 or s_width < 20:
         if debug: print 'Rescaling'
-        crop_img = downscale_proportionally(crop_img, 40, 40)
+        crop_img = downscale_proportionally(crop_img, 50, 50)
 
     # define background image as large image 
     result_img = create_blank_image()
