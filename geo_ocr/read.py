@@ -27,13 +27,13 @@ def read(image_path, correct_words=False, debug=True):
     if debug:
         print 'Avg score: %d' % (full_score * 100 / full_count)
 
-    read_text = export_words.export([n["meta"] for n in image_arrays])
+    read_text, lines = export_words.export([n["meta"] for n in image_arrays])
 
     if correct_words:
-      read_text = wr.correct_words(read_text)
+      read_text, lines= wr.correct_words(read_text)
 
-    print read_text
-    return read_text
+    #print read_text
+    return read_text, lines
 
 
 if __name__ == '__main__':
