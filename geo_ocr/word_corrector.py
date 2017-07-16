@@ -52,7 +52,6 @@ def find_matching_words(word):
     return results
      
 
-
 def correct_words(text):
     text = unicode(text, 'utf-8')
     def replace_callback(match):
@@ -74,6 +73,7 @@ def take_word_from_line(line, position):
         word_metas.append(meta)
 
     return [word_metas, len(line)]
+
 
 def group_meta_as_words(lines):
     word_lines = []
@@ -100,15 +100,25 @@ def word_from_meta_array(word_meta):
 
 def choose_best_match(word_meta, word_alternatives):
     read_word = word_from_meta_array(word_meta)
-    print word_alternatives
+    chosen_word = read_word
+
     for word_alt in word_alternatives:
+        print 'Word alternative', word_alt['word']
+
+        is_wrong_word = False
         editops = lev.editops(read_word, word_alt['word'])
         for editop in editops:
-          (op, source_index, _) = editop
-          print op, source_index, word_meta[source_index]
-          
+            (op, source_index, _) = editop
+            print op, source_index, word_meta[source_index]
+            if word_meta[source_index]['score'] > 0.9:
+                is_wrong_word = True
+                break
 
-    return read_word
+        if not is_wrong_word:
+            chosen_word = word_alt['word']
+            break
+
+    return chosen_word
 
 
 def correct_words_with_scores(lines):

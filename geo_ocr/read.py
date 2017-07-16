@@ -46,22 +46,8 @@ def read(image_path, correct_words=False, debug=True):
          {'char':u'კ', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
          {'char':u'ა', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
          {'char':u'ც', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ო', 'score':0.6, 'alternatives':[{'char':u'ი', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},      
-         {'char':u' ', 'score':1 },
-         {'char':u'კ', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ა', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ბ', 'score':0.6, 'alternatives':[{'char':u'რ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ი', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]}
-        ],[
-         {'char':u'კ', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ა', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ც', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ო', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},      
-         {'char':u' ', 'score':1 },
-         {'char':u'კ', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ა', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ც', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ო', 'score':0.6, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]}]]
+         {'char':u'ზ', 'score':0.6, 'alternatives':[{'char':u'ი', 'score':0.35}, {'char':u'ზ', 'score':0.4}]}
+        ]]
         print wr.correct_words_with_scores(document)
 
     print read_text
