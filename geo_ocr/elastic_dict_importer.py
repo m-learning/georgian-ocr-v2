@@ -3,8 +3,8 @@
 from elasticsearch import Elasticsearch,helpers
 import string
 permited_chars = "აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ"
-es = Elasticsearch([{'host': 'ocr.mlearning.ge', 'port': 9200}])
-path = "../tmp/word_list_dest.txt"
+es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+path = "./tmp/word_list_dest.txt"
 
 def parse_word_list_file():
     with open(path, 'r') as myfile:
