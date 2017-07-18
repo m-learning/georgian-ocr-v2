@@ -19,27 +19,6 @@ def read_meta(meta_dir):
             all_meta.append(meta_obj)
 
     return all_meta
-    
-def get_average_line_height():
-    pass
-
-def get_average_char_width():
-    pass
-
-def get_next_line(all_meta, char_meta):
-    pass
-
-def is_same_line(char1, char2):
-  char1_y_border = char1['y'] + char1['h']
-  char2_y_border = char2['y'] + char2['h']
-  
-  # Char1 is down
-  if char1['y'] > char2_y_border: return False
-  
-  # Char1 is up
-  if char1_y_border < char2['y'] : return False
-  
-  return True
 
 
 classes = [u"ათიო", u"ბზმნპრსძშჩწხჰ", u"ჭქ", u"გდევკლჟტუფღყცჯ"]
@@ -122,6 +101,7 @@ def detect_avg_wh(all_meta, font_type, samp_chars=20):
     
     return avg_width, avg_height
 
+
 def export(all_meta):
     
     all_meta = char_classify(all_meta)
@@ -189,7 +169,6 @@ def export(all_meta):
             
     return text, lines
     
-
 
 if __name__ == "__main__":
   all_meta = read_meta(os.path.join(os.getcwd(),'results/meta/'))
