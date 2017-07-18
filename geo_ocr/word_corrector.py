@@ -100,6 +100,7 @@ def word_from_meta_array(word_meta):
 
 
 def replacing_letter_is_wrong(char_meta, replacing_letter):
+    if 'score' not in char_meta: return True
     if char_meta['score'] > 0.9: return True
     if char_meta['alternatives'][0]['char'] == replacing_letter: return False
     if char_meta['alternatives'][1]['char'] == replacing_letter: return False
@@ -113,11 +114,12 @@ def deleting_letter_is_wrong(char_meta):
 
 def choose_best_match(word_meta, word_alternatives):
     read_word = word_from_meta_array(word_meta)
+#    print "Checking", read_word
     chosen_word = read_word
 
     # Traverse through alternatives, received from elasticsearch
     for word_alt in word_alternatives:
-        print 'Word alternative', word_alt['word']
+#        print 'Word alternative', word_alt['word']
 
         word_alt_is_wrong = False
         modifying_word_meta = copy.deepcopy(word_meta)
@@ -128,12 +130,13 @@ def choose_best_match(word_meta, word_alternatives):
 
         for editop in editops:
             (op, source_index, dest_index) = editop
-            
+
             if op == 'replace':
-                modifying_word_meta[source_index]['char'] = word_alt['word'][dest_index]
                 if replacing_letter_is_wrong(modifying_word_meta[source_index], word_alt['word'][dest_index]):
                     word_alt_is_wrong = True
                     break
+
+                modifying_word_meta[source_index]['char'] = word_alt['word'][dest_index]
             elif op == 'delete':
                 if deleting_letter_is_wrong(modifying_word_meta[source_index]):
                     word_alt_is_wrong = True
@@ -145,6 +148,8 @@ def choose_best_match(word_meta, word_alternatives):
         if not word_alt_is_wrong:
             # Word alternative passed all the checks, so we replace the original
             chosen_word = word_alt['word']
+            if read_word != chosen_word:
+                print 'Word was corrected ' + read_word + ' with ' + chosen_word
             break
 
     return chosen_word
@@ -152,16 +157,16 @@ def choose_best_match(word_meta, word_alternatives):
 
 def correct_words_with_scores(lines):
     word_lines = group_meta_as_words(lines)
-    
+
     text = ''
     for l in word_lines:
       for w in l:
         word = word_from_meta_array(w)
         
         best_match = choose_best_match(w, find_matching_words(word))
-        text+=' '+best_match
+        text+=best_match+' '
 
-      text+='\n'
+      text=text.strip()+'\n'
 
     return text
 
