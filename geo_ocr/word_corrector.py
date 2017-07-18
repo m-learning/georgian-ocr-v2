@@ -3,6 +3,7 @@ import re
 import urllib2
 import json
 import Levenshtein as lev
+import copy
 
 permited_chars = u"აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ"
 
@@ -97,6 +98,15 @@ def word_from_meta_array(word_meta):
 
     return word
 
+def replacing_letter_is_wrong(char_meta, replacing_letter):
+    if char_meta['score'] > 0.9: return True
+    if char_meta['alternatives'][0]['char'] == replacing_letter: return False
+    if char_meta['alternatives'][1]['char'] == replacing_letter: return False
+    return True
+
+def deleting_letter_is_wrong(char_meta):
+    if char_meta['score'] > 0.9: return True
+    return False
 
 def choose_best_match(word_meta, word_alternatives):
     read_word = word_from_meta_array(word_meta)
@@ -105,16 +115,27 @@ def choose_best_match(word_meta, word_alternatives):
     for word_alt in word_alternatives:
         print 'Word alternative', word_alt['word']
 
-        is_wrong_word = False
+        word_alt_is_wrong = False
+        modifying_word_meta = copy.deepcopy(word_meta)
         editops = lev.editops(read_word, word_alt['word'])
-        for editop in editops:
-            (op, source_index, _) = editop
-            print op, source_index, word_meta[source_index]
-            if word_meta[source_index]['score'] > 0.9:
-                is_wrong_word = True
-                break
 
-        if not is_wrong_word:
+        for editop in editops:
+            (op, source_index, dest_index) = editop
+            
+            if op == 'replace':
+                modifying_word_meta[source_index]['char'] = word_alt['word'][dest_index]
+                if replacing_letter_is_wrong(modifying_word_meta[source_index], word_alt['word'][dest_index]):
+                    word_alt_is_wrong = True
+                    break
+            elif op == 'delete':
+                if deleting_letter_is_wrong(modifying_word_meta[source_index]):
+                    word_alt_is_wrong = True
+                    break
+                del modifying_word_meta[source_index]
+            elif op == 'insert':
+                modifying_word_meta.insert(source_index, {'char':word_alt['word'][dest_index]})
+
+        if not word_alt_is_wrong:
             chosen_word = word_alt['word']
             break
 

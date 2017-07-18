@@ -42,13 +42,25 @@ def read(image_path, correct_words=False, debug=True):
     if correct_words:
         read_text = wr.correct_words(read_text)
 
-        document = [[
-         {'char':u'კ', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ა', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ც', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
-         {'char':u'ზ', 'score':0.6, 'alternatives':[{'char':u'ი', 'score':0.35}, {'char':u'ზ', 'score':0.4}]}
-        ]]
-        print wr.correct_words_with_scores(document)
+    
+    document = [[
+     {'char':u'კ', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
+     {'char':u'ა', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
+     {'char':u'ც', 'score':0.91, 'alternatives':[{'char':u'ვ', 'score':0.35}, {'char':u'ზ', 'score':0.4}]},
+     {'char':u'ზ', 'score':0.6, 'alternatives':[{'char':u'ი', 'score':0.35}, {'char':u'ზ', 'score':0.4}]}
+    ]]
+
+    document = [[
+     {'char':u'კ', 'score':0.5, 'alternatives':[{'char':u'ძ', 'score':0.34}, {'char':u'ქ', 'score':0.04}]},
+     {'char':u'თ', 'score':0.46, 'alternatives':[{'char':u'ო', 'score':0.38}, {'char':u'ი', 'score':0.07}]},
+     {'char':u'შ', 'score':0.77, 'alternatives':[{'char':u'უ', 'score':0.12}, {'char':u'ფ', 'score':0.02}]},
+     {'char':u'მ', 'score':0.86, 'alternatives':[{'char':u'შ', 'score':0.06}, {'char':u'ძ', 'score':0.04}]},
+     {'char':u'ა', 'score':0.90, 'alternatives':[{'char':u'ბ', 'score':0.01}, {'char':u'ყ', 'score':0.01}]},
+     {'char':u'რ', 'score':0.78, 'alternatives':[{'char':u'ი', 'score':0.07}, {'char':u'ჩ', 'score':0.06}]},
+     {'char':u'ი', 'score':0.56, 'alternatives':[{'char':u'0', 'score':0.27}, {'char':u'ჩ', 'score':0.1}]},
+     {'char':u'ძ', 'score':0.58, 'alternatives':[{'char':u'"', 'score':0.06}, {'char':u'*', 'score':0.05}]}
+    ]]
+    print wr.correct_words_with_scores(document)
 
     print read_text
     return read_text
