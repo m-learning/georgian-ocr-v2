@@ -167,7 +167,7 @@ def export(all_meta):
             tline = []
             
             
-    return text, lines
+    return text, lines, avg_char_width, avg_line_height
     
 
 if __name__ == "__main__":

@@ -17,36 +17,6 @@ def parse_word_list_file(path):
         return content.split('\n')
 
 
-def find_matching_word(word):
-    url = "http://ocr.mlearning.ge:9200/_search"
-    data = {'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
-    req = urllib2.Request(url, json.dumps(data), {'Content-Type': 'application/json'})
-    f = urllib2.urlopen(req)
-    response = f.read()
-    f.close()
-    json_data = json.loads(response)
-    if not json_data['hits']['hits']: return word
-
-    chosen_word = json_data['hits']['hits'][0]['_source']['word']
-    if chosen_word != word:
-      print 'Word was corrected ' + word + ' with ' + chosen_word
-      return chosen_word
-    else: return word
-     
-
-def correct_words(text):
-    text = unicode(text, 'utf-8')
-    def replace_callback(match):
-        if not match.group(2).strip(): return match.group(0)
-        replaced_word = find_matching_word(match.group(2))
-        return match.group(1) + replaced_word
-
-    replaced_text = re.compile(r'(^|\s)(.*?)(?=\s|$)',
-        flags=re.M).sub(replace_callback, text)
-
-    return replaced_text
-
-
 def find_matching_words(word):
     url = "http://ocr.mlearning.ge:9200/_search"
     data = {'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
@@ -94,6 +64,7 @@ def group_meta_as_words(lines):
 def word_from_meta_array(word_meta):
     word = u''
     for meta in word_meta:
+#        print meta['char'], meta['score'], meta['alternatives'][0]['char'], meta['alternatives'][1]['char'],meta['alternatives'][2]['char']
         word += meta['char']
 
     return word
@@ -101,20 +72,21 @@ def word_from_meta_array(word_meta):
 
 def replacing_letter_is_wrong(char_meta, replacing_letter):
     if 'score' not in char_meta: return True
-    if char_meta['score'] > 0.9: return True
+    if char_meta['score'] > 0.8: return True
     if char_meta['alternatives'][0]['char'] == replacing_letter: return False
     if char_meta['alternatives'][1]['char'] == replacing_letter: return False
+#    if char_meta['alternatives'][2]['char'] == replacing_letter: return False
     return True
 
 
 def deleting_letter_is_wrong(char_meta):
-    if char_meta['score'] > 0.9: return True
+    if char_meta['score'] > 0.8: return True
     return False
 
 
 def choose_best_match(word_meta, word_alternatives):
     read_word = word_from_meta_array(word_meta)
-#    print "Checking", read_word
+#    print "Checking -- ", read_word
     chosen_word = read_word
 
     # Traverse through alternatives, received from elasticsearch
@@ -131,16 +103,28 @@ def choose_best_match(word_meta, word_alternatives):
         for editop in editops:
             (op, source_index, dest_index) = editop
 
+#            print op, source_index, dest_index, read_word, word_alt['word']
             if op == 'replace':
+                if len(modifying_word_meta) <= source_index:
+                    print 'Asking to replace unknown index in word. Skipping alternative word'
+                    word_alt_is_wrong = True
+                    break
+
                 if replacing_letter_is_wrong(modifying_word_meta[source_index], word_alt['word'][dest_index]):
                     word_alt_is_wrong = True
                     break
 
                 modifying_word_meta[source_index]['char'] = word_alt['word'][dest_index]
             elif op == 'delete':
+                if len(modifying_word_meta) <= source_index:
+                    print 'Asking to delete unknown index in word. Skipping alternative word'
+                    word_alt_is_wrong = True
+                    break
+
                 if deleting_letter_is_wrong(modifying_word_meta[source_index]):
                     word_alt_is_wrong = True
                     break
+
                 del modifying_word_meta[source_index]
             elif op == 'insert':
                 modifying_word_meta.insert(source_index, {'char':word_alt['word'][dest_index]})

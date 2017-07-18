@@ -30,7 +30,7 @@ def choose_char(scores, chars):
         pairs.append({'char': chars[i], 'score': scores[i]})
     pairs = sorted(pairs, key=lambda pair: pair['score'], reverse=True)
 
-    return [pairs[0], pairs[1], pairs[2]]
+    return [pairs[0], pairs[1], pairs[2], pairs[3]]
 
 
 def recognize(array):

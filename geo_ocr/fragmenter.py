@@ -72,8 +72,8 @@ def do_fragmentation(file_path, debug = True):
     # load source image
     src_img = cv2.imread(file_path)
 
-    #src_img = cv2.resize(src_img, (0, 0), fx = 6, fy = 6)
-    #cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
+#    src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
+#    cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
 
     src_img = img_as_ubyte(vanish_image(src_img))
     cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), src_img)
@@ -176,7 +176,7 @@ def crop_rectangle(img, contour, debug):
     # Shrink if cropped image is oversized
     if s_height > 64 or s_width > 64 or s_height < 20 or s_width < 20:
         if debug: print 'Rescaling'
-        crop_img = downscale_proportionally(crop_img, 50, 50)
+        crop_img = downscale_proportionally(crop_img, 45, 45)
 
     # define background image as large image 
     result_img = create_blank_image()
@@ -187,7 +187,7 @@ def crop_rectangle(img, contour, debug):
     y_offset = int(math.floor((l_height - s_height) / 2))
     x_offset = int(math.floor((l_width - s_width) / 2))
     	
-    ndimage.gaussian_filter(crop_img, 1, output=crop_img)
+    ndimage.gaussian_filter(crop_img, 0.8, output=crop_img)
     
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)

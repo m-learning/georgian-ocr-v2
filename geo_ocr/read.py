@@ -22,8 +22,7 @@ def read(image_path, correct_words=False, debug=True):
         char = pairs[0]['char']
         score = pairs[0]['score'].item()
 
-        meta_data["alternatives"]=[
-          pairs[1], pairs[2]]
+        meta_data["alternatives"]=[pairs[1], pairs[2], pairs[3]]
 
         full_score += score
         full_count += 1
@@ -35,7 +34,9 @@ def read(image_path, correct_words=False, debug=True):
     if debug:
         print 'Avg score: %d' % (full_score * 100 / full_count)
 
-    read_text, lines = export_words.export([n["meta"] for n in image_arrays])
+    read_text, lines, avg_width, avg_height = export_words.export([n["meta"] for n in image_arrays])
+
+    lines = filter_noise(lines, avg_width, avg_height)
 
     print read_text
 
@@ -45,6 +46,21 @@ def read(image_path, correct_words=False, debug=True):
     print read_text
     return read_text
 
+
+# TODO: Move to filter file
+def filter_noise(lines, avg_width, avg_height):
+    resulting_lines = []
+    for line in lines:
+        resulting_chars = []
+        for ch in line:
+            if (ch['w'] > avg_width*0.2 and ch['h'] > avg_height*0.2):
+            # or (ch['w'] < avg_width*1.2 and ch['h'] < avg_height*1.2):
+                resulting_chars.append(ch)
+            else: print 'Filtering '+ str(ch['id']) +' as a noise'
+        resulting_lines.append(resulting_chars)
+
+    return resulting_lines
+    
 
 if __name__ == '__main__':
     args = init_arguments()
