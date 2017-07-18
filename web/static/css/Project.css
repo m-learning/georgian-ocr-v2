@@ -1,0 +1,32 @@
+.Project {
+    text-align: center;
+    background-color: hsl(80, 100%, 30%);
+    color: white;
+}
+
+.Project-subtitle {
+    margin-top: 20px;
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (max-width: 650px) {
+    .Project {
+        padding: 40px;
+    }
+    .Project-title {
+        font-size: 40px;
+        line-height: 55px;
+    }
+}
+
+@media (min-width: 651px) {
+    .Project {
+        padding: 60px;
+    }
+    .Project-title {
+        font-size: 50px;
+        line-height: 65px;
+    }
+}

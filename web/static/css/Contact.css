@@ -1,0 +1,100 @@
+.Contact {
+    text-align: center;
+}
+
+.Contact-subtitle {
+    margin-top: 20px;
+    color: hsl(0, 0%, 50%);
+}
+
+.Contact-input {
+    cursor: text;
+    border: 2px solid hsl(0, 0%, 80%);
+    background-color: hsl(0, 0%, 95%);
+}
+.Contact-input:focus {
+    border-color: hsl(80, 100%, 35%);
+    background-color: hsl(80, 100%, 90%);
+}
+
+.Contact-name,
+.Contact-email {
+    padding-right: 13px;
+    padding-left: 13px;
+    height: 60px;
+    line-height: 56px;
+}
+
+.Contact-text {
+    vertical-align: top;
+    padding: 13px;
+    height: 140px;
+}
+
+.Contact-button {
+    color: white;
+    padding-right: 15px;
+    padding-left: 15px;
+    line-height: 50px;
+    margin-top: 20px;
+    background-color: hsl(80, 100%, 35%);
+}
+.Contact-button:active {
+    color: hsl(80, 100%, 50%);
+    background-color: black;
+}
+
+@media (max-width: 650px) {
+    .Contact {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+    .Contact-title {
+        font-size: 35px;
+        line-height: 50px;
+    }
+    .Contact-content {
+        padding-top: 40px;
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+    .Contact-name {
+        width: 100%;
+    }
+    .Contact-email {
+        width: 100%;
+        margin-top: 20px;
+    }
+    .Contact-text {
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+
+@media (min-width: 651px) {
+    .Contact {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+    .Contact-title {
+        font-size: 40px;
+        line-height: 55px;
+    }
+    .Contact-content {
+        padding-top: 50px;
+        width: 550px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .Contact-name {
+        width: calc(50% - 10px);
+    }
+    .Contact-email {
+        width: calc(50% - 10px);
+        margin-left: 20px;
+    }
+    .Contact-text {
+        width: 100%;
+        margin-top: 20px;
+    }
+}

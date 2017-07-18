@@ -1,0 +1,52 @@
+.Contribute {
+    text-align: center;
+    background-color: hsl(0, 0%, 80%);
+}
+
+.Contribute-subtitle {
+    margin-top: 20px;
+    color: hsl(0, 0%, 30%);
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.Contribute-button {
+    display: inline-block;
+    vertical-align: top;
+    color: white;
+    padding-right: 15px;
+    padding-left: 15px;
+    line-height: 50px;
+    background-color: hsl(80, 100%, 35%);
+}
+.Contribute-button:active {
+    color: hsl(80, 100%, 50%);
+    background-color: black;
+}
+
+@media (max-width: 650px) {
+    .Contribute {
+        padding: 40px;
+    }
+    .Contribute-title {
+        font-size: 35px;
+        line-height: 50px;
+    }
+    .Contribute-content {
+        padding-top: 30px;
+    }
+}
+
+@media (min-width: 651px) {
+    .Contribute {
+        padding: 50px;
+    }
+    .Contribute-title {
+        font-size: 40px;
+        line-height: 55px;
+    }
+    .Contribute-content {
+        padding-top: 40px;
+    }
+}

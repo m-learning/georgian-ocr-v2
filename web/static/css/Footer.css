@@ -1,0 +1,19 @@
+.Footer {
+    text-align: center;
+    color: hsl(0, 0%, 50%);
+    background-color: black;
+}
+
+@media (max-width: 650px) {
+    .Footer {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+}
+
+@media (min-width: 651px) {
+    .Footer {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+}

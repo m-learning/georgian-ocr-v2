@@ -34,7 +34,7 @@ def choose_char(scores, chars):
 
 
 def recognize(array):
-    path = os.getcwd()
+    path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
     array = 1 - array
     global model
 

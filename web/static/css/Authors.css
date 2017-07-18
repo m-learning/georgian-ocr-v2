@@ -1,0 +1,105 @@
+.Authors {
+    text-align: center;
+}
+
+.Authors-content {
+    max-width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.Authors-subtitle {
+    margin-top: 20px;
+    color: hsl(0, 0%, 50%);
+}
+
+.Author {
+    display: inline-block;
+    vertical-align: top;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.Author-photo {
+    display: inline-block;
+    vertical-align: top;
+    border-radius: 50%;
+    background-color: hsl(80, 60%, 60%);
+    background-image: url(../img/author.svg);
+    background-size: 100% 100%;
+}
+
+.Author-text {
+    display: inline-block;
+    vertical-align: top;
+    white-space: normal;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.Author-name {
+    overflow: hidden;
+}
+
+.Author-position {
+    color: hsl(0, 0%, 50%);
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .Author {
+        width: calc(100% / 1);
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+    .Author {
+        width: calc(100% / 2);
+    }
+}
+
+@media (min-width: 901px) {
+    .Author {
+        width: calc(100% / 3);
+    }
+}
+
+@media (max-width: 650px) {
+    .Authors {
+        padding: 40px;
+    }
+    .Authors-title {
+        font-size: 35px;
+        line-height: 50px;
+    }
+    .Author {
+        padding-top: 40px;
+    }
+    .Author-photo {
+        width: 60px;
+        height: 60px;
+    }
+    .Author-text {
+        width: calc(100% - 60px);
+    }
+}
+
+@media (min-width: 651px) {
+    .Authors {
+        padding: 50px;
+    }
+    .Authors-title {
+        font-size: 40px;
+        line-height: 55px;
+    }
+    .Author {
+        padding-top: 50px;
+    }
+    .Author-photo {
+        width: 70px;
+        height: 70px;
+    }
+    .Author-text {
+        width: calc(100% - 70px);
+    }
+}
