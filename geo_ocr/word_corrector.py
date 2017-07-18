@@ -32,6 +32,19 @@ def find_matching_word(word):
       print 'Word was corrected ' + word + ' with ' + chosen_word
       return chosen_word
     else: return word
+     
+
+def correct_words(text):
+    text = unicode(text, 'utf-8')
+    def replace_callback(match):
+        if not match.group(2).strip(): return match.group(0)
+        replaced_word = find_matching_word(match.group(2))
+        return match.group(1) + replaced_word
+
+    replaced_text = re.compile(r'(^|\s)(.*?)(?=\s|$)',
+        flags=re.M).sub(replace_callback, text)
+
+    return replaced_text
 
 
 def find_matching_words(word):
@@ -51,19 +64,6 @@ def find_matching_words(word):
         })
 
     return results
-     
-
-def correct_words(text):
-    text = unicode(text, 'utf-8')
-    def replace_callback(match):
-        if not match.group(2).strip(): return match.group(0)
-        replaced_word = find_matching_word(match.group(2))
-        return match.group(1) + replaced_word
-
-    replaced_text = re.compile(r'(^|\s)(.*?)(?=\s|$)',
-        flags=re.M).sub(replace_callback, text)
-
-    return replaced_text
 
 
 def take_word_from_line(line, position):
@@ -98,25 +98,32 @@ def word_from_meta_array(word_meta):
 
     return word
 
+
 def replacing_letter_is_wrong(char_meta, replacing_letter):
     if char_meta['score'] > 0.9: return True
     if char_meta['alternatives'][0]['char'] == replacing_letter: return False
     if char_meta['alternatives'][1]['char'] == replacing_letter: return False
     return True
 
+
 def deleting_letter_is_wrong(char_meta):
     if char_meta['score'] > 0.9: return True
     return False
+
 
 def choose_best_match(word_meta, word_alternatives):
     read_word = word_from_meta_array(word_meta)
     chosen_word = read_word
 
+    # Traverse through alternatives, received from elasticsearch
     for word_alt in word_alternatives:
         print 'Word alternative', word_alt['word']
 
         word_alt_is_wrong = False
         modifying_word_meta = copy.deepcopy(word_meta)
+
+        # Take edit operations from read word to alternative. 
+        # Check if alternative is better than original.
         editops = lev.editops(read_word, word_alt['word'])
 
         for editop in editops:
@@ -136,6 +143,7 @@ def choose_best_match(word_meta, word_alternatives):
                 modifying_word_meta.insert(source_index, {'char':word_alt['word'][dest_index]})
 
         if not word_alt_is_wrong:
+            # Word alternative passed all the checks, so we replace the original
             chosen_word = word_alt['word']
             break
 
@@ -149,9 +157,6 @@ def correct_words_with_scores(lines):
     for l in word_lines:
       for w in l:
         word = word_from_meta_array(w)
-
-#        matching_word_objs = find_matching_words(word)
-#        matching_words = [f(x) for w in matching_word_objs]
         
         best_match = choose_best_match(w, find_matching_words(word))
         text+=' '+best_match
