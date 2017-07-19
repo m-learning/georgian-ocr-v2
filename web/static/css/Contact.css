@@ -87,7 +87,7 @@
         margin-left: auto;
     }
     .Contact-name {
-        width: calc(50% - 10px);
+        width: calc(50% - 20px);
     }
     .Contact-email {
         width: calc(50% - 10px);
