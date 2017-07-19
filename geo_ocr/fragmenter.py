@@ -1,6 +1,5 @@
 import random
 import cv2
-# import cv as cv2
 import math
 import os
 import sys
@@ -8,6 +7,7 @@ import json
 import shutil
 import numpy as np
 import traceback
+
 from scipy import ndimage
 
 
@@ -35,28 +35,21 @@ def vanish_image(img,invert=False):
     gray_scale_image = color.rgb2gray(img)
     if invert:
         gray_scale_image = util.invert(gray_scale_image)
-    val = filters.threshold_local(gray_scale_image,101,mode="wrap",offset=0.1)
+    val = filters.threshold_local(gray_scale_image,101,mode="wrap",offset=0.02)
     return (gray_scale_image > val)
 
-       
-def find_noise(data):
-    width = data["meta"]["w"]
-    if width < 6:
-        return True
-    return False
 
-
-def delete_subcrops(allMeta, img_arrays, debug = True):
+def delete_subcrops(img_arrays, debug = True):
 
     num_of_deleted = 0
-    for m1 in allMeta:
-       for m2 in allMeta:
+    for m1 in img_arrays:
+       for m2 in img_arrays:
            if (m1['x'] > m2['x'] and
                   m1['y'] > m2['y'] and
                   m1['x']+m1['w'] < m2['x']+m2['w'] and
                   m1['y']+m1['h'] < m2['y']+m2['h']):
 
-              img_arrays = [s for s in img_arrays if not s['meta']['id'] == m1['id']]
+              img_arrays = [s for s in img_arrays if not s['id'] == m1['id']]
 
               num_of_deleted += 1
               if debug:
@@ -76,8 +69,9 @@ def do_fragmentation(file_path, debug = True):
     # load source image
     src_img = cv2.imread(file_path)
 
-#    src_img = cv2.resize(src_img, (0, 0), fx = 10, fy = 10)
-#    cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
+
+    src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
+    cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
 
     src_img = img_as_ubyte(vanish_image(src_img))
     cv2.imwrite(("%s/a1 vainshed.png" % DEBUG_DIR), src_img)
@@ -94,12 +88,8 @@ def do_fragmentation(file_path, debug = True):
     # Find the contours
     _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     
-    # TODO: allMeta is not required because img_arrays contains meta any way
-    allMeta = []
     count = 0
-    num_of_noise = 0
-
-    img_arrays = []
+    chars = []
 
     print 'Number of contures', len(contours)
     # For each contour, find the bounding rectangle and crop it.
@@ -113,27 +103,21 @@ def do_fragmentation(file_path, debug = True):
                 cv2.imwrite(("%s/%s.png" % (FRAGMENTS_DIR, count)), img_arr)
 
             # Create meta file
-            meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
+            char = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count, 'image': img_arr}
             
-            image_data = {'arr':img_arr, "meta": meta}
-            if find_noise(image_data):
-                num_of_noise += 1
-            else:
-                img_arrays.append(image_data)
-                allMeta.append(meta)
-                count += 1
+            chars.append(char)
+            count += 1
         except ValueError, ve:
             if debug:
                 traceback.print_exc(file=sys.stdout)
                 print "skip fragment:", ve
 
     # TODO: Last contour is the whole image. It has to be deleted nicely
-    img_arrays = img_arrays[:-1]
-    allMeta = allMeta[:-1]
-    img_arrays = delete_subcrops(allMeta, img_arrays, debug)
+    #chars = chars[:-1]
+    #chars = delete_subcrops(chars, debug)
 
-    print 'Number of noise parts removed', num_of_noise
-    return img_arrays
+    full_h, full_w = src_img.shape
+    return chars, full_w, full_h
     
     
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):

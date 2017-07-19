@@ -18,6 +18,10 @@ def parse_word_list_file(path):
 
 
 def find_matching_words(word):
+    if len(word) > 20:
+        print 'Word is too long to find alternatives'
+        return []
+
     url = "http://ocr.mlearning.ge:9200/_search"
     data = {'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
     req = urllib2.Request(url, json.dumps(data), {'Content-Type': 'application/json'})
