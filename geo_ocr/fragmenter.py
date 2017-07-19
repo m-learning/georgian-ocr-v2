@@ -48,6 +48,7 @@ def find_noise(data):
 
 def delete_subcrops(allMeta, img_arrays, debug = True):
 
+    num_of_deleted = 0
     for m1 in allMeta:
        for m2 in allMeta:
            if (m1['x'] > m2['x'] and
@@ -57,10 +58,13 @@ def delete_subcrops(allMeta, img_arrays, debug = True):
 
               img_arrays = [s for s in img_arrays if not s['meta']['id'] == m1['id']]
 
+              num_of_deleted += 1
               if debug:
+                
                 imageFilename = "%s/%d.png" % (FRAGMENTS_DIR, m1['id'])
                 if os.path.isfile(imageFilename): os.remove(imageFilename)
 
+    print 'Number of deleted sub crops', num_of_deleted
     return img_arrays
 
 
@@ -72,11 +76,11 @@ def do_fragmentation(file_path, debug = True):
     # load source image
     src_img = cv2.imread(file_path)
 
-#    src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
+#    src_img = cv2.resize(src_img, (0, 0), fx = 10, fy = 10)
 #    cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
 
     src_img = img_as_ubyte(vanish_image(src_img))
-    cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), src_img)
+    cv2.imwrite(("%s/a1 vainshed.png" % DEBUG_DIR), src_img)
 
     #src_img = cv2.bitwise_not(src_img)
     #cv2.imwrite(("%s/a2 inverted.png" % DEBUG_DIR), src_img * 255)
@@ -93,6 +97,7 @@ def do_fragmentation(file_path, debug = True):
     # TODO: allMeta is not required because img_arrays contains meta any way
     allMeta = []
     count = 0
+    num_of_noise = 0
 
     img_arrays = []
 
@@ -111,7 +116,9 @@ def do_fragmentation(file_path, debug = True):
             meta = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
             
             image_data = {'arr':img_arr, "meta": meta}
-            if not find_noise(image_data):
+            if find_noise(image_data):
+                num_of_noise += 1
+            else:
                 img_arrays.append(image_data)
                 allMeta.append(meta)
                 count += 1
@@ -124,6 +131,8 @@ def do_fragmentation(file_path, debug = True):
     img_arrays = img_arrays[:-1]
     allMeta = allMeta[:-1]
     img_arrays = delete_subcrops(allMeta, img_arrays, debug)
+
+    print 'Number of noise parts removed', num_of_noise
     return img_arrays
     
     
@@ -175,7 +184,6 @@ def crop_rectangle(img, contour, debug):
 
     # Shrink if cropped image is oversized
     if s_height > 64 or s_width > 64 or s_height < 20 or s_width < 20:
-        if debug: print 'Rescaling'
         crop_img = downscale_proportionally(crop_img, 45, 45)
 
     # define background image as large image 

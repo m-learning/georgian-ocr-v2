@@ -27,7 +27,7 @@ def read(image_path, correct_words=False, debug=True):
         full_score += score
         full_count += 1
         if debug:
-            print meta_data['id'], char.encode('utf8'), score, pairs[1]['char'].encode('utf8'), pairs[1]['score'], pairs[2]['char'].encode('utf8'), pairs[2]['score']
+            print meta_data['id'], char.encode('utf8'), score, pairs[1]['char'].encode('utf8'), pairs[1]['score'], pairs[2]['char'].encode('utf8'), pairs[2]['score'], str(meta_data['w'])+'x'+str(meta_data['h'])
 
         meta_data['char'] = char
         meta_data['score'] = score
@@ -49,16 +49,24 @@ def read(image_path, correct_words=False, debug=True):
 
 # TODO: Move to filter file
 def filter_noise(lines, avg_width, avg_height):
+    num_of_noise = 0
     resulting_lines = []
     for line in lines:
         resulting_chars = []
         for ch in line:
-            if (ch['w'] > avg_width*0.2 and ch['h'] > avg_height*0.2):
+            print ch['id'], ch['h'], avg_height, avg_height*0.2
+            if (ch['w'] < avg_width*0.2 or ch['h'] < avg_height*0.2):
             # or (ch['w'] < avg_width*1.2 and ch['h'] < avg_height*1.2):
+                num_of_noise += 1
+                imageFilename = "%s/%d.png" % ("results/letters", ch['id'])
+                if os.path.isfile(imageFilename): os.remove(imageFilename)
+            else:
                 resulting_chars.append(ch)
-            else: print 'Filtering '+ str(ch['id']) +' as a noise'
-        resulting_lines.append(resulting_chars)
 
+        print len(resulting_chars)
+        resulting_lines.append(resulting_chars)
+                
+    print 'Number of unproportional parts removed as noise', num_of_noise
     return resulting_lines
     
 
