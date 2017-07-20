@@ -6,6 +6,7 @@ logs/
 *.iml
 data/
 tmp/
+web/tmp_uploads/
 
 exported-fragments.svg
 exported-no-bg.svg
