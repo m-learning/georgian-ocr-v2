@@ -160,6 +160,7 @@ def downscale_proportionally(image, max_w, max_h):
 
 def crop_rectangle(img, contour, debug):
     x, y, w, h = cv2.boundingRect(contour)
+    # TODO: Store original pixels too
     
     crop_img = img[y:y + h, x:x + w]
     
@@ -178,7 +179,7 @@ def crop_rectangle(img, contour, debug):
     
     y_offset = int(math.floor((l_height - s_height) / 2))
     x_offset = int(math.floor((l_width - s_width) / 2))
-    	
+
     ndimage.gaussian_filter(crop_img, 0.8, output=crop_img)
     
     # Convert image to 64x64

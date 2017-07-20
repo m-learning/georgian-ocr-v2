@@ -23,11 +23,13 @@ def read(image_path, correct_words=False, debug=True):
 
     chars, full_w, full_h = fragmenter.do_fragmentation(image_path, debug=debug)
 
+    # TODO: Line detector
+
     print len(chars), 'chars exist'
 
     chars = filter.filter_background(chars, full_w, full_h)
     chars = filter.filter_overlaps(chars)
-    chars = filter.filter_too_small(chars)
+#    chars = filter.filter_too_small(chars)
     chars = filter.filter_unproportional(chars)
 
     # TODO: Fix for images without noise

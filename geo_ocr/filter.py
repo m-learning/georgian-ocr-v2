@@ -10,8 +10,9 @@ def filter_unproportional(chars):
         ratio = float(ch['w'])/ch['h']
         if ratio < 0.2 or ratio > 3.0:
             num_of_noise += 1
+            # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-            if os.path.isfile(imageFilename): os.remove(imageFilename)
+            if os.path.isfile(imageFilename): os.remove(imageFilename) 
         else:
             resulting_chars.append(ch)
 
@@ -25,6 +26,7 @@ def filter_too_small(chars):
     for ch in chars:
         if ch['w'] < 6 or ch['h'] < 6:
             num_of_noise += 1
+            # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
             if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
@@ -51,6 +53,7 @@ def filter_out_of_average(chars):
     for ch in chars:
         if ch['w'] > avg_w * 15 or ch['h'] > avg_h * 15 or ch['w'] < avg_w / 15 or ch['h'] < avg_h / 15:
             num_of_noise += 1
+            # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
             if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
@@ -78,13 +81,7 @@ def filter_by_size_distribution_step(chars):
         if ch['h'] > max_h:
             max_h = ch['h']
 
-    #min_w = full_w
-    #min_h = full_h
-    #max_w = 0
-    #max_h = 0
-
-    hist_size = 100
-    # Histogram is for debugging
+    hist_size = 5
     width_hist = [0] * hist_size
     height_hist = [0] * hist_size
     width_delta = max_w - min_w
@@ -103,6 +100,7 @@ def filter_by_size_distribution_step(chars):
 
         if width_index < 1 or height_index < 1:
             num_of_noise += 1
+            # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
             if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
@@ -118,21 +116,32 @@ def filter_by_size_distribution_step(chars):
 
 
 def filter_by_size_distribution(chars, full_w, full_h):
-    # TODO: Dynamic, maybe by detecting the first hype and removing it
+    num_of_too_small = 0
+    for ch in chars:
+        if ch['w'] < 6 or ch['h'] < 6:
+            num_of_too_small += 1
 
-    chars = filter_by_size_distribution_step(chars)
-    chars = filter_by_size_distribution_step(chars)
+    if not num_of_too_small:
+        print 'Number of low occurence size parts removed', 0, 'There is no noise'
+        return chars
+
     chars = filter_by_size_distribution_step(chars)
 
     return chars
+
+
+def filter_by_edge_smoothness(chars):
+    # TODO: Work on original image, not blurred
+    pass
 
 
 def filter_by_weights(chars):
     num_of_noise = 0
     resulting_chars = []
     for ch in chars:
-        if ch['score'] < 0.35:
+        if ch['score'] < 0.2:
             num_of_noise += 1
+            # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
             if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
@@ -140,6 +149,7 @@ def filter_by_weights(chars):
 
     print 'Number of parts removed because of low wight', num_of_noise
     return resulting_chars
+
 
 def filter_by_possible_alternatives(chars):
     # TODO
@@ -158,6 +168,7 @@ def filter_overlaps(chars):
                   m1['y']+m1['h'] < m2['y']+m2['h']):
 
                 num_of_noise += 1
+                # TODO: Copy to debug dir with filter name
                 imageFilename = "%s/%d.png" % (LETTERS_PATH, m1['id'])
                 if os.path.isfile(imageFilename): os.remove(imageFilename)
                 removed = True
@@ -176,6 +187,7 @@ def filter_background(chars, full_w, full_h):
     for ch in chars:
         if (float(ch['w']) * ch['h']) / (full_w * full_h) > 0.9:
             num_of_noise += 1
+            # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
             if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
@@ -196,6 +208,7 @@ def filter_outsized(line_metas, avg_width, avg_height):
 #            print ch['id'], ch['h'], avg_height, avg_height*0.2
             if ch['w'] < avg_width*0.2 or ch['h'] < avg_height*0.2 or ch['h'] > avg_height*1.5:
                 num_of_noise += 1
+                # TODO: Copy to debug dir with filter name
                 imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
                 if os.path.isfile(imageFilename): os.remove(imageFilename)
             else:
