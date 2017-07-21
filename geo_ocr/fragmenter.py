@@ -53,7 +53,7 @@ def delete_subcrops(img_arrays, debug = True):
 
               num_of_deleted += 1
               if debug:
-                
+
                 imageFilename = "%s/%d.png" % (FRAGMENTS_DIR, m1['id'])
                 if os.path.isfile(imageFilename): os.remove(imageFilename)
 
@@ -65,7 +65,7 @@ def do_fragmentation(file_path, debug = True):
     create_clean_dir(FRAGMENTS_DIR)
     create_clean_dir(META_DIR)
     create_clean_dir(DEBUG_DIR)
-    
+
     # load source image
     src_img = cv2.imread(file_path)
 
@@ -84,10 +84,10 @@ def do_fragmentation(file_path, debug = True):
 
     #src_img = cv2.bitwise_not(src_img)
     #cv2.imwrite(("%s/a4 uninvert.png" % DEBUG_DIR), src_img)
-    
+
     # Find the contours
     _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    
+
     count = 0
     chars = []
 
@@ -97,14 +97,14 @@ def do_fragmentation(file_path, debug = True):
     for cnt in contours:
         try:
             # Create image file
-            x, y, w, h, img_arr = crop_rectangle(src_img, cnt, debug)
+            x, y, w, h, img_arr, original = crop_rectangle(src_img, cnt, debug)
 
             if debug:
                 cv2.imwrite(("%s/%s.png" % (FRAGMENTS_DIR, count)), img_arr)
 
             # Create meta file
-            char = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count, 'image': img_arr}
-            
+            char = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count, 'image': img_arr, 'original': original}
+
             chars.append(char)
             count += 1
         except ValueError, ve:
@@ -118,21 +118,21 @@ def do_fragmentation(file_path, debug = True):
 
     full_h, full_w = src_img.shape
     return chars, full_w, full_h
-    
-    
+
+
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
     image = np.zeros((height, width, 3), np.uint8)
-    
+
     # Since OpenCV uses BGR, convert the color first
     color = tuple(reversed(rgb_color))
     # Fill image with color
     image[:] = color
-    
+
     return image
 
 
 def create_image_for_recognize(image, width=64, height=64):
-    generated_image = np.ones((height, width)) * 255
+    generated_image = np.ones((height, width), np.float32) * 255
     (image_h, image_w) = image.shape
     index_w = (width - image_w) / 2
     index_h = (height - image_h) / 2
@@ -161,9 +161,10 @@ def downscale_proportionally(image, max_w, max_h):
 def crop_rectangle(img, contour, debug):
     x, y, w, h = cv2.boundingRect(contour)
     # TODO: Store original pixels too
-    
+
     crop_img = img[y:y + h, x:x + w]
-    
+    original = crop_img
+
     # define small height and width
     s_height, s_width = crop_img.shape[:2]
 
@@ -171,21 +172,21 @@ def crop_rectangle(img, contour, debug):
     if s_height > 64 or s_width > 64 or s_height < 20 or s_width < 20:
         crop_img = downscale_proportionally(crop_img, 45, 45)
 
-    # define background image as large image 
+    # define background image as large image
     result_img = create_blank_image()
 
     # define large height and width
     l_height, l_width = result_img.shape[:2]
-    
+
     y_offset = int(math.floor((l_height - s_height) / 2))
     x_offset = int(math.floor((l_width - s_width) / 2))
 
     ndimage.gaussian_filter(crop_img, 0.8, output=crop_img)
-    
+
     # Convert image to 64x64
     image_to_recognize = create_image_for_recognize(crop_img)
-    
-    return x, y, w, h, image_to_recognize
+
+    return x, y, w, h, image_to_recognize, original
 
 
 if __name__ == "__main__":
