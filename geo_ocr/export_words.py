@@ -88,10 +88,11 @@ def detect_avg_wh(all_meta, font_type, samp_chars=20):
     
     # limit number of charactes by 20
     sample = len(all_meta)
+    
     if sample > samp_chars:
         avr_chars = avr_chars[-samp_chars:]
     
-    avg_width = sum([n[1][1]['w'] for n in avr_chars]) / samp_chars
+    avg_width = sum([n[1][1]['w'] for n in avr_chars])  / len(avr_chars)
     avg_width *= 0.5
     
     if font_type ==  'Mxedruli':
@@ -117,7 +118,7 @@ def export(all_meta):
     print 'Font Type: ', font_type
     
     avg_char_width, avg_line_height =  detect_avg_wh(all_meta[0:100], font_type)
-    #avg_char_width = 10
+    #avg_char_width = 20
     #avg_line_height = 40
     
     print 'Char avr width: ', avg_char_width
@@ -127,6 +128,10 @@ def export(all_meta):
     line = []
     tline = []
     text = ''
+    
+    sort = sorted(all_meta, key=lambda x: x['x'])
+    for n in sort:
+        print n['x'], n['y'], n['id'], n['char'], '===='
     
     # Sort and find lines
     m_len = len(all_meta)
@@ -149,7 +154,7 @@ def export(all_meta):
             for j in xrange(len(line)):
                 if line[j]['x'] - line[j-1]['x'] - line[j-1]['w'] > avg_char_width:
                     text += u' '
-                    #text += line[j]['char']
+                    
 
                     # add space
                     space = line[j].copy()
@@ -160,7 +165,7 @@ def export(all_meta):
                     
                 text += line[j]['char']
                 tline.append(line[j])
-                
+
             text += u'\n'
             lines.append(tline)
             line = []
