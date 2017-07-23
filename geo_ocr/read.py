@@ -83,8 +83,7 @@ def read(image_path, correct_words=False, debug=True):
     print read_text
     
     restored_image = restore_image(chars, full_h, full_w)
-    cv2.imwrite('/home/shota/image1.png', restored_image)
-
+    cv2.imwrite('results/debug/filtered.png', restored_image)
 
     return read_text
 
