@@ -9,6 +9,7 @@ import numpy as np
 import traceback
 
 from scipy import ndimage
+from transform import deskew_image
 
 from skimage import color
 from skimage import filters
@@ -67,7 +68,7 @@ def do_fragmentation(file_path, debug = True):
 
     # load source image
     src_img = cv2.imread(file_path)
-
+    src_img = deskew_image(src_img)
 
     src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
     cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
