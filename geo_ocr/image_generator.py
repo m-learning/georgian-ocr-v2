@@ -77,6 +77,33 @@ def list_available_fonts():
         for name in parse_fonts_directory('bulk_fonts/utf-8')]
 
     return font_names
+
+
+def find_max_font_size(context, text, max_w, max_h):
+    font_size = 1000
+
+    context.set_font_size(font_size)
+    box = context.text_extents(text)
+    w = box[2]
+    h = box[3]
+
+    while w > max_w:
+        ratio_w = max_w / w
+        font_size = font_size * ratio_w
+        context.set_font_size(font_size)
+        box = context.text_extents(text)
+        w = box[2]
+
+    h = box[3]
+
+    while h > max_h:
+        ratio_h = max_h / h
+        font_size = font_size * ratio_h
+        context.set_font_size(font_size)
+        box = context.text_extents(text)
+        h = box[2]
+
+    return int(font_size)
     
 
 def paint_text(text, w, h,
@@ -87,7 +114,8 @@ def paint_text(text, w, h,
     with cairo.Context(surface) as context:
         context.set_source_rgb(1, 1, 1)  # White
         context.paint()
-        fonts = list_available_fonts()
+
+    fonts = list_available_fonts()
 
     if multi_fonts:
         font = np.random.choice(fonts)
@@ -101,7 +129,12 @@ def paint_text(text, w, h,
 
 
     if (multi_sizes):
-        context.set_font_size(random.randint(25, 60))
+        max_font_size = find_max_font_size(context, text, 64, 64)
+        if not max_font_size:
+            print 'Damaged font', font['name'], 'for text', text
+            raise ValueError('Damaged font')
+
+        context.set_font_size(random.randint(25, max_font_size))
     else:
         context.set_font_size(44)
 
@@ -193,10 +226,17 @@ def next_batch(size, rotate=False, ud=False, lr=False,
     x_train = np.zeros((size, img_w, img_h))
     y_train = [None] * size
     for i in range(size):
-        char = chars[random.randint(0, LABEL_SIZE - 1)]
-        img = paint_text(char, img_w, img_h,
-                         rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
-                         multi_sizes=multi_sizes, blur=blur, save=save)
+        while True:
+            try:
+                char = chars[random.randint(0, LABEL_SIZE - 1)]
+                img = paint_text(char, img_w, img_h,
+                                 rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
+                                 multi_sizes=multi_sizes, blur=blur, save=save)
+                break
+            except ValueError, e:
+                # FIXME: Wrong decision!
+                print e
+
         x_train[i] = 1 - img
         y_train[i] = y[chars.index(char)]
     x_train = np.expand_dims(x_train, 3)
