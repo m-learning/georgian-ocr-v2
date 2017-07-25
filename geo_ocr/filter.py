@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 
 LETTERS_PATH = "results/letters"
 
@@ -108,8 +109,8 @@ def filter_by_size_distribution_step(chars):
 
     print 'Number of low occurence size parts removed', num_of_noise
     #print '---'
-    #print width_hist
-    #print height_hist
+    print width_hist
+    print height_hist
     #print '---'
 
     return resulting_chars
@@ -218,4 +219,27 @@ def filter_outsized(line_metas, avg_width, avg_height):
                 
     print 'Number of outsized parts removed', num_of_noise
     return resulting_lines
+
+def filter_compare(chars,clean_img):
+    new_chars=[]
+    for char in chars:
+        
+        clean_letter=np.invert(np.array(clean_img[char["y"]:(char["y"]+char["h"]),
+                 char["x"]:(char["x"]+char["w"])],dtype=bool))
+        
+        #print np.sum(clean_letter)/float((char["w"]*char["h"]))
+        if (np.sum(clean_letter)/float(char["w"]*char["h"])>0.15):
+            new_chars.append(char)
+    
+    return new_chars
+
+def filter_merge(chars_1,chars_2):
+    for char_2 in chars_2:
+        in_list=False
+        for char_1 in chars_1:
+            if char_2["id"]==char_1["id"]:
+                in_list=True
+        if not in_list:
+            chars_1.append(char_2)
+    return chars_1
 

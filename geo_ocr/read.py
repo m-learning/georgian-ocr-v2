@@ -23,26 +23,32 @@ def read(image_path, correct_words=False, debug=True):
         print("Files does not exists")
         return
 
-    chars, full_w, full_h = fragmenter.do_fragmentation(image_path, debug=debug)
+    chars, full_w, full_h, clean_img = fragmenter.do_fragmentation(image_path, debug=debug)
 
     # TODO: Line detector
 
     print len(chars), 'chars exist'
 
     chars = filter.filter_background(chars, full_w, full_h)
-    chars = filter.filter_overlaps(chars)
-#    chars = filter.filter_too_small(chars)
+    #chars = filter.filter_overlaps(chars)
+    other_chars= filter.filter_too_small(chars)
+    other_chars=filter.filter_compare(chars,clean_img)
+
     chars = filter.filter_unproportional(chars)
 
     # TODO: Fix for images without noise
     chars = filter.filter_by_size_distribution(chars, full_w, full_h)
     #chars = filter.filter_out_of_average(chars)
 
+    #merge filters
+    chars=filter.filter_merge(chars,other_chars)
+    chars = filter.filter_overlaps(chars)
+
     print len(chars), 'chars left after filtering'
     #if you want to see filtered image uncomment next 4 lines
     #restored_image = restore_image(chars, full_h, full_w)
     #plt.imshow(restored_image)
-    #cv2.imwrite('path/to/image.ext', restored_image)
+    #cv2.imwrite('/home/shota/image.png', restored_image)
     #plt.show()
     full_score = 0
     full_count = 0
@@ -75,6 +81,10 @@ def read(image_path, correct_words=False, debug=True):
       read_text = wc.correct_words_with_scores(lines)
 
     print read_text
+    
+    restored_image = restore_image(chars, full_h, full_w)
+    cv2.imwrite('results/debug/filtered.png', restored_image)
+
     return read_text
 
 

@@ -9,13 +9,14 @@ import numpy as np
 import traceback
 
 from scipy import ndimage
-
+from transform import deskew_image
 
 from skimage import color
 from skimage import filters
 from skimage import img_as_ubyte
 from skimage import util
 from skimage import img_as_float
+
 
 # destination directory
 FRAGMENTS_DIR = "results/letters"
@@ -31,13 +32,12 @@ def create_clean_dir(path):
     os.makedirs(path)
 
 
-def vanish_image(img,invert=False):
+def vanish_image(img,local_area,offset,invert=False):
     gray_scale_image = color.rgb2gray(img)
     if invert:
         gray_scale_image = util.invert(gray_scale_image)
-    val = filters.threshold_local(gray_scale_image,101,mode="wrap",offset=0.02)
+    val = filters.threshold_local(gray_scale_image,local_area,mode="wrap",offset=offset)
     return (gray_scale_image > val)
-
 
 def delete_subcrops(img_arrays, debug = True):
 
@@ -68,14 +68,17 @@ def do_fragmentation(file_path, debug = True):
 
     # load source image
     src_img = cv2.imread(file_path)
-
+    src_img = deskew_image(src_img)
 
     src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
     cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
+   
 
-    src_img = img_as_ubyte(vanish_image(src_img))
+    clean_img = img_as_ubyte(vanish_image(src_img,301,0.2))
+    src_img = img_as_ubyte(vanish_image(src_img,201,0.04))
     cv2.imwrite(("%s/a1 vainshed.png" % DEBUG_DIR), src_img)
-
+    cv2.imwrite(("%s/a1 clean.png" % DEBUG_DIR), clean_img)
+    #cv2.imwrite(("%s/a1 clean.png" % DEBUG_DIR), clean_img)
     #src_img = cv2.bitwise_not(src_img)
     #cv2.imwrite(("%s/a2 inverted.png" % DEBUG_DIR), src_img * 255)
 
@@ -115,9 +118,11 @@ def do_fragmentation(file_path, debug = True):
     # TODO: Last contour is the whole image. It has to be deleted nicely
     #chars = chars[:-1]
     #chars = delete_subcrops(chars, debug)
+    
 
     full_h, full_w = src_img.shape
-    return chars, full_w, full_h
+    
+    return chars, full_w, full_h, clean_img
 
 
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
