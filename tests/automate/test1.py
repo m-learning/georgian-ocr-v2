@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import geo_ocr
 import subprocess
 from Levenshtein import ratio
@@ -10,21 +11,27 @@ y=0
 total =0
 testresults = []
 while i < (len(a)):
-	text1 = open("tests/automate/level1/"+a[i], "r")
-	data = text1.read()
-	print a[i]
-	text2 =open("tests/automate/level1/output.txt" , "wr")
-	text2.write(geo_ocr.read("tests/automate/level1/"+b[i], False, False))
-	text2 = open("tests/automate/level1/output.txt" , "r")
-	result = text2.read()
-	testresults.append(ratio(data , result))
+	txt = open("tests/automate/level1/"+a[i], "r+")
+	data = txt.read()
+	print a[i] , b[i]
+	try:
+		pic =open("tests/automate/level1/output.txt" , "wr")
+		pic.write(geo_ocr.read("tests/automate/level1/"+b[i], False, False).encode('utf-8').strip())
+		pic = open("tests/automate/level1/output.txt" , "r")
+		result = pic.read()
+		testresults.append(ratio(data , result))
 
-	print "data" , data 
-	print  "result" , result
-	print  b[i], ratio(data , result)
-	
-	total += ratio(data , result)
-	i+=1
+		print "data" , data
+		print  "result" , result
+		print  b[i], ratio(data , result)
+
+		total += ratio(data , result)
+	except:
+		print "error ocured with ", a[i] , b[i]
+		testresults.append(0)
+		total +=0
+	finally:
+		i+=1
 average = total/len(a)
 #green = ( '\033[92m'%round(testresults[y] *100, 1) + '\033[0m')
 #red = ( '\033[91m' %round(testresults[y] *100, 1) + '\033[0m')
@@ -33,9 +40,8 @@ for y in range(len(testresults)):
 		print ( '\033[92m' + b[y]+ '\033[0m') , round(testresults[y] *100, 1) , "%"
 	else:
 		print ( '\033[91m'+ b[y]+ '\033[0m') , round(testresults[y] *100, 1), "%"
-	y+=1 
+	y+=1
 if average > 0.7:
-	print  ( '\033[92m' +"average "+ '\033[0m') , round(total/len(a) *100 , 1) , "%"
+	print  ( '\033[92m' + "LEVEL 1 AVERAGE "+ '\033[0m') , round(total/len(a) *100 , 1) , "%"
 else:
-	print ( '\033[91m' +  "average "+ '\033[0m') , round(total/len(a) *100 , 1) , "%"
-
+	print ( '\033[91m' +  "LEVEL 1 AVERAGE " + '\033[0m') , round(total/len(a) *100 , 1) , "%"

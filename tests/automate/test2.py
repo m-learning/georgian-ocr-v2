@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import geo_ocr
 import subprocess
 from Levenshtein import ratio
@@ -9,19 +10,18 @@ y=0
 total =0
 testresults = []
 while i < (len(a)):
-	text1 = open("tests/automate/level2-badlight/"+a[i], "r")
-	data = text1.read()
-	print a[i]
-	text2 =open("tests/automate/level2-badlight//output.txt" , "wr")
-	text2.write(geo_ocr.read("tests/automate/level2-badlight/"+b[i], False, False))
-	text2 = open("tests/automate/level2-badlight/output.txt" , "r")
-	result = text2.read()
+	txt = open("tests/automate/level2-badlight/"+a[i], "r+")
+	data = txt.read()
+	print a[i] , b[i]
+	pic =open("tests/automate/level2-badlight/output.txt" , "wr")
+	pic.write(geo_ocr.read("tests/automate/level2-badlight/"+b[i], False, False).encode('utf-8').strip())
+	pic = open("tests/automate/level2-badlight/output.txt" , "r")
+	result = pic.read()
 	testresults.append(ratio(data , result))
 
-	print "data" , data 
+	print "data" , data
 	print  "result" , result
 	print  b[i], ratio(data , result)
-	
 	total += ratio(data , result)
 	i+=1
 average = total/len(a)
@@ -32,9 +32,8 @@ for y in range(len(testresults)):
 		print ( '\033[92m' + b[y]+ '\033[0m') , round(testresults[y] *100, 1) , "%"
 	else:
 		print ( '\033[91m'+ b[y]+ '\033[0m') , round(testresults[y] *100, 1), "%"
-	y+=1 
+	y+=1
 if average > 0.7:
-	print  ( '\033[92m' +"LEVEL 2 AVERAGE "+ '\033[0m') , round(total/len(a) *100 , 1) , "%"
+	print  ( '\033[92m' +"LEVEL 2 AVERAGE " + '\033[0m') , round(total/len(a) *100 , 1) , "%"
 else:
 	print ( '\033[91m' +  "LEVEL 2 AVERAGE "+ '\033[0m') , round(total/len(a) *100 , 1) , "%"
-
