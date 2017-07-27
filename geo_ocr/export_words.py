@@ -113,7 +113,7 @@ def export(all_meta):
     # pass empty if error is high 
     if font_type == None:
         print "> Error rate for text if to high, can't detect font type"
-        return '', [[]]
+        return '', [all_meta], 0, 0
     
     print 'Font Type: ', font_type
     
