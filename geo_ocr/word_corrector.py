@@ -96,9 +96,11 @@ def word_from_meta_array(word_meta):
 def replacing_letter_is_wrong(char_meta, replacing_letter):
     if 'score' not in char_meta: return True
     if char_meta['score'] > 0.8: return True
-    if char_meta['alternatives'][0]['char'] == replacing_letter: return False
-    if char_meta['alternatives'][1]['char'] == replacing_letter: return False
-#    if char_meta['alternatives'][2]['char'] == replacing_letter: return False
+
+    for alt in char_meta['alternatives']:
+        if alt['score'] < 0.1: return True
+        if alt['char'] == replacing_letter: return False
+
     return True
 
 
