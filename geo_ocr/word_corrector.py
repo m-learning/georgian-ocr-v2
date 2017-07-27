@@ -60,7 +60,7 @@ def take_word_from_line(line, position):
         if meta['char'] == u' ':
             return [word_metas, index]
         if meta['char'] not in permitted_chars:
-            print 'Checkint punctuation', word_from_meta_array(word_metas)
+#            print 'Checking punctuation', word_from_meta_array(word_metas)
             if is_punctuation(line, index):
                 return [word_metas, index]
                 
