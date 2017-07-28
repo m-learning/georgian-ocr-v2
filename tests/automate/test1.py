@@ -6,6 +6,7 @@ from Levenshtein import ratio
 a=["160.txt", "220.txt", "cxoveli.txt", "logikuri.txt", "logikuri-mcdaria.txt", "mqsoveli.txt", "mtacebeli.txt", "nika.txt", "procenti.txt", "proporciuli.txt" , "datom.txt" , "gafrinda.txt" , "miigos.txt"]
 
 b=["160.jpg","220.jpg","cxoveli.jpg","logikuri.jpg","logikuri-mcdaria.jpg","mqsoveli.jpg","mtacebeli.jpg","nika.jpg","procenti.jpg","proporciuli.jpg" , "datom.jpg" , "gafrinda.jpg" , "miigos.jpg"]
+
 i=0
 y=0
 total =0
@@ -26,8 +27,8 @@ while i < (len(a)):
 		print  b[i], ratio(data , result)
 
 		total += ratio(data , result)
-	except:
-		print "error ocured with ", a[i] , b[i]
+	except Exception as e:
+		print "error ocured with ", a[i] , b[i], e
 		testresults.append(0)
 		total +=0
 	finally:
