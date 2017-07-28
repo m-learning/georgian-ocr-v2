@@ -14,7 +14,7 @@ while i < (len(a)):
 	data = txt.read()
 	print a[i] , b[i]
 	pic =open("tests/automate/level2-badlight/output.txt" , "wr")
-	pic.write(geo_ocr.read("tests/automate/level2-badlight/"+b[i], False, False).encode('utf-8').strip())
+	pic.write(geo_ocr.read("tests/automate/level2-badlight/"+b[i], True, False).encode('utf-8').strip())
 	pic = open("tests/automate/level2-badlight/output.txt" , "r")
 	result = pic.read()
 	testresults.append(ratio(data , result))
