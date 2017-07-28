@@ -129,7 +129,7 @@ def paint_text(text, w, h,
 
 
     if (multi_sizes):
-        max_font_size = find_max_font_size(context, text, 64, 64)
+        max_font_size = find_max_font_size(context, text, img_w, img_h) - 4
         if not max_font_size:
             print 'Damaged font', font['name'], 'for text', text
             raise ValueError('Damaged font')
@@ -151,25 +151,26 @@ def paint_text(text, w, h,
 
     # teach the RNN translational invariance by
     # fitting text box randomly on canvas, with some room to rotate
-    max_shift_x = w - box[2] - border_w_h[0]
-    max_shift_y = h - box[3] - border_w_h[1]
+    max_shift_x = w - text_w - border_w_h[0]
+    max_shift_y = h - text_h - border_w_h[1]
 
-    if int(max_shift_y) <= 0 or int(max_shift_x) <= 0:
-      # FIXME: This is a workaround for oversized font
-#      print font['name'], 'Font oversized', text
-      top_left_x = 0
-      top_left_y = 0
+    if int(max_shift_x) <= 0:
+      max_shift_x = 1
+      
+    if int(max_shift_y) <= 0:
+      max_shift_y = 1
     
+    
+    if lr:
+        top_left_x = np.random.randint(0, int(max_shift_x))
     else:
-      if lr:
-          top_left_x = np.random.randint(0, int(max_shift_x))
-      else:
-          top_left_x = w // 2 - text_w // 2
+        top_left_x = w // 2 - text_w // 2
 
-      if ud:
-          top_left_y = np.random.randint(0, int(max_shift_y))
-      else:
-          top_left_y = h // 2 - text_h // 2
+    if ud:
+        top_left_y = np.random.randint(0, int(max_shift_y))
+    else:
+        top_left_y = h // 2 - text_h // 2
+
 
     context.move_to(top_left_x - int(box[0]), top_left_y - int(box[1]))
     #context.set_source_rgb(0, 0, 0)

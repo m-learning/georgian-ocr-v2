@@ -9,8 +9,8 @@ import os
 img_w = img_h = 64
 nb_epoch = 1
 iterations = 25
-TRAINING_SET_SIZE = 5000
-TEST_SET_SIZE = 100
+TRAINING_SET_SIZE = 50000
+TEST_SET_SIZE = 1000
 
 K.set_learning_phase(1)
 if K.image_data_format() == 'channels_first':

@@ -113,7 +113,8 @@ def export(all_meta):
     # pass empty if error is high 
     if font_type == None:
         print "> Error rate for text if to high, can't detect font type"
-        return '', [all_meta], 0, 0
+        # TODO: Construct flat text (word_from_meta_array)
+        return '--', [all_meta], 0, 0
     
     print 'Font Type: ', font_type
     
