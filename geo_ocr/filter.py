@@ -133,7 +133,7 @@ def filter_by_size_distribution(chars, full_w, full_h):
 
 def filter_by_edge_smoothness(chars):
     # TODO: Work on original image, not blurred
-    pass
+    return chars
 
 
 def filter_by_weights(chars):
@@ -228,7 +228,7 @@ def filter_compare(chars,clean_img):
                  char["x"]:(char["x"]+char["w"])],dtype=bool))
         
         #print np.sum(clean_letter)/float((char["w"]*char["h"]))
-        if (np.sum(clean_letter)/float(char["w"]*char["h"])>0.15):
+        if (np.sum(clean_letter)/float(char["w"]*char["h"])>0.05):
             new_chars.append(char)
     
     return new_chars

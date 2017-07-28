@@ -77,6 +77,33 @@ def list_available_fonts():
         for name in parse_fonts_directory('bulk_fonts/utf-8')]
 
     return font_names
+
+
+def find_max_font_size(context, text, max_w, max_h):
+    font_size = 1000
+
+    context.set_font_size(font_size)
+    box = context.text_extents(text)
+    w = box[2]
+    h = box[3]
+
+    while w > max_w:
+        ratio_w = max_w / w
+        font_size = font_size * ratio_w
+        context.set_font_size(font_size)
+        box = context.text_extents(text)
+        w = box[2]
+
+    h = box[3]
+
+    while h > max_h:
+        ratio_h = max_h / h
+        font_size = font_size * ratio_h
+        context.set_font_size(font_size)
+        box = context.text_extents(text)
+        h = box[2]
+
+    return int(font_size)
     
 
 def paint_text(text, w, h,
@@ -87,7 +114,8 @@ def paint_text(text, w, h,
     with cairo.Context(surface) as context:
         context.set_source_rgb(1, 1, 1)  # White
         context.paint()
-        fonts = list_available_fonts()
+
+    fonts = list_available_fonts()
 
     if multi_fonts:
         font = np.random.choice(fonts)
@@ -101,7 +129,12 @@ def paint_text(text, w, h,
 
 
     if (multi_sizes):
-        context.set_font_size(random.randint(25, 60))
+        max_font_size = find_max_font_size(context, text, img_w, img_h) - 4
+        if not max_font_size:
+            print 'Damaged font', font['name'], 'for text', text
+            raise ValueError('Damaged font')
+
+        context.set_font_size(random.randint(25, max_font_size))
     else:
         context.set_font_size(44)
 
@@ -118,25 +151,26 @@ def paint_text(text, w, h,
 
     # teach the RNN translational invariance by
     # fitting text box randomly on canvas, with some room to rotate
-    max_shift_x = w - box[2] - border_w_h[0]
-    max_shift_y = h - box[3] - border_w_h[1]
+    max_shift_x = w - text_w - border_w_h[0]
+    max_shift_y = h - text_h - border_w_h[1]
 
-    if int(max_shift_y) <= 0 or int(max_shift_x) <= 0:
-      # FIXME: This is a workaround for oversized font
-#      print font['name'], 'Font oversized', text
-      top_left_x = 0
-      top_left_y = 0
+    if int(max_shift_x) <= 0:
+      max_shift_x = 1
+      
+    if int(max_shift_y) <= 0:
+      max_shift_y = 1
     
+    
+    if lr:
+        top_left_x = np.random.randint(0, int(max_shift_x))
     else:
-      if lr:
-          top_left_x = np.random.randint(0, int(max_shift_x))
-      else:
-          top_left_x = w // 2 - text_w // 2
+        top_left_x = w // 2 - text_w // 2
 
-      if ud:
-          top_left_y = np.random.randint(0, int(max_shift_y))
-      else:
-          top_left_y = h // 2 - text_h // 2
+    if ud:
+        top_left_y = np.random.randint(0, int(max_shift_y))
+    else:
+        top_left_y = h // 2 - text_h // 2
+
 
     context.move_to(top_left_x - int(box[0]), top_left_y - int(box[1]))
     #context.set_source_rgb(0, 0, 0)
@@ -193,10 +227,17 @@ def next_batch(size, rotate=False, ud=False, lr=False,
     x_train = np.zeros((size, img_w, img_h))
     y_train = [None] * size
     for i in range(size):
-        char = chars[random.randint(0, LABEL_SIZE - 1)]
-        img = paint_text(char, img_w, img_h,
-                         rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
-                         multi_sizes=multi_sizes, blur=blur, save=save)
+        while True:
+            try:
+                char = chars[random.randint(0, LABEL_SIZE - 1)]
+                img = paint_text(char, img_w, img_h,
+                                 rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
+                                 multi_sizes=multi_sizes, blur=blur, save=save)
+                break
+            except ValueError, e:
+                # FIXME: Wrong decision!
+                print e
+
         x_train[i] = 1 - img
         y_train[i] = y[chars.index(char)]
     x_train = np.expand_dims(x_train, 3)

@@ -5,11 +5,11 @@ import json
 import Levenshtein as lev
 import copy
 
-permited_chars = u"აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ"
+permitted_chars = u"აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ"
 
 # Obsolete
 def remove_symbols(word):
-    return "".join(c for c in word if c in permited_chars)
+    return "".join(c for c in word if c in permitted_chars)
 
 def parse_word_list_file(path):
     with open(path, 'r') as myfile:
@@ -23,7 +23,7 @@ def find_matching_words(word):
         return []
 
     url = "http://ocr.mlearning.ge:9200/_search"
-    data = {'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
+    data = {'size':20, 'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
     req = urllib2.Request(url, json.dumps(data), {'Content-Type': 'application/json'})
     f = urllib2.urlopen(req)
     response = f.read()
@@ -40,11 +40,30 @@ def find_matching_words(word):
     return results
 
 
+def is_punctuation(line, position):
+    for i in range(position, len(line)):
+        meta = line[i]
+        if meta['char'] in permitted_chars:
+            return False
+        elif meta['char'] == u' ':
+            return True
+
 def take_word_from_line(line, position):
+    # If first char is punctuation, return as separate word
+    first_char = line[position]
+    if first_char['char'] not in permitted_chars: 
+        return [[line[position]], position+1]
+    
     word_metas=[]
     for index in range(position, len(line)):
         meta = line[index]
-        if meta['char'] == u' ': return [word_metas, index+1]
+        if meta['char'] == u' ':
+            return [word_metas, index]
+        if meta['char'] not in permitted_chars:
+#            print 'Checking punctuation', word_from_meta_array(word_metas)
+            if is_punctuation(line, index):
+                return [word_metas, index]
+                
         word_metas.append(meta)
 
     return [word_metas, len(line)]
@@ -77,9 +96,11 @@ def word_from_meta_array(word_meta):
 def replacing_letter_is_wrong(char_meta, replacing_letter):
     if 'score' not in char_meta: return True
     if char_meta['score'] > 0.8: return True
-    if char_meta['alternatives'][0]['char'] == replacing_letter: return False
-    if char_meta['alternatives'][1]['char'] == replacing_letter: return False
-#    if char_meta['alternatives'][2]['char'] == replacing_letter: return False
+
+    for alt in char_meta['alternatives']:
+        if alt['score'] < 0.1: return True
+        if alt['char'] == replacing_letter: return False
+
     return True
 
 
@@ -89,13 +110,14 @@ def deleting_letter_is_wrong(char_meta):
 
 
 def choose_best_match(word_meta, word_alternatives):
+    #word_alternatives = sort_word_alternatives(word_alternatives)
     read_word = word_from_meta_array(word_meta)
 #    print "Checking -- ", read_word
     chosen_word = read_word
 
     # Traverse through alternatives, received from elasticsearch
     for word_alt in word_alternatives:
-#        print 'Word alternative', word_alt['word']
+#        print 'Word alternative', word_alt['word'], word_alt['score']
 
         word_alt_is_wrong = False
         modifying_word_meta = copy.deepcopy(word_meta)
@@ -143,6 +165,28 @@ def choose_best_match(word_meta, word_alternatives):
     return chosen_word
 
 
+def reorder_word_alternatives(read_word, word_alternatives):
+    with_insert_op = []
+    without_insert_op = []
+
+    for w in word_alternatives:
+        editops = lev.editops(read_word, w['word'])
+
+        with_insert = False
+        for editop in editops:
+            (op, _, _) = editop
+            if op == 'insert':
+                with_insert_op.append(w)
+                with_insert = True 
+                break
+
+        if not with_insert:
+            without_insert_op.append(w)
+
+    without_insert_op.extend(with_insert_op)
+    return without_insert_op
+
+
 def correct_words_with_scores(lines):
     word_lines = group_meta_as_words(lines)
 
@@ -150,9 +194,12 @@ def correct_words_with_scores(lines):
     for l in word_lines:
       for w in l:
         word = word_from_meta_array(w)
-        
-        best_match = choose_best_match(w, find_matching_words(word))
-        text+=best_match+' '
+        if len(w) > 1:
+            word_alternatives = find_matching_words(word)
+            word_alternatives = reorder_word_alternatives(word, word_alternatives)
+            word = choose_best_match(w, word_alternatives)
+          
+        text+=word
 
       text=text.strip()+'\n'
 
