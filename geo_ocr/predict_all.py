@@ -2,7 +2,7 @@ import argparse
 import numpy as np
 import image_generator as ig
 import network
-import learning
+import train
 import fragmenter
 import os
 
@@ -39,7 +39,7 @@ def recognize(array):
     global model
 
     if model is None:
-        model = network.init_model(ig.LABEL_SIZE, learning.input_shape)
+        model = network.init_model(ig.LABEL_SIZE, train.input_shape)
         model.load_weights(os.path.join(path, 'results/data/model.h5'))
 
     pred = model.predict(array, batch_size=1, verbose=0)
@@ -48,7 +48,7 @@ def recognize(array):
 
 def recognize_image(img_arr):
     img_arr /= 255.0
-    array = img_arr.reshape(learning.input_shape)
+    array = img_arr.reshape(train.input_shape)
 
     array = np.expand_dims(array, 0)
     return recognize(array)
