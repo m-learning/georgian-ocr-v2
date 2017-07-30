@@ -7,6 +7,8 @@ import json
 import shutil
 import numpy as np
 import traceback
+from multiprocessing import Process
+from multiprocessing import Manager
 
 from scipy import ndimage
 from transform import deskew_image
@@ -32,12 +34,15 @@ def create_clean_dir(path):
     os.makedirs(path)
 
 
-def vanish_image(img,local_area,offset,invert=False):
+def vanish_image(img,local_area,offset,ret,size,invert=False):
     gray_scale_image = color.rgb2gray(img)
     if invert:
         gray_scale_image = util.invert(gray_scale_image)
     val = filters.threshold_local(gray_scale_image,local_area,mode="wrap",offset=offset)
-    return (gray_scale_image > val)
+    ret[size] = (gray_scale_image>val)
+    #return (gray_scale_image > val)
+
+
 
 def delete_subcrops(img_arrays, debug = True):
 
@@ -67,15 +72,25 @@ def do_fragmentation(file_path, debug = True):
     create_clean_dir(DEBUG_DIR)
 
     # load source image
-    src_img = cv2.imread(file_path)
+    src_img = cv2.imread(file_path);
     src_img = deskew_image(src_img)
 
     src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
     cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
-   
-
-    clean_img = img_as_ubyte(vanish_image(src_img,301,0.2))
-    src_img = img_as_ubyte(vanish_image(src_img,201,0.04))
+  
+    manager=Manager()
+    imgs=manager.dict()
+    p1=Process(target=vanish_image,args=(src_img,201,0.2,imgs,"clean"))
+    p2=Process(target=vanish_image,args=(src_img,101,0.04,imgs,"noisy"))
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
+    clean_img=img_as_ubyte(imgs["clean"])
+    src_img=img_as_ubyte(imgs["noisy"])
+    #clean_img = img_as_ubyte(vanish_image(src_img,201,0.2))
+    #src_img = img_as_ubyte(vanish_image(src_img,101,0.04))
+    
     cv2.imwrite(("%s/a1 vainshed.png" % DEBUG_DIR), src_img)
     cv2.imwrite(("%s/a1 clean.png" % DEBUG_DIR), clean_img)
     #cv2.imwrite(("%s/a1 clean.png" % DEBUG_DIR), clean_img)
@@ -91,9 +106,9 @@ def do_fragmentation(file_path, debug = True):
     # Find the contours
     _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
+
     count = 0
     chars = []
-
     print 'Number of contures', len(contours)
     # For each contour, find the bounding rectangle and crop it.
     # put cropped image on a blank background and write to disk
@@ -119,7 +134,6 @@ def do_fragmentation(file_path, debug = True):
     #chars = chars[:-1]
     #chars = delete_subcrops(chars, debug)
     
-
     full_h, full_w = src_img.shape
     
     return chars, full_w, full_h, clean_img
