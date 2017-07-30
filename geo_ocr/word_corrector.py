@@ -48,6 +48,8 @@ def is_punctuation(line, position):
         elif meta['char'] == u' ':
             return True
 
+    return True
+
 def take_word_from_line(line, position):
     # If first char is punctuation, return as separate word
     first_char = line[position]
@@ -176,7 +178,8 @@ def reorder_word_alternatives(read_word, word_alternatives):
         for editop in editops:
             (op, _, _) = editop
             if op == 'insert':
-                with_insert_op.append(w)
+                # FIXME: Disable better
+                # with_insert_op.append(w)
                 with_insert = True 
                 break
 
