@@ -21,6 +21,7 @@ def read_meta(meta_dir):
 
 
 classes = [u"ათიო", u"ბზმნპრსძშჩწხჰ", u"ჭქ", u"გდევკლჟტუფღყცჯ"]
+pmarks = u',.!\'":;'
 
 def char_classify(all_meta):
     # ------------------------ 1 --------------------------
@@ -35,7 +36,7 @@ def char_classify(all_meta):
                 if ch['char'] in classes[i]:
                     ch['class'] = i
                     if i == 2 or i == 3:
-                        ch['lh'] = ch['h']/2.
+                        ch['lh'] = ch['h'] / 2.
                     else:
                         ch['lh'] = ch['h']
         else:
@@ -54,31 +55,27 @@ def find_font_type(all_meta):
     
     print '-------------------------'
     for meta in all_meta[:]:
-        if meta['char'] in classes[0] and meta['score'] > 0.50:
+        if meta['char'] in classes[0] and meta['score'] > 0.5:
             char1 = meta
-        elif meta['char'] in classes[3] and meta['score'] > 0.50:
+        elif meta['char'] in classes[3] and meta['score'] > 0.5:
             char2 = meta
 
     if char1 == None or char2 == None:
         return None
-    char_bit = char2['h']/8  
+    
+    char_bit = char2['h'] / 8  
     if ((char1['h'] - char2['h'])**2) ** 0.5 < char_bit:
         return 'Mtavruli'
     else:
-        #print char1['id'], char2['id']
-        #print char1['h'], char1['h'] - char2['h'], char2['h']
-        #print 'Mxedruli'
         return 'Mxedruli'
 
 
-def detect_avg_wh(all_meta, font_type, samp_chars=20):
+def detect_avg_wh(all_meta, samp_chars=20):
     
     # character counting
     chars = {}
     for meta in all_meta:
         #print meta['char']
-        #if meta['char'] in ''.join(classes):
-        #print meta['char'], meta['w'] 
         if meta['char'] not in chars:
             chars[meta['char']] = [1, meta]
         else:
@@ -95,16 +92,16 @@ def detect_avg_wh(all_meta, font_type, samp_chars=20):
         avr_chars = avr_chars[-samp_chars:]
     
     avg_width = sum([n[1][1]['w'] for n in avr_chars])  / len(avr_chars)
-    avg_width *= 0.5
-    avg_height = sum([n[1][1]['h'] for n in avr_chars
-                      if n[1][1]['char'] in classes[1]+classes[3]])  / len(avr_chars)
+    avg_width *= 0.38
 
+    middle_chars = [n[1][1]['h'] for n in avr_chars
+                      if n[1][1]['char'] in classes[1]+classes[3]]
     
-    #if font_type ==  'Mxedruli':
-    #    avg_height = avg_width * 3
-    #elif font_type == 'Mtavruli':
-    #    avg_height = avg_width 
-    
+    if len(middle_chars) == 0:
+        avg_height = avg_width
+    else:
+        avg_height = (sum(middle_chars) / len(middle_chars)) 
+        
     return avg_width, avg_height
 
 
@@ -117,13 +114,14 @@ def export(all_meta):
     
     # pass empty if error is high 
     if font_type == None:
-        print "> Error rate for text if to high, can't detect font type"
+        print "> Error rate for text is to high, can't detect font type"
         # TODO: Construct flat text (word_from_meta_array)
-        return '--', [all_meta], 0, 0
+        # return '--', [all_meta], 0, 0
+    else:
+        print 'Font Type: ', font_type
+        
     
-    print 'Font Type: ', font_type
-    
-    avg_char_width, avg_line_height =  detect_avg_wh(all_meta[0:100], font_type)
+    avg_char_width, avg_line_height =  detect_avg_wh(all_meta[0:100])
     #avg_char_width = 30
     #avg_line_height = 40
     
@@ -155,9 +153,10 @@ def export(all_meta):
                 dy = y2 - y1
                 v = all_meta[i]
                 print 'char:', v['char'], 'lh:', v['lh'], 'h:', v['h'], 'class:', v['class'], 'w:', v['w'], 'y:', v['y'], 'x:', v['x'], 'id:', v['id'], '\n'
-            elif font_type == 'Mtavruli':
+            else: #elif font_type == 'Mtavruli':
                 dy = all_meta[i+1]['y'] - all_meta[i]['y']
                 
+                    
         if i == m_len-1 or dy >= avg_line_height:
             #space_cnt = 0
             for j in xrange(len(line)):
