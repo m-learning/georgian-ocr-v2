@@ -6,6 +6,7 @@ import word_corrector as wc
 import filter
 import sys
 import matplotlib.pyplot as plt
+import timeit
 import image_operations as image_ops
 import file_operations as file_ops
 
@@ -31,25 +32,24 @@ def restore_image(chars, original_image):
 
 
 def read(image_path, correct_words=False, debug=True):
+    overall_time = timeit.default_timer()
     file_ops.create_clean_dir(LETTERS_DIR)
 
     if not os.path.isfile(image_path):
         print("Files does not exists")
         return
-
+    
     chars, full_w, full_h, clean_img = fragmenter.do_fragmentation(image_path, debug=debug)
-
     # TODO: Line detector
 
     print len(chars), 'chars exist'
-
+    
     chars = filter.filter_background(chars, full_w, full_h)
     #chars = filter.filter_overlaps(chars)
     other_chars= filter.filter_too_small(chars)
     other_chars=filter.filter_compare(chars,clean_img)
-
     chars = filter.filter_unproportional(chars)
-
+    
     # TODO: Fix for images without noise
     chars = filter.filter_by_size_distribution(chars, full_w, full_h)
     #chars = filter.filter_out_of_average(chars)
@@ -57,7 +57,7 @@ def read(image_path, correct_words=False, debug=True):
     #merge filters
     chars=filter.filter_merge(chars,other_chars)
     chars = filter.filter_overlaps(chars)
-
+    
     print len(chars), 'chars left after filtering'
     #if you want to see filtered image uncomment next 4 lines
     #restored_image = restore_image(chars, full_h, full_w)
@@ -67,6 +67,7 @@ def read(image_path, correct_words=False, debug=True):
     full_score = 0
     full_count = 0
 
+    recognize_time = timeit.default_timer()
     for char in chars:
         char_img = image_ops.crop_char_image(char, clean_img)
         pairs = recognize_image(char_img.flatten())
@@ -84,11 +85,12 @@ def read(image_path, correct_words=False, debug=True):
 
     if debug:
         print 'Avg score: %d' % (full_score * 100 / full_count)
+    recognize_time=timeit.default_timer()-recognize_time
 
-
+    start_time = timeit.default_timer()
     chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
-
+    
     read_text, lines, avg_width, avg_height = export_words.export(chars)
 
     #lines = filter.filter_outsized(lines, avg_width, avg_height)
@@ -103,6 +105,7 @@ def read(image_path, correct_words=False, debug=True):
     restored_image = restore_image(chars, clean_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
 
+    print "overall time: "+str(timeit.default_timer()-overall_time)
     return read_text
 
 
