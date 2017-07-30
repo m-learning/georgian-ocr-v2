@@ -1,48 +1,81 @@
 # -*- coding: utf-8 -*-
 import geo_ocr
 import subprocess
+import os
+import sys
 from Levenshtein import ratio
 
-textfiles=["160.txt",  "cxoveli.txt", "logikuri.txt", "logikuri-mcdaria.txt", "mqsoveli.txt", "mtacebeli.txt", "nika.txt", "procenti.txt", "proporciuli.txt" , "datom.txt" , "gafrinda.txt" , "miigos.txt" , "220.txt"]
+counter = 0
+photos = []
+textfiles = []
 
-b=["160.jpg","cxoveli.jpg","logikuri.jpg","logikuri-mcdaria.jpg","mqsoveli.jpg","mtacebeli.jpg","nika.jpg","procenti.jpg","proporciuli.jpg" , "datom.jpg" , "gafrinda.jpg" , "miigos.jpg" ,"220.jpg"]
+print 'testing directory:\t' , sys.argv[1]
+location = "tests/automate/" + sys.argv[1] + "/"
+
+for file in os.listdir(location):
+   try:
+	if file.startswith("output"):
+	   print "output file found" , file  
+	elif file.endswith(".txt"):
+           print "text file found:\t", file
+           textfiles.append(str(file))  
+	else:
+           photos.append(file)
+	   print "input files found:\t", file
+           counter = counter+1
+   except Exception as e:
+       raise e
+       print "No files found here! " "print ""Total files found:\t", counter
+
+textfiles.sort()
+photos.sort()
+
+print "textfiles " , textfiles 
+print "photos" , photos
+print counter
+
 
 i=0
-y=0
-total =0
 testresults = []
-while i < (len(textfiles)):
-	txt = open("tests/automate/level1/"+textfiles[i], "r+")
+total=0
+while i < counter:
+	txt = open(location+textfiles[i], "r+")
 	data = txt.read()
-	print textfiles[i] , b[i]
+	print textfiles[i] , photos[i]
 	try:
-		pic =open("tests/automate/level1/output.txt" , "wr")
-		pic.write(geo_ocr.read("tests/automate/level1/"+b[i], False, False).decode('utf-8').encode('utf-8'))
-		pic = open("tests/automate/level1/output.txt" , "r")
+		pic =open("tests/automate/output.txt" , "wr")
+		pic.write(geo_ocr.read(location+photos[i], False, False).decode('utf-8').encode('utf-8'))
+		pic = open("tests/automate/output.txt"  , "r")
 		result = pic.read()
 		testresults.append(ratio(data , result))
 
 		print "data" , data
 		print  "result" , result
-		print  b[i], ratio(data , result)
-
+		print  photos[i], ratio(data , result)
 		total += ratio(data , result)
 	except Exception as e:
-		print "error ocured with ", textfiles[i] , b[i], e
+		print "error ocured with ", textfiles[i] , photos[i], e
 		testresults.append(0)
 		total +=0
-	finally:
+	finally:	
 		i+=1
 average = total/len(textfiles)
-#green = ( '\033[92m'%round(testresults[y] *100, 1) + '\033[0m')
-#red = ( '\033[91m' %round(testresults[y] *100, 1) + '\033[0m')
 for y in range(len(testresults)):
 	if testresults[y] > 0.7:
-		print ( '\033[92m' + b[y]+ '\033[0m') , round(testresults[y] *100, 1) , "%"
+		print ( '\033[92m' + photos[y]+ '\033[0m') , round(testresults[y] *100, 1) , "%"
 	else:
-		print ( '\033[91m'+ b[y]+ '\033[0m') , round(testresults[y] *100, 1), "%"
+		print ( '\033[91m'+ photos[y]+ '\033[0m') , round(testresults[y] *100, 1), "%"
 	y+=1
 if average > 0.7:
-	print  ( '\033[92m' + "LEVEL 1 AVERAGE "+ '\033[0m') , round(total/len(textfiles) *100 , 1) , "%"
+	print  ( '\033[92m' +"LEVEL 2 AVERAGE " + '\033[0m') , round(total/len(textfiles) *100 , 1) , "%"
 else:
-	print ( '\033[91m' +  "LEVEL 1 AVERAGE " + '\033[0m') , round(total/len(textfiles) *100 , 1) , "%"
+	print ( '\033[91m' +  "LEVEL 2 AVERAGE "+ '\033[0m') , round(total/len(textfiles) *100 , 1) , "%"
+
+
+
+
+
+
+
+
+
