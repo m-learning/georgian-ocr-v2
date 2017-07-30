@@ -90,7 +90,7 @@ def do_fragmentation(file_path, debug = True):
     
     full_h, full_w = src_img.shape
     
-    return chars, full_w, full_h, clean_img
+    return chars, full_w, full_h, clean_img, src_img
 
 
 if __name__ == "__main__":

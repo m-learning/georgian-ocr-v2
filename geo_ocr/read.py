@@ -39,7 +39,7 @@ def read(image_path, correct_words=False, debug=True):
         print("Files does not exists")
         return
     
-    chars, full_w, full_h, clean_img = fragmenter.do_fragmentation(image_path, debug=debug)
+    chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(image_path, debug=debug)
     # TODO: Line detector
 
     print len(chars), 'chars exist'
@@ -69,7 +69,7 @@ def read(image_path, correct_words=False, debug=True):
 
     recognize_time = timeit.default_timer()
     for char in chars:
-        char_img = image_ops.crop_char_image(char, clean_img)
+        char_img = image_ops.crop_char_image(char, vanished_img)
         pairs = recognize_image(char_img.flatten())
         char['char'] = pairs[0]['char']
         char['score'] = pairs[0]['score'].item()
@@ -102,7 +102,7 @@ def read(image_path, correct_words=False, debug=True):
 
     print read_text
     
-    restored_image = restore_image(chars, clean_img)
+    restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
 
     print "overall time: "+str(timeit.default_timer()-overall_time)
