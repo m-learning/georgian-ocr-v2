@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import os, os.path
+import os
 import json
 import codecs
 
@@ -11,13 +11,12 @@ def read_meta(meta_dir):
     # Loop in characters
     for root, _, files in os.walk(meta_dir):
         for f in files:
-          fullpath = os.path.join(root, f)
+            fullpath = os.path.join(root, f)
 
-          # Put new one
-          with open(fullpath) as json_data:
-            meta_obj = json.load(json_data)
-            all_meta.append(meta_obj)
-
+            # Put new one
+            with open(fullpath) as json_data:
+                meta_obj = json.load(json_data)
+                all_meta.append(meta_obj)
     return all_meta
 
 
@@ -30,16 +29,19 @@ def char_classify(all_meta):
     new_meta = []
     for ch in all_meta:
         fv = {}
-        for i in range(len(classes)):
-            if ch['char'] in classes[i]:
-                ch['class'] = i 
-                if i == 2 or i == 3:
-                    ch['lh'] = ch['h']/2.
-                elif i == 0 or i == 1:
-                    ch['lh'] = ch['h']
-            else:
-                ch['class'] = -1
-                ch['lh'] = ch['h']
+        
+        if ch['char'] in u''.join(classes):
+            for i in range(len(classes)):
+                if ch['char'] in classes[i]:
+                    ch['class'] = i
+                    if i == 2 or i == 3:
+                        ch['lh'] = ch['h']/2.
+                    else:
+                        ch['lh'] = ch['h']
+        else:
+            ch['class'] = -1
+            ch['lh'] = ch['h']
+            
         new_meta.append(ch)
     
     return new_meta
@@ -60,7 +62,7 @@ def find_font_type(all_meta):
     if char1 == None or char2 == None:
         return None
     char_bit = char2['h']/8  
-    if ((char1['h'] - char2['h'])**2)**0.5 < char_bit:
+    if ((char1['h'] - char2['h'])**2) ** 0.5 < char_bit:
         return 'Mtavruli'
     else:
         #print char1['id'], char2['id']
@@ -79,7 +81,7 @@ def detect_avg_wh(all_meta, font_type, samp_chars=20):
         #print meta['char'], meta['w'] 
         if meta['char'] not in chars:
             chars[meta['char']] = [1, meta]
-        else: 
+        else:
             chars[meta['char']][0]+=1
         
         #print chars[meta['char']][0]
@@ -94,11 +96,14 @@ def detect_avg_wh(all_meta, font_type, samp_chars=20):
     
     avg_width = sum([n[1][1]['w'] for n in avr_chars])  / len(avr_chars)
     avg_width *= 0.5
+    avg_height = sum([n[1][1]['h'] for n in avr_chars
+                      if n[1][1]['char'] in classes[1]+classes[3]])  / len(avr_chars)
+
     
-    if font_type ==  'Mxedruli':
-        avg_height = avg_width * 3
-    elif font_type == 'Mtavruli':
-        avg_height = avg_width 
+    #if font_type ==  'Mxedruli':
+    #    avg_height = avg_width * 3
+    #elif font_type == 'Mtavruli':
+    #    avg_height = avg_width 
     
     return avg_width, avg_height
 
@@ -107,7 +112,7 @@ def export(all_meta):
     
     all_meta = char_classify(all_meta)
     all_meta = all_meta[::-1]
-
+    
     font_type = find_font_type(all_meta)
     
     # pass empty if error is high 
@@ -119,7 +124,7 @@ def export(all_meta):
     print 'Font Type: ', font_type
     
     avg_char_width, avg_line_height =  detect_avg_wh(all_meta[0:100], font_type)
-    #avg_char_width = 20
+    #avg_char_width = 30
     #avg_line_height = 40
     
     print 'Char avr width: ', avg_char_width
@@ -130,9 +135,10 @@ def export(all_meta):
     tline = []
     text = ''
     
-    sort = sorted(all_meta, key=lambda x: x['x'])
-    for n in sort:
-        print n['x'], n['y'], n['id'], n['char'], '===='
+    all_meta = sorted(all_meta, key=lambda x: x['y'])
+    #for n in all_meta:
+        #print n
+    #    print n['x'], n['y'], n['id'], n['char'], '===='
     
     # Sort and find lines
     m_len = len(all_meta)
@@ -142,21 +148,22 @@ def export(all_meta):
         
         dy = 0
         if i != m_len-1:
-        
+            
             if font_type ==  'Mxedruli':
                 y2 = all_meta[i+1]['y'] + all_meta[i+1]['lh']
                 y1 = all_meta[i]['y'] + all_meta[i]['lh']
-                dy = y2 - y1 #
+                dy = y2 - y1
+                v = all_meta[i]
+                print 'char:', v['char'], 'lh:', v['lh'], 'h:', v['h'], 'class:', v['class'], 'w:', v['w'], 'y:', v['y'], 'x:', v['x'], 'id:', v['id'], '\n'
             elif font_type == 'Mtavruli':
                 dy = all_meta[i+1]['y'] - all_meta[i]['y']
-            
+                
         if i == m_len-1 or dy >= avg_line_height:
             #space_cnt = 0
             for j in xrange(len(line)):
                 if line[j]['x'] - line[j-1]['x'] - line[j-1]['w'] > avg_char_width:
                     text += u' '
                     
-
                     # add space
                     space = line[j].copy()
                     space['char'] = u' '
@@ -168,6 +175,7 @@ def export(all_meta):
                 tline.append(line[j])
 
             text += u'\n'
+            #print text
             lines.append(tline)
             line = []
             tline = []
