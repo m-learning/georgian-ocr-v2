@@ -25,7 +25,7 @@ def paint():
 	fonts = list_available_fonts()
 	global img_counter
 
-	title_length = 20
+	title_length = 15
 
 	all_symbols = georgian + numbers + symbols
 
@@ -62,11 +62,13 @@ def list_available_fonts():
 		return font_names
 
 	# TODO: Make directory paths configurable
-	# font_names += [create_font_record(name, 'latin', file_name)
-	#                for (name, file_name) in parse_fonts_directory('bulk_fonts/latin.defunct')]
+	font_names += [create_font_record(name, 'latin', file_name)
+	               for (name, file_name) in parse_fonts_directory('bulk_fonts/latin')]
 
-	font_names += [create_font_record(name, 'unicode', file_name)
-	               for (name, file_name) in parse_fonts_directory('bulk_fonts/utf-8')]
+	# font_names += [create_font_record(name, 'unicode', file_name)
+	#                for (name, file_name) in parse_fonts_directory('bulk_fonts/utf-8.defunct')]
+
+	font_names = sorted(font_names, key=lambda c: c['file'])
 
 	return font_names
 
