@@ -10,4 +10,5 @@
         opencv-python
         scikit-image
         elasticsearch
+        python-Levenshtein
  
