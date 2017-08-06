@@ -109,8 +109,8 @@ def filter_by_size_distribution_step(chars):
 
     print 'Number of low occurence size parts removed', num_of_noise
     #print '---'
-    print width_hist
-    print height_hist
+    print 'Width distribution histogram', width_hist
+    print 'Height distribution histogram', height_hist
     #print '---'
 
     return resulting_chars

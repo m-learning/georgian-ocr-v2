@@ -202,9 +202,9 @@ def correct_words_with_scores(lines):
             word_alternatives = reorder_word_alternatives(word, word_alternatives)
             word = choose_best_match(w, word_alternatives)
           
-        text+=word
+        text += word
 
-      text=text.strip()+'\n'
+      text = text.strip()+'\n'
 
     return text
 

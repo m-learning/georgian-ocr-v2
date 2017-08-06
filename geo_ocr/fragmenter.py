@@ -10,7 +10,7 @@ from multiprocessing import Manager
 import file_operations as file_ops
 
 from scipy import ndimage
-from transform import deskew_image
+#from transform import deskew_image
 
 from skimage import color
 from skimage import filters
@@ -44,7 +44,7 @@ def do_fragmentation(file_path, debug = True):
 
     # load source image
     src_img = cv2.imread(file_path);
-    #src_img = deskew_image(src_img)
+    # src_img = deskew_image(src_img)
 
     #src_img = cv2.resize(src_img, (0, 0), fx = 1.5, fy = 1.5)
 
@@ -56,8 +56,8 @@ def do_fragmentation(file_path, debug = True):
     cv2.imwrite(("%s/a0 alias.png" % DEBUG_DIR), src_img*256)
     manager=Manager()
     imgs=manager.dict()
-    p1=Process(target=vanish_image,args=(src_img,75,0.2,imgs,"clean"))
-    p2=Process(target=vanish_image,args=(src_img,37,0.04,imgs,"noisy"))
+    p1=Process(target=vanish_image,args=(src_img,51,0.2,imgs,"clean"))
+    p2=Process(target=vanish_image,args=(src_img,27,0.04,imgs,"noisy"))
     p1.start()
     p2.start()
     p1.join()

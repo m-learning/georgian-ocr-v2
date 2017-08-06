@@ -1,0 +1,35 @@
+import image_operations as image_ops
+from predict_all import *
+
+
+def converter(each):
+    tmp = {}
+    tmp['y'] = each['y']
+    tmp['x'] = each['x']
+    tmp['w'] = each['w']
+    tmp['h'] = each['h']
+    tmp['id'] = each['id']
+    return tmp
+
+
+# recognize ? ! : % symbols
+def merge(lines, vanished_img):
+    for i in range(len(lines)):
+        j = 0
+        while j < len(lines[i]) - 1:
+            first = lines[i][j]
+            second = lines[i][j + 1]
+            if first['char'] != ' ' and (first['x'] + first['w'] - second['x'] > 6):
+                second['w'] = max(second['x'] + second['w'] - first['x'], first['w'])
+                second['h'] = max(first['y'] + first['h'], second['y'] + second['h']) - min(first['y'], second['y'])
+                second['x'] = first['x']
+                second['y'] = min(first['y'], second['y'])
+                lines[i].remove(first)
+
+                char_img = image_ops.crop_char_image(converter(second), vanished_img)
+                pairs = recognize_image(char_img.flatten())
+                second['char'] = pairs[0]['char']
+                second['score'] = pairs[0]['score'].item()
+                second["alternatives"] = [pairs[1], pairs[2], pairs[3]]
+            else:
+                j += 1
