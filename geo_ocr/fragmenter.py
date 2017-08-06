@@ -75,14 +75,11 @@ def do_fragmentation(file_path, debug = True):
 
 
 
-    #src_img=img_as_ubyte((src_img>200)*255)
-    src_img=img_as_ubyte((src_img>200)*255)
-    clean_img=img_as_ubyte((clean_img>200)*255)
+    src_img=img_as_ubyte(src_img>200)
+    clean_img=img_as_ubyte(clean_img>200)
+
     #thresh = filters.threshold_otsu(src_img)
     #src_img = img_as_ubyte(src_img >= thresh)
-
-    
-    print src_img
 
     cv2.imwrite(("%s/a1 vainshed.png" % DEBUG_DIR), src_img)
     cv2.imwrite(("%s/a1 clean.png" % DEBUG_DIR), clean_img)

@@ -46,7 +46,7 @@ def compare(text , photo):
 	print text , photo
 	try:
 		pic =open("tests/automate/output.txt" , "wr")
-		pic.write(geo_ocr.read(location+photo, False, False).encode('utf-8'))
+		pic.write(geo_ocr.read(location+photo, True, False).encode('utf-8'))
 		pic = open("tests/automate/output.txt"  , "r")
 		result = pic.read()
 		testresults.update({photo : ratio(data , result)})

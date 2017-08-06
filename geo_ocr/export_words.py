@@ -143,7 +143,7 @@ def export(all_meta):
     for i in xrange(m_len):
         line.append(all_meta[i])
         line.sort(key = lambda x: x['x'])
-        print ''.join([n["char"] for n in line])                  
+        #print ''.join([n["char"] for n in line])                  
         dy = 0
         if i != m_len-1:
             
@@ -152,7 +152,7 @@ def export(all_meta):
                 y1 = all_meta[i]['y'] + all_meta[i]['lh']
                 dy = y2 - y1
                 v = all_meta[i]
-                print 'char:', v['char'], 'lh:', v['lh'], 'h:', v['h'], 'class:', v['class'], 'w:', v['w'], 'y:', v['y'], 'x:', v['x'], 'id:', v['id'], '\n'
+                #print 'char:', v['char'], 'lh:', v['lh'], 'h:', v['h'], 'class:', v['class'], 'w:', v['w'], 'y:', v['y'], 'x:', v['x'], 'id:', v['id'], '\n'
             else: #elif font_type == 'Mtavruli':
                 dy = all_meta[i+1]['y'] - all_meta[i]['y']
                 

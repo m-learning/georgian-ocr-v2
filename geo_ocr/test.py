@@ -1,3 +1,5 @@
+#TODO: Remove this file or replace
+
 import predict
 import image_generator3 as ig
 import argparse

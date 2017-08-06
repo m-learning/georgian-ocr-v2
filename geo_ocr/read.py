@@ -46,7 +46,7 @@ def read(image_path, correct_words=False, debug=True):
     
     chars = filter.filter_background(chars, full_w, full_h)
     #chars = filter.filter_overlaps(chars)
-    other_chars= filter.filter_too_small(chars)
+    #other_chars= filter.filter_too_small(chars)
     other_chars=filter.filter_compare(chars,clean_img)
     chars = filter.filter_unproportional(chars)
     
