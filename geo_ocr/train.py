@@ -1,5 +1,6 @@
 from keras import backend as K
 from keras.callbacks import TensorBoard
+import tensorflow as tf
 
 import image_generator as ig
 import network
@@ -48,6 +49,9 @@ def train():
 
     (x_test, y_test) = ig.next_batch(TEST_SET_SIZE)
     score = model.evaluate(x_test, y_test)
+
+    tf.train.write_graph(K.get_session().graph, "results/data", "model.pb", False)
+
     print "\n"
     print 'Test score: {0:.4g}'.format(score[0])
     print 'Test accur: {0:.4g}'.format(score[1])
