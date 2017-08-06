@@ -142,12 +142,12 @@ def export(all_meta):
     m_len = len(all_meta)
     for i in xrange(m_len):
         line.append(all_meta[i])
-        line.sort(key = lambda x: x['x'])
+        line.sort(key=lambda x: x['x'])
         
         dy = 0
         if i != m_len-1:
             
-            if font_type ==  'Mxedruli':
+            if font_type == 'Mxedruli':
                 y2 = all_meta[i+1]['y'] + all_meta[i+1]['lh']
                 y1 = all_meta[i]['y'] + all_meta[i]['lh']
                 dy = y2 - y1
