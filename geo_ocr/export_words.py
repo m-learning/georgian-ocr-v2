@@ -100,7 +100,7 @@ def detect_avg_wh(all_meta, samp_chars=20):
     if len(middle_chars) == 0:
         avg_height = avg_width
     else:
-        avg_height = (sum(middle_chars) / len(middle_chars)) 
+        avg_height = (sum(middle_chars) / (1.1*len(middle_chars))) 
         
     return avg_width, avg_height
 
@@ -143,7 +143,7 @@ def export(all_meta):
     for i in xrange(m_len):
         line.append(all_meta[i])
         line.sort(key = lambda x: x['x'])
-        
+        print ''.join([n["char"] for n in line])                  
         dy = 0
         if i != m_len-1:
             

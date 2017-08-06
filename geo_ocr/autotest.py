@@ -56,7 +56,7 @@ def compare(text , photo):
 		total += ratio(data , result)
 	except Exception as e:
 		print "error ocured with ", text , photo, e
-		testresults.append({photo:0})
+		testresults.update({photo:0})
 	return total 
 for txt in textfiles:
 	for pic in photos:

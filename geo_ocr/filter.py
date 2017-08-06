@@ -222,15 +222,17 @@ def filter_outsized(line_metas, avg_width, avg_height):
 
 def filter_compare(chars,clean_img):
     new_chars=[]
+    count=0
     for char in chars:
-        
         clean_letter=np.invert(np.array(clean_img[char["y"]:(char["y"]+char["h"]),
                  char["x"]:(char["x"]+char["w"])],dtype=bool))
-        
+        print np.sum(clean_letter)/float(char["w"]*char["h"]),char["id"], np.sum(clean_letter)
         #print np.sum(clean_letter)/float((char["w"]*char["h"]))
         if (np.sum(clean_letter)/float(char["w"]*char["h"])>0.05):
             new_chars.append(char)
-    
+        else:
+            count+=1
+    print "Clean image compare filtere: "+str(count)
     return new_chars
 
 def filter_merge(chars_1,chars_2):

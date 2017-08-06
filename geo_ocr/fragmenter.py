@@ -44,26 +44,49 @@ def do_fragmentation(file_path, debug = True):
 
     # load source image
     src_img = cv2.imread(file_path);
-    src_img = deskew_image(src_img)
+    #src_img = deskew_image(src_img)
+
+    #src_img = cv2.resize(src_img, (0, 0), fx = 1.5, fy = 1.5)
+
+
 
     #src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
     cv2.imwrite(("%s/a0 scaled.png" % DEBUG_DIR), src_img)
-  
+    
+    cv2.imwrite(("%s/a0 alias.png" % DEBUG_DIR), src_img*256)
     manager=Manager()
     imgs=manager.dict()
-    p1=Process(target=vanish_image,args=(src_img,201,0.2,imgs,"clean"))
-    p2=Process(target=vanish_image,args=(src_img,101,0.04,imgs,"noisy"))
+    p1=Process(target=vanish_image,args=(src_img,75,0.2,imgs,"clean"))
+    p2=Process(target=vanish_image,args=(src_img,37,0.04,imgs,"noisy"))
     p1.start()
     p2.start()
     p1.join()
     p2.join()
     clean_img=img_as_ubyte(imgs["clean"])
+    #src_img=img_as_ubyte(imgs["noisy"])
     src_img=img_as_ubyte(imgs["noisy"])
     #clean_img = img_as_ubyte(vanish_image(src_img,201,0.2))
     #src_img = img_as_ubyte(vanish_image(src_img,101,0.04))
+
+
+
+    src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
+    clean_img = cv2.resize(clean_img, (0, 0), fx = 4, fy = 4)
+
+
+
+    #src_img=img_as_ubyte((src_img>200)*255)
+    src_img=img_as_ubyte((src_img>200)*255)
+    clean_img=img_as_ubyte((clean_img>200)*255)
+    #thresh = filters.threshold_otsu(src_img)
+    #src_img = img_as_ubyte(src_img >= thresh)
+
     
+    print src_img
+
     cv2.imwrite(("%s/a1 vainshed.png" % DEBUG_DIR), src_img)
     cv2.imwrite(("%s/a1 clean.png" % DEBUG_DIR), clean_img)
+
 
     # Find the contours
     _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)

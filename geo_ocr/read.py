@@ -88,7 +88,7 @@ def read(image_path, correct_words=False, debug=True):
     recognize_time=timeit.default_timer()-recognize_time
 
     start_time = timeit.default_timer()
-    chars = filter.filter_by_weights(chars)
+    #chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
     
     read_text, lines, avg_width, avg_height = export_words.export(chars)
