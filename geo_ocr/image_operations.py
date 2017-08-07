@@ -33,11 +33,7 @@ def downscale_proportionally(image, max_w, max_h):
     else:
        downscale_ratio = float(max_h) / h
 
-    try:
-      crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
-    except Exception, e:
-      print "Could not downscale image", e
-      crop_img = image
+    crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
     return crop_img
 
 

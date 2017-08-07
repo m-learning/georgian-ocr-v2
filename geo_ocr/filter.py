@@ -109,8 +109,8 @@ def filter_by_size_distribution_step(chars):
 
     print 'Number of low occurence size parts removed', num_of_noise
     #print '---'
-    print width_hist
-    print height_hist
+    print 'Width distribution histogram', width_hist
+    print 'Height distribution histogram', height_hist
     #print '---'
 
     return resulting_chars
@@ -119,7 +119,7 @@ def filter_by_size_distribution_step(chars):
 def filter_by_size_distribution(chars, full_w, full_h):
     num_of_too_small = 0
     for ch in chars:
-        if ch['w'] < 6 or ch['h'] < 6:
+        if ch['w'] < 10 or ch['h'] < 10:
             num_of_too_small += 1
 
     if not num_of_too_small:
@@ -222,15 +222,17 @@ def filter_outsized(line_metas, avg_width, avg_height):
 
 def filter_compare(chars,clean_img):
     new_chars=[]
+    count=0
     for char in chars:
-        
         clean_letter=np.invert(np.array(clean_img[char["y"]:(char["y"]+char["h"]),
                  char["x"]:(char["x"]+char["w"])],dtype=bool))
-        
+        #print np.sum(clean_letter)/float(char["w"]*char["h"]),char["id"], np.sum(clean_letter)
         #print np.sum(clean_letter)/float((char["w"]*char["h"]))
         if (np.sum(clean_letter)/float(char["w"]*char["h"])>0.05):
             new_chars.append(char)
-    
+        else:
+            count+=1
+    print "Clean image compare filter: "+str(count)
     return new_chars
 
 def filter_merge(chars_1,chars_2):

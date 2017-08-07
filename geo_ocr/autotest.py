@@ -46,7 +46,7 @@ def compare(text , photo):
     print text , photo
     try:
         pic =open("tests/automate/output.txt" , "wr")
-        pic.write(read.read(location+photo, False, False).encode('utf-8'))
+        pic.write(read.read(location+photo, True, False).encode('utf-8'))
         pic = open("tests/automate/output.txt"  , "r")
         result = pic.read()
         testresults.update({photo : ratio(data , result)})
@@ -57,7 +57,7 @@ def compare(text , photo):
     except Exception as e:
         print "error ocured with ", text , photo, e
         testresults.update({photo:0})
-    return total 
+    return total
 for txt in textfiles:
     for pic in photos:
         if os.path.splitext(os.path.basename(txt))[0] == os.path.splitext(os.path.basename(pic))[0]:			

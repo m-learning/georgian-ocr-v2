@@ -65,8 +65,8 @@ def read(image_path, correct_words=False, debug=True):
     print len(chars), 'chars exist'
 
     chars = filter.filter_background(chars, full_w, full_h)
-    # chars = filter.filter_overlaps(chars)
-    other_chars = filter.filter_too_small(chars)
+    #chars = filter.filter_overlaps(chars)
+    #other_chars= filter.filter_too_small(chars)
     other_chars = filter.filter_compare(chars, clean_img)
     chars = filter.filter_unproportional(chars)
 
@@ -92,8 +92,14 @@ def read(image_path, correct_words=False, debug=True):
     full_count = 0
 
     recognize_time = timeit.default_timer()
+    recognized_chars = []
     for char in chars:
-        char_img = image_ops.crop_char_image(char, vanished_img)
+        try:
+            char_img = image_ops.crop_char_image(char, vanished_img)
+        except Exception, e:
+            print "Could not crop image:", e
+            continue
+
         pairs = recognize_image(char_img.flatten())
         char['char'] = pairs[0]['char']
         char['score'] = pairs[0]['score'].item()
@@ -101,6 +107,9 @@ def read(image_path, correct_words=False, debug=True):
 
         full_score += char['score']
         full_count += 1
+
+        recognized_chars.append(char)
+
         if debug:
             print char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h'])
 
@@ -111,7 +120,10 @@ def read(image_path, correct_words=False, debug=True):
         print 'Avg score: %d' % (full_score * 100 / full_count)
     recognize_time = timeit.default_timer()-recognize_time
     start_time = timeit.default_timer()
-    chars = filter.filter_by_weights(chars)
+
+    chars = recognized_chars
+
+    #chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
 
     read_text, lines, avg_width, avg_height = export_words.export(chars)
