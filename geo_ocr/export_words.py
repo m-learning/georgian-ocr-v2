@@ -92,7 +92,7 @@ def detect_avg_wh(all_meta, samp_chars=20):
         avr_chars = avr_chars[-samp_chars:]
     
     avg_width = sum([n[1][1]['w'] for n in avr_chars])  / len(avr_chars)
-    avg_width *= 0.38
+    avg_width *= 0.4
 
     middle_chars = [n[1][1]['h'] for n in avr_chars
                       if n[1][1]['char'] in classes[1]+classes[3]]
@@ -145,18 +145,17 @@ def export(all_meta):
         line.sort(key=lambda x: x['x'])
         
         dy = 0
-        if i != m_len-1:
-            
+        if i != m_len-1 and i > 1: 
             if font_type == 'Mxedruli':
+                y1 = sum([n['y'] + n['lh'] for n in line]) / len(line)
                 y2 = all_meta[i+1]['y'] + all_meta[i+1]['lh']
-                y1 = all_meta[i]['y'] + all_meta[i]['lh']
                 dy = y2 - y1
                 v = all_meta[i]
-                print 'char:', v['char'], 'lh:', v['lh'], 'h:', v['h'], 'class:', v['class'], 'w:', v['w'], 'y:', v['y'], 'x:', v['x'], 'id:', v['id'], '\n'
+                #print 'char:', v['char'], 'lh:', v['lh'], 'h:', v['h'], 'class:', v['class'], 'w:', v['w'], 'y:', v['y'], 'x:', v['x'], 'id:', v['id'], '\n'
             else: #elif font_type == 'Mtavruli':
-                dy = all_meta[i+1]['y'] - all_meta[i]['y']
+                y1 = sum([n['y'] for n in line]) / len(line)
+                dy = all_meta[i+1]['y'] - y1
                 
-                    
         if i == m_len-1 or dy >= avg_line_height:
             #space_cnt = 0
             for j in xrange(len(line)):
@@ -182,24 +181,3 @@ def export(all_meta):
             
     return text, lines, avg_char_width, avg_line_height
     
-
-if __name__ == "__main__":
-  all_meta = read_meta(os.path.join(os.getcwd(),'results/meta/'))
-  
-  avg_line_height = 40
-  avg_char_width = 24
-  line_first_chars = get_line_first_chars(all_meta, avg_line_height)
-
-  final_text = ''
-  for first_char in line_first_chars:
-    all_line_chars = get_all_chars_from_line(all_meta, first_char, avg_line_height)
-  
-    words = split_line_with_words(all_line_chars, avg_char_width)
-    for w in words:
-      final_text += w + ' '
-
-    final_text+= '\n'
-
-  print final_text.encode('utf-8')
-
-
