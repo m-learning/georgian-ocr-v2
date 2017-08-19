@@ -147,7 +147,9 @@ def read(image_path, correct_words=False, debug=True):
     cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print "overall time: "+str(timeit.default_timer()-overall_time)
-    return lines  # read_text
+
+    return read_text 
+
 
 
 if __name__ == '__main__':
