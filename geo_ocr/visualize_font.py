@@ -12,7 +12,7 @@ import scipy.misc as misc
 latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
 georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
 numbers = u'1234567890'
-symbols = u'!*()-+=.,?;:"'
+symbols = u'!*()-+=.,?;:"%&[]{}\\/<>'
 
 font_names = []
 
@@ -61,12 +61,11 @@ def list_available_fonts():
 	if font_names:
 		return font_names
 
-	# TODO: Make directory paths configurable
 	font_names += [create_font_record(name, 'latin', file_name)
 	               for (name, file_name) in parse_fonts_directory('bulk_fonts/latin')]
 
-	# font_names += [create_font_record(name, 'unicode', file_name)
-	#                for (name, file_name) in parse_fonts_directory('bulk_fonts/utf-8.defunct')]
+	font_names += [create_font_record(name, 'unicode', file_name)
+	               for (name, file_name) in parse_fonts_directory('bulk_fonts/utf-8')]
 
 	font_names = sorted(font_names, key=lambda c: c['file'])
 
@@ -108,7 +107,8 @@ def get_empty_image(images_count, fonts_count, title_length):
 def generate_image(font, text, context, index, font_index):
 	if font is not None:
 		context.select_font_face(font['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-	context.set_font_size(48)
+	font_size = 48
+	context.set_font_size(font_size)
 	context.set_source_rgb(0, 0, 0)
 
 	if font is not None and font['type'] == 'latin' and text in georgian:
