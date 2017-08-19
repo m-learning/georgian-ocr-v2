@@ -105,10 +105,62 @@ def detect_avg_wh(all_meta, samp_chars=20):
     return avg_width, avg_height
 
 
-def export(all_meta):
+
+def makelines(all_meta, avg_height, font_type):
+    
+    lines = []
+    line = []
+    all_meta = sorted(all_meta, key=lambda x: x['y'])
+    
+    # Sort and find lines
+    m_len = len(all_meta)
+    for i in xrange(m_len):
+        
+        line.append(all_meta[i])
+        line.sort(key=lambda x: x['x'])
+        dy = 0
+        if i != m_len-1 and i > 1: 
+            if font_type == 'Mxedruli':
+                y1 = sum([n['y'] + n['lh'] for n in line]) / len(line)
+                y2 = all_meta[i+1]['y'] + all_meta[i+1]['lh']
+                dy = y2 - y1
+                v = all_meta[i]
+            else: #elif font_type == 'Mtavruli':
+                y1 = sum([n['y'] for n in line]) / len(line)
+                dy = all_meta[i+1]['y'] - y1
+                
+        if i == m_len-1 or dy >= avg_height:
+            lines.append(line)
+            line = []
+
+    return lines
+
+
+def addspaces(meta_lines, avg_width):
+    space_cnt = 0
+    new_meta_lines = []
+    for line in meta_lines:
+        tline = []
+        for j in xrange(len(line)):
+            if line[j]['x'] - line[j-1]['x'] - line[j-1]['w'] > avg_width:
+                
+                # add space
+                space = line[j].copy()
+                space['char'] = u' '
+                space['x'] += 1
+                tline.append(space)     
+                
+            tline.append(line[j])
+            
+        new_meta_lines.append(tline)
+        
+    return new_meta_lines
+
+            
+def export_lines(all_meta):
     
     all_meta = char_classify(all_meta)
-    all_meta = all_meta[::-1]
+    #all_meta = all_meta[::-1]
     
     font_type = find_font_type(all_meta)
     
@@ -121,62 +173,17 @@ def export(all_meta):
         print 'Font Type: ', font_type
         
     
-    avg_char_width, avg_line_height =  detect_avg_wh(all_meta[0:100])
+    avg_width, avg_height =  detect_avg_wh(all_meta[0:100])
     #avg_char_width = 30
     #avg_line_height = 40
     
-    print 'Char avr width: ', avg_char_width
-    print 'Char avr height: ', avg_line_height
-    
-    lines = []
-    line = []
-    tline = []
-    text = ''
-    
-    all_meta = sorted(all_meta, key=lambda x: x['y'])
-    #for n in all_meta:
-        #print n
-    #    print n['x'], n['y'], n['id'], n['char'], '===='
-    
-    # Sort and find lines
-    m_len = len(all_meta)
-    for i in xrange(m_len):
-        line.append(all_meta[i])
-        line.sort(key=lambda x: x['x'])
-        dy = 0
-        if i != m_len-1 and i > 1: 
-            if font_type == 'Mxedruli':
-                y1 = sum([n['y'] + n['lh'] for n in line]) / len(line)
-                y2 = all_meta[i+1]['y'] + all_meta[i+1]['lh']
-                dy = y2 - y1
-                v = all_meta[i]
-                #print 'char:', v['char'], 'lh:', v['lh'], 'h:', v['h'], 'class:', v['class'], 'w:', v['w'], 'y:', v['y'], 'x:', v['x'], 'id:', v['id'], '\n'
-            else: #elif font_type == 'Mtavruli':
-                y1 = sum([n['y'] for n in line]) / len(line)
-                dy = all_meta[i+1]['y'] - y1
-                
-        if i == m_len-1 or dy >= avg_line_height:
-            #space_cnt = 0
-            for j in xrange(len(line)):
-                if line[j]['x'] - line[j-1]['x'] - line[j-1]['w'] > avg_char_width:
-                    text += u' '
-                    
-                    # add space
-                    space = line[j].copy()
-                    space['char'] = u' '
-                    space['x'] += 1
-                    tline.append(space)
-                    
-                    
-                text += line[j]['char']
-                tline.append(line[j])
+    print 'Char avr width: ', avg_width
+    print 'Char avr height: ', avg_height
 
-            text += u'\n'
-            #print text
-            lines.append(tline)
-            line = []
-            tline = []
-            
-            
-    return text, lines, avg_char_width, avg_line_height
+    
+    lines = makelines(all_meta, avg_height, font_type)
+
+    #lines = addspaces(lines, avg_width)
+    
+    return lines, avg_width, avg_height
     

@@ -25,7 +25,7 @@ def merge(lines, vanished_img):
                 second['x'] = first['x']
                 second['y'] = min(first['y'], second['y'])
                 lines[i].remove(first)
-
+                
                 char_img = image_ops.crop_char_image(converter(second), vanished_img)
                 pairs = recognize_image(char_img.flatten())
                 second['char'] = pairs[0]['char']
