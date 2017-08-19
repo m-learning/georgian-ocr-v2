@@ -245,3 +245,47 @@ def filter_merge(chars_1,chars_2):
             chars_1.append(char_2)
     return chars_1
 
+
+def filter_out_of_line(lines):
+    new_lines=[]
+    ssst=""
+    faulty=['*','.','-','=',' ',',']
+    changed=True
+    print "---------------------------sadasd----------" 
+    #print lines[0][0]['char']
+    
+    for line in lines:
+        leng=len(line)         
+        for i in range(leng):
+            if line[leng-1-i]['char'] == ' ':
+                break
+        #if line[leng-i]['char']=='*':
+        if leng==1:
+            continue
+        if i>0:
+            if any(line[leng-i]['char']==char for char in faulty):
+                print line[leng-i]['char']
+                line=line[:leng-i]
+        new_lines.append(line)
+    lines=new_lines[:]
+    new_lines=[]
+    
+    for line in lines:
+        leng=len(line)         
+        for i in range(leng):
+            if line[i]['char'] == ' ':
+                print i
+                break
+        if i+1>0:
+            if any(line[i-1]['char']==char for char in faulty):
+                print line[i-1]['char']
+                line=line[i+1:]
+        new_lines.append(line)
+    for line in new_lines:
+        for char in line:
+            ssst+=char['char']
+            #print char['char']
+        #    print char
+        #print ssst
+    print "---------------------------sadasd----------" 
+    return new_lines

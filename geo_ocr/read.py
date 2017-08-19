@@ -133,7 +133,9 @@ def read(image_path, correct_words=False, debug=True):
 
     lines = export_words.addspaces(lines, avg_width)
     print 'xazebis raodenoba: ', len(lines)
-
+    
+    lines=filter.filter_out_of_line(lines)
+    
     if debug:
         line_debugger(lines, vanished_img)
         print_symbols(lines, vanished_img)
