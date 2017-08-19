@@ -9,7 +9,6 @@ import random
 from keras.preprocessing import image
 import os
 import argparse
-# TODO: Remove matplotlib requirement
 import matplotlib.image as mpimg
 from PIL import ImageFont
 import cv2
@@ -46,7 +45,7 @@ img_counter = 0
 latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
 georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
 numbers = u'1234567890'
-symbols = u'!*()-+=.,?;:"%&[]{}\\/<>'
+symbols = u'!*()-+=.,?;:"'
 
 GENERATED_IMAGES_DIR = "results/gen_imgs/"
 

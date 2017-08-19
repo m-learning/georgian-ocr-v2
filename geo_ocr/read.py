@@ -141,7 +141,7 @@ def read(image_path, correct_words=False, debug=True):
     if correct_words:
         read_text = wc.correct_words_with_scores(lines)
 
-    #print read_text
+    print read_text
     
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
