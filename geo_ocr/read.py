@@ -65,7 +65,7 @@ def read(image_path, correct_words=False, debug=True):
     print len(chars), 'chars exist'
 
     chars = filter.filter_background(chars, full_w, full_h)
-    #chars = filter.filter_overlaps(chars)
+    # chars = filter.filter_overlaps(chars)
     other_chars = filter.filter_compare(chars, clean_img)
     chars = filter.filter_unproportional(chars)
 
@@ -123,7 +123,7 @@ def read(image_path, correct_words=False, debug=True):
     
     chars = recognized_chars
     
-    #chars = filter.filter_by_weights(chars)
+    # chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
     
     lines, avg_width, avg_height = export_words.export_lines(chars)
@@ -147,7 +147,9 @@ def read(image_path, correct_words=False, debug=True):
     cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print "overall time: "+str(timeit.default_timer()-overall_time)
+
     return read_text 
+
 
 
 if __name__ == '__main__':
