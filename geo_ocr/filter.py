@@ -25,7 +25,7 @@ def filter_too_small(chars):
     num_of_noise = 0
     resulting_chars = []
     for ch in chars:
-        if ch['w'] < 6 or ch['h'] < 6:
+        if ch['w'] < 10 or ch['h'] < 10:
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
@@ -245,3 +245,35 @@ def filter_merge(chars_1,chars_2):
             chars_1.append(char_2)
     return chars_1
 
+
+def filter_out_of_line(lines):
+    changed=False
+    new_lines=[]
+    faulty=['*','.','-','=',' ',',']
+    #print lines[0][0]['char']
+    for line in lines:
+        leng=len(line)         
+        for i in range(leng):
+            if line[leng-1-i]['char'] == ' ':
+                break
+        if leng==1:
+            continue
+        if i>0 and leng>0:
+            if any(line[leng-i]['char']==char for char in faulty):
+                changed=True
+                line=line[:leng-i-1]
+        new_lines.append(line)
+    lines=new_lines[:]
+    new_lines=[]
+    
+    for line in lines:
+        leng=len(line)         
+        for i in range(leng):
+            if line[i]['char'] == ' ':
+                break
+        if i>0 and leng >0:
+            if any(line[i-1]['char']==char for char in faulty):
+                line=line[i+1:]
+                changed=True
+        new_lines.append(line)
+    return new_lines,changed

@@ -65,8 +65,7 @@ def read(image_path, correct_words=False, debug=True):
     print len(chars), 'chars exist'
 
     chars = filter.filter_background(chars, full_w, full_h)
-    #chars = filter.filter_overlaps(chars)
-    #other_chars= filter.filter_too_small(chars)
+    # chars = filter.filter_overlaps(chars)
     other_chars = filter.filter_compare(chars, clean_img)
     chars = filter.filter_unproportional(chars)
 
@@ -77,6 +76,7 @@ def read(image_path, correct_words=False, debug=True):
     # merge filters
     chars = filter.filter_merge(chars, other_chars)
     chars = filter.filter_overlaps(chars)
+    chars = filter.filter_too_small(chars)
 
     # detect % ? ! : symbols
     # chars = sorted(chars, key=lambda k: k['x'])
@@ -123,15 +123,19 @@ def read(image_path, correct_words=False, debug=True):
     
     chars = recognized_chars
     
-    #chars = filter.filter_by_weights(chars)
+    # chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
     
-    lines, avg_width, avg_height = export_words.export(chars)
+    lines, avg_width, avg_height = export_words.export_lines(chars)
     read_text = u''
     # detect ? ! : ; % symbols
     ms.merge(lines, vanished_img)
-    
+
+    lines = export_words.addspaces(lines, avg_width)
     print 'xazebis raodenoba: ', len(lines)
+   
+
+
 
     if debug:
         line_debugger(lines, vanished_img)
@@ -140,13 +144,19 @@ def read(image_path, correct_words=False, debug=True):
     if correct_words:
         read_text = wc.correct_words_with_scores(lines)
 
-    #print read_text
+        print read_text
+    
+    changed=True
+    while(changed):
+        lines,changed=filter.filter_out_of_line(lines)
     
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print "overall time: "+str(timeit.default_timer()-overall_time)
-    return lines #read_text 
+
+    return read_text 
+
 
 
 if __name__ == '__main__':
