@@ -3,6 +3,7 @@ import read
 import subprocess
 import os
 import sys
+import traceback
 from Levenshtein import ratio
 
 amount = 0
@@ -56,6 +57,7 @@ def compare(text , photo):
         total += ratio(data , result)
     except Exception as e:
         print "error ocured with ", text , photo, e
+        traceback.print_exc()
         testresults.update({photo:0})
     return total
 for txt in textfiles:
