@@ -9,6 +9,7 @@ import random
 from keras.preprocessing import image
 import os
 import argparse
+# TODO: Remove matplotlib requirement
 import matplotlib.image as mpimg
 from PIL import ImageFont
 import cv2

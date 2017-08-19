@@ -17,3 +17,18 @@ def generate_word_list(source, dest):
       for word in distinct_words:
           f.write(word+'\n')
       f.close()
+
+
+def remove_same_words(source_wordlist, dest):
+    distinct_words = {}
+
+    with open(source_wordlist) as f:
+        for word in f:
+            distinct_words[word] = 1
+
+
+
+    with open(dest, 'w') as f:
+        for word in distinct_words:
+            f.write(word)
+

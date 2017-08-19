@@ -66,7 +66,6 @@ def read(image_path, correct_words=False, debug=True):
 
     chars = filter.filter_background(chars, full_w, full_h)
     #chars = filter.filter_overlaps(chars)
-    #other_chars= filter.filter_too_small(chars)
     other_chars = filter.filter_compare(chars, clean_img)
     chars = filter.filter_unproportional(chars)
 
@@ -77,6 +76,7 @@ def read(image_path, correct_words=False, debug=True):
     # merge filters
     chars = filter.filter_merge(chars, other_chars)
     chars = filter.filter_overlaps(chars)
+    chars = filter.filter_too_small(chars)
 
     # detect % ? ! : symbols
     # chars = sorted(chars, key=lambda k: k['x'])

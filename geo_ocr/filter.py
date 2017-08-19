@@ -25,7 +25,7 @@ def filter_too_small(chars):
     num_of_noise = 0
     resulting_chars = []
     for ch in chars:
-        if ch['w'] < 6 or ch['h'] < 6:
+        if ch['w'] < 10 or ch['h'] < 10:
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
