@@ -19,7 +19,10 @@ def merge(lines, vanished_img):
         while j < len(lines[i]) - 1:
             first = lines[i][j]
             second = lines[i][j + 1]
-            if first['char'] != ' ' and (first['x'] + first['w'] - second['x'] > 6):
+            common_lenght = first['x'] + first['w'] - second['x']
+            min_with = min(first['w'], second['w'])
+            if first['char'] != ' ' and float(common_lenght) / min_with > 0.8:
+                print 'work!!!!!!!!!!!!!!!!!!!!!'
                 second['w'] = max(second['x'] + second['w'] - first['x'], first['w'])
                 second['h'] = max(first['y'] + first['h'], second['y'] + second['h']) - min(first['y'], second['y'])
                 second['x'] = first['x']
