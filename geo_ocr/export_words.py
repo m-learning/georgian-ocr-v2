@@ -22,6 +22,7 @@ def read_meta(meta_dir):
 
 classes = [u"ათიო", u"ბზმნპრსძშჩწხჰ", u"ჭქ", u"გდევკლჟტუფღყცჯ"]
 pmarks = u',.!\'":;'
+numbers = u'0123456789'
 
 def char_classify(all_meta):
     # ------------------------ 1 --------------------------
@@ -90,18 +91,32 @@ def detect_avg_wh(all_meta, samp_chars=20):
     
     if sample > samp_chars:
         avr_chars = avr_chars[-samp_chars:]
-    
-    avg_width = sum([n[1][1]['w'] for n in avr_chars])  / len(avr_chars)
-    avg_width *= 0.4
 
-    middle_chars = [n[1][1]['h'] for n in avr_chars
-                      if n[1][1]['char'] in classes[1]+classes[3]]
+    numbers_chars = [n[1][1]['w'] for n in avr_chars if n[1][1]['char']
+                           in numbers+u''.join(classes)]
     
-    if len(middle_chars) == 0:
+    avg_width = float(sum(numbers_chars))/len(numbers_chars)
+
+    if len(numbers_chars) > 40:
+        avg_width *= 0.4
+    else:
+        avg_width *= 0.3
+    
+    middle_chars = [n[1][1]['h'] for n in avr_chars
+                      if n[1][1]['char'] in classes[1] + classes[3]]
+    
+    number_list = [n[1][1]['h'] for n in avr_chars
+                      if n[1][1]['char'] in numbers]
+    
+    full_h = middle_chars + number_list
+    if len(full_h) < 20:
+        avg_height = (sum(full_h) / (1.5 * len(full_h)))
+    elif len(numbers) == 0 and middle_chars < numbers:
+        avg_height = (sum(full_h) / (1.1 * len(full_h)))
+    elif len(middle_chars) == 0:
         avg_height = avg_width
     else:
-        avg_height = (sum(middle_chars) / (1.1*len(middle_chars))) 
-        
+        avg_height = (sum(middle_chars) / (1.1 * len(middle_chars))) 
     return avg_width, avg_height
 
 
