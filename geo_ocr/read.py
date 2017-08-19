@@ -120,17 +120,17 @@ def read(image_path, correct_words=False, debug=True):
         print 'Avg score: %d' % (full_score * 100 / full_count)
     recognize_time = timeit.default_timer()-recognize_time
     start_time = timeit.default_timer()
-
+    
     chars = recognized_chars
-
+    
     #chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
-
-    read_text, lines, avg_width, avg_height = export_words.export(chars)
-
+    
+    lines, avg_width, avg_height = export_words.export(chars)
+    read_text = u''
     # detect ? ! : ; % symbols
     ms.merge(lines, vanished_img)
-
+    
     print 'xazebis raodenoba: ', len(lines)
 
     if debug:
@@ -140,13 +140,13 @@ def read(image_path, correct_words=False, debug=True):
     if correct_words:
         read_text = wc.correct_words_with_scores(lines)
 
-    print read_text
-
+    #print read_text
+    
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
-
+    
     print "overall time: "+str(timeit.default_timer()-overall_time)
-    return read_text
+    return lines #read_text 
 
 
 if __name__ == '__main__':
