@@ -256,13 +256,12 @@ def filter_out_of_line(lines):
         for i in range(leng):
             if line[leng-1-i]['char'] == ' ':
                 break
-        #if line[leng-i]['char']=='*':
         if leng==1:
             continue
         if i>0 and leng>0:
             if any(line[leng-i]['char']==char for char in faulty):
                 changed=True
-                line=line[:leng-i]
+                line=line[:leng-i-1]
         new_lines.append(line)
     lines=new_lines[:]
     new_lines=[]
