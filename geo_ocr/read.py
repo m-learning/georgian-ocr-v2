@@ -126,11 +126,12 @@ def read(image_path, correct_words=False, debug=True):
     #chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
     
-    lines, avg_width, avg_height = export_words.export(chars)
+    lines, avg_width, avg_height = export_words.export_lines(chars)
     read_text = u''
     # detect ? ! : ; % symbols
     ms.merge(lines, vanished_img)
-    
+
+    lines = export_words.addspaces(lines, avg_width)
     print 'xazebis raodenoba: ', len(lines)
 
     if debug:

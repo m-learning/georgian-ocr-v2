@@ -132,9 +132,9 @@ def makelines(all_meta, avg_height, font_type):
         if i == m_len-1 or dy >= avg_height:
             lines.append(line)
             line = []
-            
+
     return lines
-    
+
 
 def addspaces(meta_lines, avg_width):
     space_cnt = 0
@@ -148,7 +148,7 @@ def addspaces(meta_lines, avg_width):
                 space = line[j].copy()
                 space['char'] = u' '
                 space['x'] += 1
-                tline.append(space)        
+                tline.append(space)     
                 
             tline.append(line[j])
             
@@ -157,10 +157,10 @@ def addspaces(meta_lines, avg_width):
     return new_meta_lines
 
             
-def export(all_meta):
+def export_lines(all_meta):
     
     all_meta = char_classify(all_meta)
-    all_meta = all_meta[::-1]
+    #all_meta = all_meta[::-1]
     
     font_type = find_font_type(all_meta)
     
@@ -179,10 +179,11 @@ def export(all_meta):
     
     print 'Char avr width: ', avg_width
     print 'Char avr height: ', avg_height
+
     
     lines = makelines(all_meta, avg_height, font_type)
 
-    lines = addspaces(lines, avg_width)
+    #lines = addspaces(lines, avg_width)
     
     return lines, avg_width, avg_height
     
