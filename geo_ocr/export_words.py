@@ -71,7 +71,9 @@ def find_font_type(all_meta):
         return 'Mxedruli'
 
 
-def detect_avg_wh(all_meta, samp_chars=20):
+def detect_avg_wh(all_meta, samp_chars=200):
+    if len(all_meta) == 0:
+        return -1, -1
     
     # character counting
     chars = {}
@@ -81,8 +83,7 @@ def detect_avg_wh(all_meta, samp_chars=20):
             chars[meta['char']] = [1, meta]
         else:
             chars[meta['char']][0]+=1
-        
-        #print chars[meta['char']][0]
+    
     
     avr_chars = sorted(chars.items(), key = lambda x: x[1][0])
     
@@ -91,7 +92,7 @@ def detect_avg_wh(all_meta, samp_chars=20):
     
     if sample > samp_chars:
         avr_chars = avr_chars[-samp_chars:]
-
+    
     numbers_chars = [n[1][1]['w'] for n in avr_chars if n[1][1]['char']
                            in numbers+u''.join(classes)]
     
@@ -109,14 +110,14 @@ def detect_avg_wh(all_meta, samp_chars=20):
                       if n[1][1]['char'] in numbers]
     
     full_h = middle_chars + number_list
-    if len(full_h) < 20:
+    
+    if len(full_h) < 10:
         avg_height = (sum(full_h) / (1.5 * len(full_h)))
-    elif len(numbers) == 0 and middle_chars < numbers:
+    elif len(middle_chars) < len(number_list):
         avg_height = (sum(full_h) / (1.1 * len(full_h)))
-    elif len(middle_chars) == 0:
-        avg_height = avg_width
     else:
-        avg_height = (sum(middle_chars) / (1.1 * len(middle_chars))) 
+        avg_height = (sum(middle_chars) / (1.1 * len(middle_chars)))
+        
     return avg_width, avg_height
 
 
@@ -194,7 +195,7 @@ def export_lines(all_meta):
     
     print 'Char avr width: ', avg_width
     print 'Char avr height: ', avg_height
-
+    
     
     lines = makelines(all_meta, avg_height, font_type)
 
