@@ -21,7 +21,7 @@ def init_model(nb_classes, input_shape):
 
 	model.add(Flatten())
 
-	model.add(Dense(64))
+	model.add(Dense(128))
 	model.add(Activation('relu'))
 
 	model.add(Dense(nb_classes))
