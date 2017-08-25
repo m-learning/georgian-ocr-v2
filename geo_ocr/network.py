@@ -29,7 +29,9 @@ def init_model(nb_classes, input_shape):
 	model.add(Activation('relu'))
 	model.add(Dropout(0.2))
 
-
+	model.add(Dense(2048))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.2))
 
 	model.add(Dense(nb_classes))
 	model.add(Activation('softmax'))
