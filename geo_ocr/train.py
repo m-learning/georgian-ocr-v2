@@ -32,13 +32,13 @@ def train():
                               histogram_freq=0, write_graph=True,
                               write_images=True)
 
-    for epoch in range(0, iterations):
+    for epoch in range(0, iterations, 2):
         (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE,
                                            rotate=True, ud=True, lr=True,
                                            multi_fonts=True,
                                            multi_sizes=True, blur=False)
         model.fit(x_train, y_train,
-                  batch_size=32, epochs=epoch + 1,
+                  batch_size=32, epochs=epoch + nb_epoch,
                   verbose=1, validation_split=0.1,
                   callbacks=[tensorboard], initial_epoch=epoch)
 
