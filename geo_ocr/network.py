@@ -2,24 +2,18 @@ from keras.models import Sequential
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers import Dense, Dropout, Activation, Flatten
 
-nb_filters = 32
+nb_filters = 16
 pool_size = (2, 2)
-kernel_size1 = (3, 3)
-kernel_size2 = (5, 5)
-kernel_size3 = (7, 7)
+kernel_size = (5, 5)
 def init_model(nb_classes, input_shape):
 
 	model = Sequential()
 	
-	model.add(Convolution2D(nb_filters, kernel_size1, padding='valid', input_shape=input_shape, use_bias=True))
+	model.add(Convolution2D(nb_filters, kernel_size, padding='valid', input_shape=input_shape, use_bias=True))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
 
-	model.add(Convolution2D(nb_filters, kernel_size2, use_bias=True, padding='valid'))
-	model.add(Activation('relu'))
-	model.add(MaxPooling2D(pool_size=pool_size))
-
-	model.add(Convolution2D(nb_filters, kernel_size3, use_bias=True, padding='valid'))
+	model.add(Convolution2D(nb_filters, kernel_size, use_bias=True, padding='valid'))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
 
