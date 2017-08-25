@@ -45,7 +45,7 @@ img_counter = 0
 latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
 georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
 numbers = u'1234567890'
-symbols = u'!*()-+=.,?;:"%^/\[]{}<>'
+symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
 GENERATED_IMAGES_DIR = "results/gen_imgs/"
 

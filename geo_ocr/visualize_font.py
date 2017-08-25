@@ -12,7 +12,7 @@ import scipy.misc as misc
 latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
 georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
 numbers = u'1234567890'
-symbols = u'!*()-+=.,?;:"%&[]{}\\/<>'
+symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
 font_names = []
 
