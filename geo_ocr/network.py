@@ -4,7 +4,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 
 nb_filters = 32
 pool_size = (2, 2)
-kernel_size = (3, 3)
+kernel_size = (5, 5)
 
 
 def init_model(nb_classes, input_shape):
@@ -28,6 +28,8 @@ def init_model(nb_classes, input_shape):
 	model.add(Dense(2048))
 	model.add(Activation('relu'))
 	model.add(Dropout(0.2))
+
+
 
 	model.add(Dense(nb_classes))
 	model.add(Activation('softmax'))
