@@ -136,6 +136,10 @@ def read(image_path, correct_words=False, debug=True):
    
 
 
+    changed=True
+    while(changed):
+        lines,changed=filter.filter_out_of_line(lines)
+    #lines=filter.filter_out_of_line(lines)
 
     if debug:
         line_debugger(lines, vanished_img)
@@ -146,9 +150,6 @@ def read(image_path, correct_words=False, debug=True):
 
         print read_text
     
-    changed=True
-    while(changed):
-        lines,changed=filter.filter_out_of_line(lines)
     
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)

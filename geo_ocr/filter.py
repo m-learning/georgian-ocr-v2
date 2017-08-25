@@ -246,7 +246,7 @@ def filter_merge(chars_1,chars_2):
     return chars_1
 
 
-def filter_out_of_line(lines):
+def __filter_out_of_line(lines):
     changed=False
     new_lines=[]
     faulty=['*','.','-','=',' ',',']
@@ -277,3 +277,56 @@ def filter_out_of_line(lines):
                 changed=True
         new_lines.append(line)
     return new_lines,changed
+
+def filter_out_of_line(lines):
+    changed=False
+    new_lines=[]
+    faulty=['*','.','-','=',' ',',']
+
+    """
+    for line in lines:
+        spaces=[]
+        leng=len(line)
+        
+        for i in range(leng):
+            if line[i]['char'] == ' ':
+                spaces.append(i)
+        print spaces
+    """
+    for line in lines:
+        spaces=[]
+        leng=len(line)
+        
+        for i in range(leng):
+            if any(line[i]['char']==char for char in faulty):
+                if leng<=2:
+                    line=[]
+                    changed=True
+                    break
+                elif i>0 and line[i]['char']==' ':
+                    if line[i-1]['char']==' ': 
+                        line=line[:i]+line[i+1:]
+                        changed=True
+                        break
+                elif i<1:
+                    line=line[i+1:]
+                    changed=True
+                    break
+                elif i==leng-1:
+                    if line[i-1]['char']==' ':
+                        line=line[:i]
+                        changed=True
+                        break
+                elif i>0 and i<(leng-1):
+                    if line[i+1]['char']==' ' and line[i-1]['char']==' ':
+                        if line[i]['char']!='-':
+                            line=line[:i]+line[i+1:]
+                            changed=True
+                            break 
+        if line:
+            new_lines.append(line)
+    #print "dog"
+    #print new_lines 
+    return new_lines,changed
+
+
