@@ -21,13 +21,11 @@ def init_model(nb_classes, input_shape):
 
 	model.add(Flatten())
 
-	model.add(Dense(4096))
+	model.add(Dense(256))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.1))
 
-	model.add(Dense(4096))
+	model.add(Dense(256))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.1))
 
 	model.add(Dense(nb_classes))
 	model.add(Activation('softmax'))
