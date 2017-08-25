@@ -2,9 +2,9 @@ from keras.models import Sequential
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers import Dense, Dropout, Activation, Flatten
 
-nb_filters = 32
+nb_filters = 64
 pool_size = (2, 2)
-kernel_size = (7, 7)
+kernel_size = (5, 5)
 
 
 def init_model(nb_classes, input_shape):
