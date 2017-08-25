@@ -8,9 +8,9 @@ import network
 import os
 
 img_w = img_h = 64
-nb_epoch = 2
-iterations = 25
-TRAINING_SET_SIZE = 10000
+nb_epoch = 1
+iterations = 12
+TRAINING_SET_SIZE = 20000
 TEST_SET_SIZE = 1000
 
 K.set_learning_phase(1)
