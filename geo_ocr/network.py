@@ -6,7 +6,7 @@ nb_filters = 32
 pool_size = (2, 2)
 kernel_size1 = (3, 3)
 kernel_size2 = (5, 5)
-
+kernel_size3 = (7, 7)
 def init_model(nb_classes, input_shape):
 
 	model = Sequential()
@@ -16,6 +16,10 @@ def init_model(nb_classes, input_shape):
 	model.add(MaxPooling2D(pool_size=pool_size))
 
 	model.add(Convolution2D(nb_filters, kernel_size2, use_bias=True, padding='valid'))
+	model.add(Activation('relu'))
+	model.add(MaxPooling2D(pool_size=pool_size))
+
+	model.add(Convolution2D(nb_filters, kernel_size3, use_bias=True, padding='valid'))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
 
