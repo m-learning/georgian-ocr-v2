@@ -32,7 +32,7 @@ def train():
                               histogram_freq=0, write_graph=True,
                               write_images=True)
 
-    for epoch in range(0, iterations, 2):
+    for epoch in range(0, iterations, nb_epoch):
         (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE,
                                            rotate=True, ud=True, lr=True,
                                            multi_fonts=True,
