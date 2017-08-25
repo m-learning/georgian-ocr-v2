@@ -188,13 +188,13 @@ def paint_text(text, w, h,
     a = np.expand_dims(a, 0)
     if rotate:
         a = image.random_rotation(a, 7 * (w - top_left_x) / w + 1)
-    if spackle:
-        a = speckle(a)
+    #if spackle:
+    #    a = speckle(a)
 
     a = np.squeeze(a)
 
-    if blur:
-        ndimage.gaussian_filter(a, np.random.randint(0, 2), output=a)
+    #if blur:
+    #    ndimage.gaussian_filter(a, np.random.randint(0, 2), output=a)
 
     # Randomly reverse colors
     #if bool(random.getrandbits(1)):
