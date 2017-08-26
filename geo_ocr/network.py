@@ -11,11 +11,12 @@ def init_model(nb_classes, input_shape):
 	
 	model.add(Convolution2D(8, kernel_size, padding='valid', input_shape=input_shape, use_bias=True))
 	model.add(Activation('relu'))
-	model.add(MaxPooling2D(pool_size=pool_size))
+	#model.add(MaxPooling2D(pool_size=pool_size))
 
 	model.add(Convolution2D(32, kernel_size, use_bias=True, padding='valid'))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
+	model.add(Dropout(0.2))
 
 	model.add(Flatten())
 
