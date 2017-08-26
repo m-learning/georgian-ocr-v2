@@ -13,7 +13,7 @@ def init_model(nb_classes, input_shape):
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
 
-	model.add(Convolution2D(nb_filters, kernel_size, use_bias=True, padding='valid', strides = 2))
+	model.add(Convolution2D(nb_filters, kernel_size, use_bias=True, padding='valid'))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
 
