@@ -4,7 +4,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 
 nb_filters = 16
 pool_size = (2, 2)
-kernel_size = (5, 5)
+kernel_size = (3, 3)
 def init_model(nb_classes, input_shape):
 
 	model = Sequential()
