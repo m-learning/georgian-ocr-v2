@@ -13,13 +13,13 @@ def init_model(nb_classes, input_shape):
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
 
-	model.add(Convolution2D(16, kernel_size, use_bias=True, padding='valid'))
+	model.add(Convolution2D(32, kernel_size, use_bias=True, padding='valid'))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=pool_size))
 
 	model.add(Flatten())
 
-	model.add(Dense(256))
+	model.add(Dense(1024))
 	model.add(Activation('relu'))
 
 	model.add(Dense(nb_classes))
