@@ -43,7 +43,7 @@ def char_classify(all_meta):
         else:
             ch['class'] = -1
             ch['lh'] = ch['h']
-            
+        
         new_meta.append(ch)
     
     return new_meta
@@ -74,9 +74,10 @@ def find_font_type(all_meta):
 def detect_avg_wh(all_meta, samp_chars=200):
     if len(all_meta) == 0:
         return -1, -1
-    
+
     # character counting
     chars = {}
+    
     for meta in all_meta:
         #print meta['char']
         if meta['char'] not in chars:
@@ -92,17 +93,17 @@ def detect_avg_wh(all_meta, samp_chars=200):
     
     if sample > samp_chars:
         avr_chars = avr_chars[-samp_chars:]
-    
+            
     numbers_chars = [n[1][1]['w'] for n in avr_chars if n[1][1]['char']
                            in numbers+u''.join(classes)]
-    
-    avg_width = float(sum(numbers_chars))/len(numbers_chars)
 
-    if len(numbers_chars) > 40:
-        avg_width *= 0.4
+    avg_width = float(sum(numbers_chars))/len(numbers_chars)
+    
+    if len(numbers_chars) > 20:
+        avg_width *= 0.5
     else:
         avg_width *= 0.3
-    
+        
     middle_chars = [n[1][1]['h'] for n in avr_chars
                       if n[1][1]['char'] in classes[1] + classes[3]]
     
@@ -119,7 +120,6 @@ def detect_avg_wh(all_meta, samp_chars=200):
         avg_height = (sum(middle_chars) / (1.1 * len(middle_chars)))
         
     return avg_width, avg_height
-
 
 
 def makelines(all_meta, avg_height, font_type):
@@ -189,7 +189,7 @@ def export_lines(all_meta):
         print 'Font Type: ', font_type
         
     
-    avg_width, avg_height =  detect_avg_wh(all_meta[0:100])
+    avg_width, avg_height =  detect_avg_wh(all_meta, samp_chars = 200)
     #avg_char_width = 30
     #avg_line_height = 40
     
