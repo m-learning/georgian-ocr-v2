@@ -1,11 +1,26 @@
 from flask import Flask
-app = Flask(__name__)
 from flask import render_template
 from werkzeug.utils import secure_filename
 from flask import request
 from flask import jsonify
 import geo_ocr
 import os
+from flask_mail import Mail, Message
+
+app = Flask(__name__)
+mail=Mail(app)
+
+app.config.update(
+	DEBUG=True,
+	#EMAIL SETTINGS
+	MAIL_SERVER='smtp.gmail.com',
+	MAIL_PORT=465,
+	MAIL_USE_SSL=True,
+	MAIL_USERNAME = 'mlearning.no.reply@gmail.com',
+	MAIL_PASSWORD = '12398712',
+    MAIL_USE_TLS=False
+	)
+mail=Mail(app)
 
 @app.route('/')
 def index():
@@ -44,6 +59,15 @@ def api_read():
         debug=True)
     os.remove(path)
     return jsonify(text=recognized_text)
+
+@app.route("/send", methods=['POST'])
+def send():
+    subject = request.form['name']
+    sender = request.form['email']
+    msg = Message(subject, sender=sender, recipients=['rezo@thargi.com'])
+    msg.body = request.form['text']
+    mail.send(msg)
+    return "გაგზავნილია."
 
 
 
