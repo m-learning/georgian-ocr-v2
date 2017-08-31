@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask
 from flask import render_template
 from werkzeug.utils import secure_filename
@@ -64,7 +65,7 @@ def api_read():
 def send():
     subject = request.form['name']
     sender = request.form['email']
-    msg = Message(subject, sender=sender, recipients=['rezo@thargi.com'])
+    msg = Message(subject, sender=sender, recipients=['mail@test.com'])
     msg.body = request.form['text']
     mail.send(msg)
     return "გაგზავნილია."
