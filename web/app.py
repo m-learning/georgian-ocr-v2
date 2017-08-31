@@ -14,11 +14,11 @@ mail=Mail(app)
 app.config.update(
 	DEBUG=True,
 	#EMAIL SETTINGS
-	MAIL_SERVER='smtp.gmail.com',
+	MAIL_SERVER='smtp.test.com',
 	MAIL_PORT=465,
 	MAIL_USE_SSL=True,
-	MAIL_USERNAME = 'mlearning.no.reply@gmail.com',
-	MAIL_PASSWORD = '12398712',
+	MAIL_USERNAME = 'noreply@test.com',
+	MAIL_PASSWORD = '',
     MAIL_USE_TLS=False
 	)
 mail=Mail(app)
