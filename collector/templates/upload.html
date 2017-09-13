@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>OCR</title>
+<link type="text/css" rel="stylesheet" src="{{url_for('static', filename='css/main.css')}}" />
+</head>
+<body>
+<form action="upload" enctype="multipart/form-data" method="post">
+<input type="file" name="datafile" size="40" accept="image/*">
+</form>
+<script type="text/javascript">
+document.getElementsByTagName('INPUT')[0].addEventListener('change', function () {
+	this.parentNode.submit()
+})
+</script>
+</body>
+<html>
+

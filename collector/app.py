@@ -9,9 +9,11 @@ import json
 
 app = Flask(__name__)
 
+last_image = 0
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('upload.html')
 
 @app.route('/load', methods=['GET'])
 def load():
@@ -19,8 +21,19 @@ def load():
 	for i in range(randint(2, 10)):
 		images.append(read_image("images/" + str(randint(1, 2)) + ".jpg"))
 	
+	
+	global last_image
+	print(last_image)
+	
 	return jsonify(images)
 	
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+	global last_image
+	last_image += 1
+	return render_template('index.html')
+
 def read_image(src):
 	with open(src, "rb") as image_file:
 		data = image_file.read()
