@@ -98,6 +98,10 @@
 		87: 'ჭ'
 	}
 	
+	var otherSymbols = ['=', '-', ',', ';', ':', '!', '?', '.',
+						'\'', '"', '(', ')', '*', '%', '+',
+						'0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+	
 	var DEFAULT_BORDER = '0.1px solid grey'
 	var SELECTED_BORDER = '2px solid green'
 	var COMPLETED_COLOR = 'rgba(142, 230, 142, 0.2)'
@@ -285,6 +289,10 @@
 				value = shiftedKeyCodes[e.keyCode]
 			} else {
 				value = keyCodes[e.keyCode]
+			}
+			
+			if (!value && otherSymbols.indexOf(e.key) != -1) {
+				value = e.key
 			}
 			
 			clearTimeout(timeout)
