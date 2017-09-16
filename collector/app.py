@@ -6,19 +6,38 @@ import json
 
 app = Flask(__name__)
 
+UPLOADED_IMAGES_DIR = 'uploaded-images'
+
+last_image_path = 0
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+	global last_image_path
 	if request.method == 'GET':
-		return render_template('upload.html')
+		if last_image_path != 0:
+			return render_template('index.html')
+		else:
+			return render_template('upload.html')
 	elif request.method == 'POST' and 'image' in request.files:
+		filename = str(len(os.walk(UPLOADED_IMAGES_DIR).next()[2]) + 1)
+		last_image_path = os.path.join(UPLOADED_IMAGES_DIR, filename)
 		_file = request.files['image']
-		filename = str(len(os.walk('uploaded-images').next()[2]) + 1)
-        _file.save('uploaded-images/' + filename)
+        _file.save(last_image_path)
         print "File " + filename + " was uploaded successfully"
         return render_template('index.html')
 
 @app.route('/load', methods=['GET'])
 def load():
+	# TODO run read.py for last_image_path
+	# return json array of base64 strings of extracted images
+	global last_image_path
+	print last_image_path
+	
+	if not os.path.isfile(last_image_path):
+		print("File" + last_image_path + " not found")
+		return ""
+
+	# return random images temporarily
 	images = []
 	for i in range(randint(2, 10)):
 		images.append(read_image("images/" + str(randint(1, 2)) + ".jpg"))
@@ -29,6 +48,14 @@ def read_image(src):
 	with open(src, "rb") as image_file:
 		data = image_file.read()
 		return "data:image/jpeg;base64," + data.encode("base64")
+		
+		
+@app.route('/clear', methods=['GET'])
+def clear():
+	print "clear"
+	global last_image_path
+	last_image_path = 0
+	return ""
 
 @app.route("/save", methods=['POST'])
 def save():

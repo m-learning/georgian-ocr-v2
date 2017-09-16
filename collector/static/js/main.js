@@ -121,7 +121,12 @@
 	document.addEventListener('keydown', keyHandler, false)
 	
 	document.getElementById('new-button').addEventListener('click', function () {
-		location.href = "/"
+		var oReq = new XMLHttpRequest()
+		oReq.addEventListener("load", function () {
+			location.href = "/"
+		})
+		oReq.open("GET", "clear")
+		oReq.send()
 	})
 	
 	var saveButton = document.getElementById('save-button')
@@ -150,7 +155,7 @@
 		var formData = new FormData
 		formData.append('data', JSON.stringify(data))
 		
-		var oReq = new XMLHttpRequest();
+		var oReq = new XMLHttpRequest()
 		oReq.addEventListener("load", function () {
 			if (this.responseText == 'OK') {
 				init()
@@ -166,12 +171,14 @@
 	function init () {
 		containerDiv.innerHTML = ''
 		
-		var oReq = new XMLHttpRequest();
+		var oReq = new XMLHttpRequest()
 		oReq.addEventListener("load", function () {
 			var data
 			try {
 				data = JSON.parse(this.responseText)
-			} catch (ex) {}
+			} catch (ex) {
+				showMessage(':(')
+			}
 			
 			if (data) {
 				for (var i = 0; i < data.length; i++) {
@@ -234,7 +241,7 @@
 	function getInputIndex (el) {
 		for (var i = 0; i < containerDiv.children.length; i++) {
 			if (containerDiv.children[i].input == el) {
-				return i;
+				return i
 			}
 		}
 		
