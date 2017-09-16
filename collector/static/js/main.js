@@ -158,7 +158,6 @@
 		var oReq = new XMLHttpRequest()
 		oReq.addEventListener("load", function () {
 			if (this.responseText == 'OK') {
-				init()
 				showMessage('მონაცემები შენახულია')
 			}
 		})

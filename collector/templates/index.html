@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <title>OCR</title>
-<link type="text/css" rel="stylesheet" src="{{url_for('static', filename='css/main.css')}}" />
+<link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" />
 </head>
 <body style="border:0; margin: 0;">
-<div id="container" style="margin: 10px; "></div>
-<div id="message-div" style="display: none; width:600px; position: absolute; margin: auto; right:0; bottom: 50px; left:0; color: rgba(42, 130, 42, 1); font-size: 30px;"></div>
+<div id="container" style="margin: 10px;"></div>
+<div id="message-div" class="message"></div>
 <button id="save-button" style="width: 200px; height: 100px; position:absolute; right:10px; bottom:10px; font-size: 30px;">შენახვა</button>
 <button id="new-button" style="width: 200px; height: 100px; position:absolute; left:10px; bottom:10px; font-size: 30px;">ახალი</button>
 <script type="text/javascript" src="{{url_for('static', filename='js/main.js')}}"></script>
 </body>
 <html>
-

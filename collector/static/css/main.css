@@ -3,3 +3,18 @@ body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 }
+
+.message {
+    display: none;
+    text-align: center;
+    background-color: rgba(42, 130, 42, 0.1);
+    padding: 30px;
+    z-index: 1;
+    position: absolute;
+    margin: auto;
+    right:0;
+    bottom: 130px;
+    left:0;
+    color: rgba(42, 130, 42, 1);
+    font-size: 30px;
+}

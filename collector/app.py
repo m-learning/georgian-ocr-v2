@@ -3,6 +3,10 @@ from random import randint
 import os
 import base64
 import json
+import sys
+
+sys.path.insert(0, '../geo_ocr/')
+import read
 
 app = Flask(__name__)
 
@@ -37,6 +41,9 @@ def load():
 		print("File" + last_image_path + " not found")
 		return ""
 
+	_, words = read.read(last_image_path)
+	print words
+	
 	# return random images temporarily
 	images = []
 	for i in range(randint(2, 10)):
