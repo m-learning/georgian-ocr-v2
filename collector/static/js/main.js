@@ -186,7 +186,9 @@
 	}
 	
 	function selectFirstInput () {
-		selectInput(containerDiv.children[0].input)
+		if (containerDiv.children.length) {
+			selectInput(containerDiv.children[0].input)
+		}
 	}
 	
 	function selectInput (input) {

@@ -1,7 +1,4 @@
-from flask import Flask
-from flask import render_template
-from flask import jsonify
-from flask import request
+from flask import Flask, request, render_template, jsonify
 from random import randint
 import os
 import base64
@@ -9,11 +6,16 @@ import json
 
 app = Flask(__name__)
 
-last_image = 0
-
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('upload.html')
+	if request.method == 'GET':
+		return render_template('upload.html')
+	elif request.method == 'POST' and 'image' in request.files:
+		_file = request.files['image']
+		filename = str(len(os.walk('uploaded-images').next()[2]) + 1)
+        _file.save('uploaded-images/' + filename)
+        print "File " + filename + " was uploaded successfully"
+        return render_template('index.html')
 
 @app.route('/load', methods=['GET'])
 def load():
@@ -21,19 +23,8 @@ def load():
 	for i in range(randint(2, 10)):
 		images.append(read_image("images/" + str(randint(1, 2)) + ".jpg"))
 	
-	
-	global last_image
-	print(last_image)
-	
 	return jsonify(images)
 	
-
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
-	global last_image
-	last_image += 1
-	return render_template('index.html')
-
 def read_image(src):
 	with open(src, "rb") as image_file:
 		data = image_file.read()
