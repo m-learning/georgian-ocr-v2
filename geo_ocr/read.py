@@ -10,6 +10,7 @@ import timeit
 import image_operations as image_ops
 import file_operations as file_ops
 import merge_symbols as ms
+import char_operations as co
 
 LETTERS_DIR = "results/letters"
 
@@ -134,8 +135,6 @@ def read(image_path, correct_words=False, debug=True):
     lines = export_words.addspaces(lines, avg_width)
     print 'xazebis raodenoba: ', len(lines)
    
-
-
     changed=True
     while(changed):
         lines,changed=filter.filter_out_of_line(lines)
@@ -147,9 +146,9 @@ def read(image_path, correct_words=False, debug=True):
 
     if correct_words:
         read_text = wc.correct_words_with_scores(lines)
-
-        print read_text
+    else: read_text = co.lines_to_text(lines)
     
+    print read_text
     
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)

@@ -4,6 +4,7 @@ import urllib2
 import json
 import Levenshtein as lev
 import copy
+import char_operations as co
 
 permitted_chars = u"აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ"
 
@@ -22,7 +23,7 @@ def find_matching_words(word):
         print 'Word is too long to find alternatives'
         return []
 
-    url = "http://ocr.mlearning.ge:9200/_search"
+    url = "http://localhost:9200/_search"
     data = {'size':20, 'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
     req = urllib2.Request(url, json.dumps(data), {'Content-Type': 'application/json'})
     f = urllib2.urlopen(req)
@@ -38,61 +39,6 @@ def find_matching_words(word):
         })
 
     return results
-
-
-def is_punctuation(line, position):
-    for i in range(position, len(line)):
-        meta = line[i]
-        if meta['char'] in permitted_chars:
-            return False
-        elif meta['char'] == u' ':
-            return True
-
-    return True
-
-def take_word_from_line(line, position):
-    # If first char is punctuation, return as separate word
-    first_char = line[position]
-    if first_char['char'] not in permitted_chars: 
-        return [[line[position]], position+1]
-    
-    word_metas=[]
-    for index in range(position, len(line)):
-        meta = line[index]
-        if meta['char'] == u' ':
-            return [word_metas, index]
-        if meta['char'] not in permitted_chars:
-#            print 'Checking punctuation', word_from_meta_array(word_metas)
-            if is_punctuation(line, index):
-                return [word_metas, index]
-                
-        word_metas.append(meta)
-
-    return [word_metas, len(line)]
-
-
-def group_meta_as_words(lines):
-    word_lines = []
-    position = 0
-    for l in lines:
-        words = []
-        while position < len(l):
-            [word_metas, position] = take_word_from_line(l, position)
-            words.append(word_metas)
-
-        position = 0
-        word_lines.append(words)
-
-    return word_lines
-
-
-def word_from_meta_array(word_meta):
-    word = u''
-    for meta in word_meta:
-#        print meta['char'], meta['score'], meta['alternatives'][0]['char'], meta['alternatives'][1]['char'],meta['alternatives'][2]['char']
-        word += meta['char']
-
-    return word
 
 
 def replacing_letter_is_wrong(char_meta, replacing_letter):
@@ -113,7 +59,7 @@ def deleting_letter_is_wrong(char_meta):
 
 def choose_best_match(word_meta, word_alternatives):
     #word_alternatives = sort_word_alternatives(word_alternatives)
-    read_word = word_from_meta_array(word_meta)
+    read_word = co.word_from_meta_array(word_meta)
 #    print "Checking -- ", read_word
     chosen_word = read_word
 
@@ -191,12 +137,12 @@ def reorder_word_alternatives(read_word, word_alternatives):
 
 
 def correct_words_with_scores(lines):
-    word_lines = group_meta_as_words(lines)
+    word_lines = co.group_meta_as_words(lines)
 
     text = ''
     for l in word_lines:
       for w in l:
-        word = word_from_meta_array(w)
+        word = co.word_from_meta_array(w)
         if len(w) > 1:
             word_alternatives = find_matching_words(word)
             word_alternatives = reorder_word_alternatives(word, word_alternatives)
