@@ -43,10 +43,24 @@ def read_image(src):
 def save():
 	data = json.loads(request.form['data'])
 	for i in range(len(data)):
-		img = base64.decodestring(data[i].get("image"))
-		f = open("results/" + data[i].get("result") + ".png", "w")
-		f.write(img)
-		f.close()
+		
+		result = data[i].get("result")
+		if result == ".":
+			result = "dot_and_others"
+
+		directory = "training-data/" + result
+
+		if os.path.isdir(directory):
+			try:
+				img = base64.decodestring(data[i].get("image"))
+				files_count = len(os.walk(directory).next()[2])
+				file_path = directory + "/" + str(files_count + 1) + ".png"
+				f = open(file_path, "w")
+				f.write(img)
+				f.close()
+				print "Image was written sucessfully in " + directory
+			except:
+				print "Could not write image in " + directory
 
 	return "OK"
     
