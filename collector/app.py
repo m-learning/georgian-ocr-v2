@@ -4,6 +4,7 @@ import os
 import base64
 import json
 import sys
+import cv2
 
 sys.path.insert(0, '../geo_ocr/')
 import read
@@ -11,6 +12,7 @@ import read
 app = Flask(__name__)
 
 UPLOADED_IMAGES_DIR = 'uploaded-images'
+RESULT_IMAGES_DIR = 'result-images'
 
 last_image_path = 0
 
@@ -34,23 +36,26 @@ def index():
 def load():
 	# TODO run read.py for last_image_path
 	# return json array of base64 strings of extracted images
-	global last_image_path
-	print last_image_path
-	
-	if not os.path.isfile(last_image_path):
+    global last_image_path
+    print last_image_path
+
+    if not os.path.isfile(last_image_path):
 		print("File" + last_image_path + " not found")
 		return ""
 
-	_, words = read.read(last_image_path)
-	print words
-	
-	# return random images temporarily
-	images = []
-	for i in range(randint(2, 10)):
-		images.append(read_image("images/" + str(randint(1, 2)) + ".jpg"))
-	
-	return jsonify(images)
-	
+    filenames = []
+    char_images = read.read(last_image_path)
+    for i in range(len(char_images)):
+        filename = RESULT_IMAGES_DIR + "/" + str(i) + ".png"
+        filenames.append(filename)
+        cv2.imwrite(filename, char_images[i])
+
+    images = []
+    for filename in filenames:
+        images.append(read_image(filename))
+    
+    return jsonify(images)
+
 def read_image(src):
 	with open(src, "rb") as image_file:
 		data = image_file.read()
