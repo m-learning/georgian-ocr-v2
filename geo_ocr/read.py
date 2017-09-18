@@ -159,6 +159,84 @@ def read(image_path, correct_words=False, debug=True):
 
 
 
+
+
+
+def read_lines(image_path, debug=True):
+    file_ops.create_clean_dir(LETTERS_DIR)
+
+    if not os.path.isfile(image_path):
+        print("Files does not exists")
+        return
+
+    chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(image_path, debug=debug)
+    # TODO: Line detector
+
+    print len(chars), 'chars exist'
+
+    chars = filter.filter_background(chars, full_w, full_h)
+    # chars = filter.filter_overlaps(chars)
+    other_chars = filter.filter_compare(chars, clean_img)
+    chars = filter.filter_unproportional(chars)
+
+    # TODO: Fix for images without noise
+    chars = filter.filter_by_size_distribution(chars, full_w, full_h)
+    # chars = filter.filter_out_of_average(chars)
+
+    # merge filters
+    chars = filter.filter_merge(chars, other_chars)
+    chars = filter.filter_overlaps(chars)
+    chars = filter.filter_too_small(chars)
+
+    # detect % ? ! : symbols
+    # chars = sorted(chars, key=lambda k: k['x'])
+
+    print len(chars), 'chars left after filtering'
+
+    # if you want to see filtered image uncomment next 4 lines
+    # restored_image = restore_image(chars, full_h, full_w)
+    # plt.imshow(restored_image)
+    # cv2.imwrite('/home/shota/image.png', restored_image)
+    # plt.show()
+    full_count = 0
+
+    for char in chars:
+        try:
+            char_img = image_ops.crop_char_image(char, vanished_img)
+        except Exception, e:
+            print "Could not crop image:", e
+            continue
+
+        full_count += 1
+
+    #chars = filter.filter_by_possible_alternatives(chars)
+    
+    print chars
+    
+    
+    lines, avg_width, avg_height = export_words.export_lines(chars)
+    return 1
+    ms.merge(lines, vanished_img)
+
+    lines = export_words.addspaces(lines, avg_width)
+    print 'xazebis raodenoba: ', len(lines)
+    print lines
+   
+    changed=True
+    while(changed):
+        lines,changed=filter.filter_out_of_line(lines)
+    #lines=filter.filter_out_of_line(lines)
+
+    if debug:
+        line_debugger(lines, vanished_img)
+        print_symbols(lines, vanished_img)
+
+    restored_image = restore_image(chars, vanished_img)
+    cv2.imwrite('results/debug/filtered.png', restored_image)
+    return 0
+
+
+
 if __name__ == '__main__':
     args = init_arguments()
     read(args.image, args.correct_words, args.debug)
