@@ -18,6 +18,8 @@ bad_fonts = ['GLKupiura-Bold.ttf', 'GLKupiura-Light.ttf', 'GLKupiura-Medium.ttf'
             'GLMkafio-Book.ttf', 'GLMkafio-Thin.ttf', 'GLMkafio-Light.ttf', 'GLMkafio-Regular.ttf', 'GLMkafio-ExtraLight.ttf', 'GLMkafio-UltraLight.ttf',
 			 'GLParizuli-Bold.ttf', 'GLParizuli-Medium.ttf', 'GLParizuli-Regular.ttf']
 
+bad_font_7 = ['GLChonchkhi-Book.ttf', 'GLChonchkhi-Light.ttf', 'GLChonchkhi-Regular.ttf']
+
 font_names = []
 
 GENERATED_IMAGES_FILE = "../results/fonts.png"
@@ -122,7 +124,8 @@ def generate_image(font, text, context, index, font_index):
 	context.move_to(index * 64 + 16, font_index * 64 + 48)
 	if font is not None and (text == '/' or text == '\\') and font['file'] in bad_fonts:
                 context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-        
+        if font is not None and text == '7' and font['file'] in bad_font_7:
+                context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
         context.show_text(text)
 	# context.set_source_rgb(1, 1, 1)
 	
