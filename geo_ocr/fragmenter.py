@@ -64,12 +64,12 @@ def do_fragmentation(file_path, debug = True):
 
 
 
-    #src_img = cv2.erode(src_img, 1)
-    #cv2.imwrite(("%s/a1 eroded.png" % DEBUG_DIR), src_img)
 
     src_img = cv2.resize(src_img, (0, 0), fx = 4, fy = 4)
     clean_img = cv2.resize(clean_img, (0, 0), fx = 4, fy = 4)
 
+#    src_img = cv2.erode(src_img, None, iterations=1)
+#    cv2.imwrite(("%s/a1 eroded.png" % DEBUG_DIR), src_img)
 
 
     src_img=img_as_ubyte(src_img>200)
