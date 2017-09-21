@@ -14,6 +14,10 @@ georgian = u'აბგდევზთიკლმნოპჟრსტუფქ�
 numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
+bad_fonts = ['GLKupiura-Bold.ttf', 'GLKupiura-Light.ttf', 'GLKupiura-Medium.ttf', 'GLKupiura-Regular.ttf', 'GLKupiura-UltraLight.ttf',
+            'GLMkafio-Book.ttf', 'GLMkafio-Thin.ttf', 'GLMkafio-Light.ttf', 'GLMkafio-Regular.ttf', 'GLMkafio-ExtraLight.ttf', 'GLMkafio-UltraLight.ttf',
+			 'GLParizuli-Bold.ttf', 'GLParizuli-Medium.ttf', 'GLParizuli-Regular.ttf']
+
 font_names = []
 
 GENERATED_IMAGES_FILE = "results/fonts.png"
@@ -69,6 +73,7 @@ def list_available_fonts():
 
 	font_names = sorted(font_names, key=lambda c: c['file'])
 
+
 	return font_names
 
 
@@ -115,8 +120,12 @@ def generate_image(font, text, context, index, font_index):
 		text = latingeo[georgian.index(text)]
 
 	context.move_to(index * 64 + 16, font_index * 64 + 48)
+	if font is not None and (text == '/' or text == '\\') and font['file'] in bad_fonts:
+                context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        
+        context.show_text(text)
 	# context.set_source_rgb(1, 1, 1)
-	context.show_text(text)
+	
 
 
 if __name__ == '__main__':
