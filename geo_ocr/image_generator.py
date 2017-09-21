@@ -47,11 +47,9 @@ georgian = u'აბგდევზთიკლმნოპჟრსტუფქ�
 numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
-bad_fonts = ['GLKupiura-Bold.ttf', 'GLKupiura-Light.ttf', 'GLKupiura-Medium.ttf', 'GLKupiura-Regular.ttf', 'GLKupiura-UltraLight.ttf',
-             'GLMkafio-Book.ttf', 'GLMkafio-Thin.ttf', 'GLMkafio-Light.ttf', 'GLMkafio-Regular.ttf', 'GLMkafio-ExtraLight.ttf', 'GLMkafio-UltraLight.ttf',
-			 'GLParizuli-Bold.ttf', 'GLParizuli-Medium.ttf', 'GLParizuli-Regular.ttf']
+bad_fonts = ['GL Kupiura', 'GL Mkafio', 'GL Parizuli']
 
-bad_font_7 = ['GLChonchkhi-Book.ttf', 'GLChonchkhi-Light.ttf', 'GLChonchkhi-Regular.ttf']
+bad_font_7 = ['GL Chonchkhi']
 
 
 GENERATED_IMAGES_DIR = "results/gen_imgs/"
@@ -147,11 +145,10 @@ def paint_text(text, w, h,
 
     if font['type'] == 'latin' and text in georgian:
         text = latingeo[georgian.index(text)]
-    if font is not None and (text == '/' or text == '\\') and font['file'] in bad_fonts:
+    if font is not None and (text == '/' or text == '\\') and font['name'] in bad_fonts:
         context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-    if font is not None and text == '7' and font['file'] in bad_font_7:
-        context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-        
+    if font is not None and text == '7' and font['name'] in bad_font_7:
+        context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)        
     box = context.text_extents(text)
     text_w = box[2]
     text_h = box[3]

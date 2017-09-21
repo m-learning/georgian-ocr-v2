@@ -14,15 +14,13 @@ georgian = u'აბგდევზთიკლმნოპჟრსტუფქ�
 numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
-bad_fonts = ['GLKupiura-Bold.ttf', 'GLKupiura-Light.ttf', 'GLKupiura-Medium.ttf', 'GLKupiura-Regular.ttf', 'GLKupiura-UltraLight.ttf',
-            'GLMkafio-Book.ttf', 'GLMkafio-Thin.ttf', 'GLMkafio-Light.ttf', 'GLMkafio-Regular.ttf', 'GLMkafio-ExtraLight.ttf', 'GLMkafio-UltraLight.ttf',
-			 'GLParizuli-Bold.ttf', 'GLParizuli-Medium.ttf', 'GLParizuli-Regular.ttf']
+bad_fonts = ['GL Kupiura', 'GL Mkafio', 'GL Parizuli']
 
-bad_font_7 = ['GLChonchkhi-Book.ttf', 'GLChonchkhi-Light.ttf', 'GLChonchkhi-Regular.ttf']
+bad_font_7 = ['GL Chonchkhi']
 
 font_names = []
 
-GENERATED_IMAGES_FILE = "../results/fonts.png"
+GENERATED_IMAGES_FILE = "results/fonts.png"
 
 img_counter = 0
 
@@ -49,7 +47,6 @@ def paint():
 		GENERATED_IMAGES_FILE
 	)
 
-
 def parse_fonts_directory(fonts_path):
 	font_files = os.listdir(fonts_path)
 
@@ -68,10 +65,10 @@ def list_available_fonts():
 		return font_names
 
 	font_names += [create_font_record(name, 'latin', file_name)
-	               for (name, file_name) in parse_fonts_directory('../bulk_fonts/latin')]
+	               for (name, file_name) in parse_fonts_directory('bulk_fonts/latin')]
 
 	font_names += [create_font_record(name, 'unicode', file_name)
-	               for (name, file_name) in parse_fonts_directory('../bulk_fonts/utf-8')]
+	               for (name, file_name) in parse_fonts_directory('bulk_fonts/utf-8')]
 
 	font_names = sorted(font_names, key=lambda c: c['file'])
 
@@ -122,9 +119,9 @@ def generate_image(font, text, context, index, font_index):
 		text = latingeo[georgian.index(text)]
 
 	context.move_to(index * 64 + 16, font_index * 64 + 48)
-	if font is not None and (text == '/' or text == '\\') and font['file'] in bad_fonts:
+	if font is not None and (text == '/' or text == '\\') and font['name'] in bad_fonts:
                 context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-        if font is not None and text == '7' and font['file'] in bad_font_7:
+        if font is not None and text == '7' and font['name'] in bad_font_7:
                 context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
         context.show_text(text)
 	# context.set_source_rgb(1, 1, 1)
