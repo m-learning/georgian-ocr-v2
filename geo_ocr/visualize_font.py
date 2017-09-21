@@ -20,7 +20,7 @@ bad_fonts = ['GLKupiura-Bold.ttf', 'GLKupiura-Light.ttf', 'GLKupiura-Medium.ttf'
 
 font_names = []
 
-GENERATED_IMAGES_FILE = "results/fonts.png"
+GENERATED_IMAGES_FILE = "../results/fonts.png"
 
 img_counter = 0
 
@@ -66,10 +66,10 @@ def list_available_fonts():
 		return font_names
 
 	font_names += [create_font_record(name, 'latin', file_name)
-	               for (name, file_name) in parse_fonts_directory('bulk_fonts/latin')]
+	               for (name, file_name) in parse_fonts_directory('../bulk_fonts/latin')]
 
 	font_names += [create_font_record(name, 'unicode', file_name)
-	               for (name, file_name) in parse_fonts_directory('bulk_fonts/utf-8')]
+	               for (name, file_name) in parse_fonts_directory('../bulk_fonts/utf-8')]
 
 	font_names = sorted(font_names, key=lambda c: c['file'])
 
