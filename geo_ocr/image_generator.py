@@ -13,7 +13,10 @@ import matplotlib.image as mpimg
 from PIL import ImageFont
 import cv2
 import random
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 random.seed(55)
 np.random.seed(55)
 
