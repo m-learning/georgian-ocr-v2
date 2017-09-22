@@ -245,16 +245,14 @@ def next_batch(size, rotate=False, ud=False, lr=False,
                multi_fonts=False, multi_sizes=False, blur=False, save=False):
     create_dir_if_missing(GENERATED_IMAGES_DIR)
     images_paths = []
-
     for im_name in os.listdir(TRAIN_IMAGES_DIR):
-        for f_path in os.listdir(TRAIN_IMAGES_DIR + '/' + im_name):
-            images_paths.append(TRAIN_IMAGES_DIR + '/' + im_name + '/' + f_path)
+        for f_path in os.listdir(u'/'.join((TRAIN_IMAGES_DIR, im_name))):
+            images_paths.append(u'/'.join((TRAIN_IMAGES_DIR, im_name, f_path)))
 
 
     print "Generating {0:d} images...".format(size)
     x_train = np.zeros((size, img_w, img_h))
     y_train = [None] * size
-    print len(images_paths)
     if len(images_paths) < 4000:
         img_number = len(images_paths)
     else:
