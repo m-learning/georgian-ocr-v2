@@ -144,9 +144,13 @@ def read(image_path, correct_words=False, debug=True):
         line_debugger(lines, vanished_img)
         print_symbols(lines, vanished_img)
 
+    word_lines = co.group_meta_as_words(lines)
+
+    word_lines = co.merge_split_words(word_lines)
+
     if correct_words:
-        read_text = wc.correct_words_with_scores(lines)
-    else: read_text = co.lines_to_text(lines)
+        read_text = wc.correct_words_with_scores(word_lines)
+    else: read_text = co.word_lines_to_text(word_lines)
     
     print read_text
     
