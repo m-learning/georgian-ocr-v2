@@ -38,13 +38,13 @@ createDirIfNotExists(TRAINING_DATA_DIR)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        if 'last_image_path' in session:
-            if session['last_image_path'] != 0:
-                return render_template('index.html')
-            else:
-                return render_template('upload.html')
-        else:
-            return render_template('upload.html')
+        #if 'last_image_path' in session:
+        #    if session['last_image_path'] != 0:
+        #        return render_template('index.html')
+        #    else:
+        #        return render_template('upload.html')
+        #else:
+        return render_template('upload.html')
 
     elif request.method == 'POST' and 'image' in request.files:
         filename = str(len(os.walk(UPLOADED_IMAGES_DIR).next()[2]) + 1)
