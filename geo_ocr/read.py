@@ -264,4 +264,4 @@ def read_lines(image_path, debug=True):
 
 if __name__ == '__main__':
     args = init_arguments()
-    read_lines(args.image)
+    read(args.image, args.correct_words, args.debug)
