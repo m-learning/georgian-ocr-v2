@@ -5,7 +5,7 @@ from predict_all import *
 import word_corrector as wc
 import filter
 import sys
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import timeit
 import image_operations as image_ops
 import file_operations as file_ops
