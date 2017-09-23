@@ -238,7 +238,7 @@ def export_lines(all_meta):
         #plt.show() 
         
         #lines = addspaces(lines, avg_width)
-        if abs(avg_width / avg) > 1.5:
+        if avg < 0 or abs(avg_width / avg) < 0.2 or abs(avg_width / avg) > 1.5:
             avg = avg_width
     except IndexError as ierr:
         avg = avg_width
