@@ -35,32 +35,19 @@ createDirIfNotExists(UPLOADED_IMAGES_DIR)
 createDirIfNotExists(RESULT_IMAGES_DIR)
 createDirIfNotExists(TRAINING_DATA_DIR)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
-    if request.method == 'GET':
-        #if 'last_image_path' in session:
-        #    if session['last_image_path'] != 0:
-        #        return render_template('index.html')
-        #    else:
-        #        return render_template('upload.html')
-        #else:
-        return render_template('upload.html')
+    return render_template('index.html')
 
-    elif request.method == 'POST' and 'image' in request.files:
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    if request.method == 'POST' and 'image' in request.files:
         filename = str(len(os.walk(UPLOADED_IMAGES_DIR).next()[2]) + 1)
         last_image_path = os.path.join(UPLOADED_IMAGES_DIR, filename)
         _file = request.files['image']
         _file.save(last_image_path)
         print 'File ' + filename + ' was uploaded successfully'
-        session['last_image_path'] = last_image_path
-        return render_template('index.html')
-
-@app.route('/load', methods=['GET'])
-def load():
-    if 'last_image_path' in session:
-        last_image_path = session['last_image_path']
-    else:
-        last_image_path = ''
 
     if not os.path.isfile(last_image_path):
         print('File' + last_image_path + ' not found')
@@ -68,12 +55,12 @@ def load():
 
     filenames = []
 
-    char_images = read.read_lines(last_image_path)    
-    
+    char_images = read.read_lines(last_image_path)
+        
     for i in range(len(char_images)):
-        if char_images[i] == 'space':
+        if isinstance(char_images[i], basestring) and char_images[i] == 'space':
             filenames.append('space')
-        elif char_images[i] == 'newline':
+        elif isinstance(char_images[i], basestring) and char_images[i] == 'newline':
             filenames.append('newline')
         else:
             filename = os.path.join(RESULT_IMAGES_DIR, str(i) + '.png')
@@ -91,18 +78,12 @@ def load():
     
     return jsonify(images)
 
+
 def read_image(src):
     with open(src, 'rb') as image_file:
         data = image_file.read()
         return 'data:image/jpeg;base64,' + data.encode('base64')
         
-        
-@app.route('/clear', methods=['GET'])
-def clear():
-    print 'Cleared'
-    session['last_image_path'] = 0
-    return ''
-
 @app.route('/save', methods=['POST'])
 def save():
     data = json.loads(request.form['data'])
@@ -126,9 +107,10 @@ def save():
                 f.close()
             except:
                 print 'Could not write image in ' + directory
-    print 'Training data was saved sucessfully'
 
-    return 'OK'
-    
+    print 'Training data was saved sucessfully'
+    return ''
+
+
 if __name__ == '__main__':
     app.run()

@@ -246,8 +246,6 @@ def read_lines(image_path, debug=True):
                 print "Could not crop image:", e
                 continue
         char_imgs.append('newline')
-    
-    #print '\nlen\n\n', len(char_imgs)
 
     if debug:
         line_debugger(lines, vanished_img)
