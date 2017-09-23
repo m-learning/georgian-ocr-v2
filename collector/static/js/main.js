@@ -137,7 +137,7 @@
 	})
 	
 	var saveButton = document.getElementById('save-button')
-	saveButton.disabled = 'disabled'
+//	saveButton.disabled = 'disabled'
 	saveButton.addEventListener('click', function () {
 		var canvas = document.createElement('canvas')
 		var c = canvas.getContext('2d')
@@ -147,11 +147,11 @@
 		for (var i = 0; i < containerDiv.children.length; i++) {
 			var img = containerDiv.children[i].image
 			var input = containerDiv.children[i].input
-			if (input.disabled) continue
+			if (input.disabled || !input.value) continue
 			
 			canvas.width = img.naturalWidth	
 			canvas.height = img.naturalHeight
-			c.clearRect(0, 0, canvas.width,canvas.height)
+			c.clearRect(0, 0, canvas.width, canvas.height)
 			c.drawImage(img, 0, 0)
 			data.push({
 				image: canvas.toDataURL().substring(22),
@@ -346,10 +346,10 @@
 		
 		if (checkFinished()) {
 			finished = true
-			saveButton.disabled = ''
+			//saveButton.disabled = ''
 		} else {
 			finished = false
-			saveButton.disabled = 'disabled'
+			//saveButton.disabled = 'disabled'
 		}
 	}
 	

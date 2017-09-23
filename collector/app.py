@@ -24,7 +24,7 @@ UPLOADED_IMAGES_DIR = 'uploaded-images'
 RESULT_IMAGES_DIR = 'result-images'
 TRAINING_DATA_DIR = 'training-data'
 
-ALLOWED_CHARS = ['dot', '=', '-', ',', ';', ':', '!', '?',
+ALLOWED_CHARS = ['d', '=', '-', ',', ';', ':', '!', '?',
     '\'', '"', '(', ')', '*', '%', '+',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     u'ა', u'ბ', u'გ', u'დ', u'ე', u'ვ', u'ზ', u'თ', u'ი', u'კ', u'ლ', u'მ', u'ნ',
@@ -107,7 +107,7 @@ def clear():
 def save():
     data = json.loads(request.form['data'])
     for i in range(len(data)):
-        result = data[i].get('result').replace('.', 'dot')
+        result = data[i].get('result').replace('.', 'd')
         
         if result not in ALLOWED_CHARS:
             continue

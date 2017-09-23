@@ -35,3 +35,20 @@ body {
     font-weight: bold;
     padding-top: 100px;
 }
+
+.button {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    font-size: 30px;
+}
+
+.left {
+    float: left;
+    left: 20px;
+}
+
+.right {
+    float: right;
+    right: 20px;
+}
