@@ -230,7 +230,7 @@ def export_lines(all_meta):
         indexes = numpy.argsort(hist[0])[-2:]
         
         #print(hist[1][indexes[0]], hist[1][indexes[1]])
-        avg = (hist[1][indexes[0]] + hist[1][indexes[1]]) / 1.5
+        avg = (hist[1][indexes[0]] + hist[1][indexes[1]]) / 1.3
         print('Space treshold', avg)
         
         #plt.hist(spaces, bins=fl)  # arguments are passed to np.histogram
