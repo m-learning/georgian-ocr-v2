@@ -27,9 +27,9 @@ TRAINING_DATA_DIR = 'training-data'
 ALLOWED_CHARS = ['dot', '=', '-', ',', ';', ':', '!', '?',
     '\'', '"', '(', ')', '*', '%', '+',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'ა', 'ბ', 'გ', 'დ', 'ე', 'ვ', 'ზ', 'თ', 'ი', 'კ', 'ლ', 'მ', 'ნ',
-    'ო', 'პ', 'ჟ', 'რ', 'ს', 'ტ', 'უ', 'ფ', 'ქ', 'ღ', 'ყ', 'შ', 'ჩ',
-    'ც', 'ძ', 'წ', 'ჭ', 'ხ', 'ჯ', 'ჰ']
+    u'ა', u'ბ', u'გ', u'დ', u'ე', u'ვ', u'ზ', u'თ', u'ი', u'კ', u'ლ', u'მ', u'ნ',
+    u'ო', u'პ', u'ჟ', u'რ', u'ს', u'ტ', u'უ', u'ფ', u'ქ', u'ღ', u'ყ', u'შ', u'ჩ',
+    u'ც', u'ძ', u'წ', u'ჭ', u'ხ', u'ჯ', u'ჰ']
 
 createDirIfNotExists(UPLOADED_IMAGES_DIR)
 createDirIfNotExists(RESULT_IMAGES_DIR)
@@ -124,9 +124,9 @@ def save():
                 f = open(file_path, 'w')
                 f.write(img)
                 f.close()
-                print 'Image was written sucessfully in ' + directory
             except:
                 print 'Could not write image in ' + directory
+    print 'Training data was saved sucessfully'
 
     return 'OK'
     

@@ -136,6 +136,8 @@
 		oReq.send()
 	})
 	
+	var maskDiv = document.getElementById('mask-div')
+	
 	var saveButton = document.getElementById('save-button')
 	saveButton.disabled = 'disabled'
 	saveButton.addEventListener('click', function () {
@@ -198,9 +200,11 @@
 				}
 				
 				selectFirstInput()
+				maskDiv.style.display = 'none'
 			}
 		})
 		oReq.open("GET", "load")
+		maskDiv.style.display = 'block'
 		oReq.send()
 	}
 	
