@@ -285,8 +285,14 @@
 	}
 	
 	
+	
+	
 	var timeout
 	function keyHandler (e) {
+	    if (e.keyCode == 32 && e.target == document.body) {
+            e.preventDefault() // disabled space key
+        }
+	    
 		var value
 		
 		if (e.key === 'ArrowLeft') {
@@ -326,11 +332,13 @@
 				selectedInput.value += value
 				enableSelectedInput()
 				
+				/*
 				timeout = (function (input) {
 					return setTimeout(function () {
 						selectInput(input)
 					}, 1000)
 				})(selectedInput)
+				*/
 				
 				selectNextInput()
 			}
