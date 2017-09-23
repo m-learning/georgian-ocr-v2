@@ -160,8 +160,6 @@ def read(image_path, correct_words=False, debug=True):
 
 
 
-
-
 def read_lines(image_path, debug=True):
     file_ops.create_clean_dir(LETTERS_DIR)
 
@@ -198,24 +196,30 @@ def read_lines(image_path, debug=True):
     # plt.imshow(restored_image)
     # cv2.imwrite('/home/shota/image.png', restored_image)
     # plt.show()
+    
+    '''
     full_count = 0
+    char_imgs = []
 
     for char in chars:
         try:
             char_img = image_ops.crop_char_image(char, vanished_img)
+            char_imgs.append(char_img)
         except Exception, e:
             print "Could not crop image:", e
             continue
 
         full_count += 1
-
+    
+    print '\n\n\n\nfull_count=', full_count
+    print '\n\n\n\n\n\n\n\nchars\n\n', chars
+    '''
+    
+    #return char_imgs
     #chars = filter.filter_by_possible_alternatives(chars)
     
-    print chars
-    
-    
     lines, avg_width, avg_height = export_words.export_lines(chars)
-    return 1
+    print 'lines, avg_width, avg_height', lines, avg_width, avg_height
     ms.merge(lines, vanished_img)
 
     lines = export_words.addspaces(lines, avg_width)
@@ -226,6 +230,23 @@ def read_lines(image_path, debug=True):
     while(changed):
         lines,changed=filter.filter_out_of_line(lines)
     #lines=filter.filter_out_of_line(lines)
+    
+    
+    full_count = 0
+    char_imgs = []
+    for chars in lines:
+        for char in chars:
+            try:
+                char_img = image_ops.crop_char_image(char, vanished_img)
+                char_imgs.append(char_img)
+            except Exception, e:
+                print "Could not crop image:", e
+                continue
+
+            full_count += 1
+    
+    print '\n\n\n\n\n\n\n\nlines\n\n', lines
+    print '\n\n\n\n\n\n\n\nlen\n\n', len(char_imgs)
 
     if debug:
         line_debugger(lines, vanished_img)
@@ -233,10 +254,9 @@ def read_lines(image_path, debug=True):
 
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
-    return 0
-
+    return char_imgs
 
 
 if __name__ == '__main__':
     args = init_arguments()
-    read(args.image, args.correct_words, args.debug)
+    read_lines(args.image)

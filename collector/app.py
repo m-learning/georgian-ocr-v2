@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, session, request, render_template, jsonify, escape
+from flask import Flask, session, request, render_template, jsonify
 from random import randint
 import os
 import base64
@@ -50,33 +51,27 @@ def index():
         last_image_path = os.path.join(UPLOADED_IMAGES_DIR, filename)
         _file = request.files['image']
         _file.save(last_image_path)
-        print "File " + filename + " was uploaded successfully"
+        print 'File ' + filename + ' was uploaded successfully'
         session['last_image_path'] = last_image_path
         return render_template('index.html')
 
 @app.route('/load', methods=['GET'])
 def load():
-    # TODO run read.py for last_image_path
-    # return json array of base64 strings of extracted images
     if 'last_image_path' in session:
         last_image_path = session['last_image_path']
     else:
         last_image_path = ''
 
-    print last_image_path
-
     if not os.path.isfile(last_image_path):
-        print("File" + last_image_path + " not found")
-        return ""
+        print('File' + last_image_path + ' not found')
+        return ''
 
     filenames = []
 
-    #char_images = read.read_lines(last_image_path)    
-    #print char_images
-    return jsonify([])
+    char_images = read.read_lines(last_image_path)    
     
     for i in range(len(char_images)):
-        filename = os.path.join(RESULT_IMAGES_DIR, str(i) + ".png")
+        filename = os.path.join(RESULT_IMAGES_DIR, str(i) + '.png')
         filenames.append(filename)
         cv2.imwrite(filename, char_images[i])
 
@@ -87,24 +82,22 @@ def load():
     return jsonify(images)
 
 def read_image(src):
-    with open(src, "rb") as image_file:
+    with open(src, 'rb') as image_file:
         data = image_file.read()
-        return "data:image/jpeg;base64," + data.encode("base64")
+        return 'data:image/jpeg;base64,' + data.encode('base64')
         
         
 @app.route('/clear', methods=['GET'])
 def clear():
-    print "clear"
+    print 'Cleared'
     session['last_image_path'] = 0
-    return ""
+    return ''
 
-@app.route("/save", methods=['POST'])
+@app.route('/save', methods=['POST'])
 def save():
     data = json.loads(request.form['data'])
     for i in range(len(data)):
-        result = data[i].get("result")
-        if result == ".":
-            result = "dot"
+        result = data[i].get('result').replace('.', 'dot')
         
         if result not in ALLOWED_CHARS:
             continue
@@ -115,17 +108,17 @@ def save():
 
         if os.path.isdir(directory):
             try:
-                img = base64.decodestring(data[i].get("image"))
+                img = base64.decodestring(data[i].get('image'))
                 files_count = len(os.walk(directory).next()[2])
-                file_path = os.path.join(directory, str(files_count + 1) + ".png")
-                f = open(file_path, "w")
+                file_path = os.path.join(directory, str(files_count + 1) + '.png')
+                f = open(file_path, 'w')
                 f.write(img)
                 f.close()
-                print "Image was written sucessfully in " + directory
+                print 'Image was written sucessfully in ' + directory
             except:
-                print "Could not write image in " + directory
+                print 'Could not write image in ' + directory
 
-    return "OK"
+    return 'OK'
     
 if __name__ == '__main__':
     app.run()
