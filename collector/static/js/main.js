@@ -165,7 +165,7 @@
 	
     var maskDiv = document.getElementById('mask-div')
     
-    document.getElementById('new-button').addEventListener('click', function () {
+    document.getElementById('new-button').addEventListener('mouseup', function () {
 	    document.getElementById('file-input').click()
 	})
     
