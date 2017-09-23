@@ -282,6 +282,7 @@ def filter_out_of_line(lines):
     changed=False
     new_lines=[]
     faulty=['*','.','-','=',' ',',']
+    faulty_middle=['*','.','!',',',':',';','{','}','(',')','?','[',']','[']
 
     """
     for line in lines:
@@ -322,7 +323,23 @@ def filter_out_of_line(lines):
                         if line[i]['char']!='-':
                             line=line[:i]+line[i+1:]
                             changed=True
-                            break 
+                            break
+
+            if any(line[i]['char']==char for char in faulty_middle) and i<leng-1:
+                if line[i+1]['char']!=' ':
+                    line=line[:i]+line[i+1:]
+                    changed=True
+                    break
+
+
+            if any(line[i]['char']==char for char in faulty_middle) and i>0:
+                if line[i-1]['char']==' ':
+                    line=line[:i]+line[i+1:]
+                    changed=True
+                    break
+
+
+
         if line:
             new_lines.append(line)
     #print "dog"
