@@ -223,12 +223,11 @@ def read_lines(image_path, debug=True):
         char['score'] = 0
     
     lines, avg_width, avg_height = export_words.export_lines(chars)
-    print 'lines, avg_width, avg_height', lines, avg_width, avg_height
+   #print 'lines, avg_width, avg_height', lines, avg_width, avg_height
     ms.merge(lines, vanished_img)
 
     lines = export_words.addspaces(lines, avg_width)
     print 'xazebis raodenoba: ', len(lines)
-    print lines
    
     changed=True
     while(changed):
@@ -250,8 +249,7 @@ def read_lines(image_path, debug=True):
                 continue
         char_imgs.append('newline')
     
-    print '\n\n\n\n\n\n\n\nlines\n\n', lines
-    print '\n\n\n\n\n\n\n\nlen\n\n', len(char_imgs)
+    #print '\nlen\n\n', len(char_imgs)
 
     if debug:
         line_debugger(lines, vanished_img)

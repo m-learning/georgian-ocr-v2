@@ -28,4 +28,10 @@ body {
     background-color: rgba(128, 128, 128, 0.7);
     display: none;
     z-index: 2;
+    text-align: center;
+    color: #FFFFFF;
+    padding-top: 100px;
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 100px;
 }

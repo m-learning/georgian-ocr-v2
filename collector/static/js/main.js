@@ -136,8 +136,6 @@
 		oReq.send()
 	})
 	
-	var maskDiv = document.getElementById('mask-div')
-	
 	var saveButton = document.getElementById('save-button')
 	saveButton.disabled = 'disabled'
 	saveButton.addEventListener('click', function () {
@@ -174,6 +172,8 @@
 		oReq.send(formData)
 	})
 	
+    var maskDiv = document.getElementById('mask-div')
+	
 	init()
 	
 	function init () {
@@ -200,11 +200,11 @@
 				}
 				
 				selectFirstInput()
-				maskDiv.style.display = 'none'
+				hideMask()
 			}
 		})
 		oReq.open("GET", "load")
-		maskDiv.style.display = 'block'
+		showMask('მიმდინარეობს სურათის დამუშავება...')
 		oReq.send()
 	}
 	
@@ -368,5 +368,15 @@
 		setTimeout(function () {
 			div.style.display = 'none'
 		}, 3000)
+	}
+	
+	function showMask (msg) {
+	    maskDiv.style.display = 'block'
+	    maskDiv.innerHTML = msg
+    }
+    
+    function hideMask () {
+	    maskDiv.style.display = 'none'
+	    maskDiv.innerHTML = ''
 	}
 })()
