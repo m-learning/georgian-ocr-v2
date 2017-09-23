@@ -13,7 +13,10 @@ import matplotlib.image as mpimg
 from PIL import ImageFont
 import cv2
 import random
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 random.seed(55)
 np.random.seed(55)
 
@@ -47,7 +50,14 @@ georgian = u'აბგდევზთიკლმნოპჟრსტუფქ�
 numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
+bad_fonts = ['GL Kupiura', 'GL Mkafio', 'GL Parizuli']
+
+bad_font_7 = ['GL Chonchkhi']
+
+TRAIN_IMAGES_DIR = "training_data"
+
 GENERATED_IMAGES_DIR = "results/gen_imgs/"
+
 
 def parse_fonts_directory(fonts_path):
     font_files = os.listdir(fonts_path)
@@ -61,9 +71,11 @@ def parse_fonts_directory(fonts_path):
 
 
 def create_font_record(name, font_type):
-    return { 'name': name, 'type': font_type }
+    return {'name': name, 'type': font_type}
 
 font_names = []
+
+
 def list_available_fonts():
     global font_names
 
@@ -104,89 +116,103 @@ def find_max_font_size(context, text, max_w, max_h):
         h = box[2]
 
     return int(font_size)
-    
 
-def paint_text(text, w, h,
+count = 1
+def paint_text(text, w, h, input_img=None,
                rotate=False, ud=False, lr=False, multi_fonts=False,
                multi_sizes=False, save=False, spackle=False, blur=False):
+    if input_img is None:
+        surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
+        with cairo.Context(surface) as context:
+            context.set_source_rgb(1, 1, 1)  # White
+            context.paint()
+        fonts = list_available_fonts()
 
-    surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
-    with cairo.Context(surface) as context:
-        context.set_source_rgb(1, 1, 1)  # White
-        context.paint()
+        if multi_fonts:
+            font = np.random.choice(fonts)
+            context.select_font_face(font['name'],
+                                     cairo.FONT_SLANT_NORMAL,
+                                     np.random.choice([cairo.FONT_WEIGHT_BOLD,
+                                                       cairo.FONT_WEIGHT_NORMAL]))
+        else:
+            font = fonts[0]
+            context.select_font_face(font['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
 
-    fonts = list_available_fonts()
+        if (multi_sizes):
+            max_font_size = find_max_font_size(context, text, img_w, img_h) - 4
+            if not max_font_size:
+                print 'Damaged font', font['name'], 'for text', text
+                raise ValueError('Damaged font')
 
-    if multi_fonts:
-        font = np.random.choice(fonts)
-        context.select_font_face(font['name'],
-                                 cairo.FONT_SLANT_NORMAL,
-                                 np.random.choice([cairo.FONT_WEIGHT_BOLD,
-                                                   cairo.FONT_WEIGHT_NORMAL]))
+            context.set_font_size(random.randint(25, max_font_size))
+        else:
+            context.set_font_size(44)
+        if font['type'] == 'latin' and text in georgian:
+            text = latingeo[georgian.index(text)]
+        if font is not None and (text == '/' or text == '\\') and font['name'] in bad_fonts:
+            context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        if font is not None and text == '7' and font['name'] in bad_font_7:
+            context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        box = context.text_extents(text)
+
+        text_w = box[2]
+        text_h = box[3]
+
+        border_w_h = (4, 4)
+        # if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
+        #     raise IOError('Could not fit string into image. \
+        #                   Max char count is too large for given image width.')
+
+        # teach the RNN translational invariance by
+        # fitting text box randomly on canvas, with some room to rotate
+        max_shift_x = w - text_w - border_w_h[0]
+        max_shift_y = h - text_h - border_w_h[1]
+
+        if int(max_shift_x) <= 0:
+            max_shift_x = 1
+
+        if int(max_shift_y) <= 0:
+            max_shift_y = 1
+
+
+        if lr:
+            top_left_x = np.random.randint(0, int(max_shift_x))
+        else:
+            top_left_x = w // 2 - text_w // 2
+
+        if ud:
+            top_left_y = np.random.randint(0, int(max_shift_y))
+        else:
+            top_left_y = h // 2 - text_h // 2
+
+
+        context.move_to(top_left_x - int(box[0]), top_left_y - int(box[1]))
+        #context.set_source_rgb(0, 0, 0)
+        context.show_text(text)
+        buf = surface.get_data()
     else:
-        font = fonts[0]
-        context.select_font_face(font['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        buf = input_img
 
 
-    if (multi_sizes):
-        max_font_size = find_max_font_size(context, text, img_w, img_h) - 4
-        if not max_font_size:
-            print 'Damaged font', font['name'], 'for text', text
-            raise ValueError('Damaged font')
-
-        context.set_font_size(random.randint(25, max_font_size))
-    else:
-        context.set_font_size(44)
-
-    if font['type'] == 'latin' and text in georgian:
-        text = latingeo[georgian.index(text)]
-
-    box = context.text_extents(text)
-    text_w = box[2]
-    text_h = box[3]
-    border_w_h = (4, 4)
-    # if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
-    #     raise IOError('Could not fit string into image. \
-    #                   Max char count is too large for given image width.')
-
-    # teach the RNN translational invariance by
-    # fitting text box randomly on canvas, with some room to rotate
-    max_shift_x = w - text_w - border_w_h[0]
-    max_shift_y = h - text_h - border_w_h[1]
-
-    if int(max_shift_x) <= 0:
-      max_shift_x = 1
-      
-    if int(max_shift_y) <= 0:
-      max_shift_y = 1
-    
-    
-    if lr:
-        top_left_x = np.random.randint(0, int(max_shift_x))
-    else:
-        top_left_x = w // 2 - text_w // 2
-
-    if ud:
-        top_left_y = np.random.randint(0, int(max_shift_y))
-    else:
-        top_left_y = h // 2 - text_h // 2
-
-
-    context.move_to(top_left_x - int(box[0]), top_left_y - int(box[1]))
-    #context.set_source_rgb(0, 0, 0)
-    context.show_text(text)
-    if save:
+    if save and input_img is None:
         global img_counter
         img_counter += 1
         surface.write_to_png(
             create_dir_if_missing(GENERATED_IMAGES_DIR) + 'img_%04d.png' % img_counter
         )
-    buf = surface.get_data()
+    if save and input_img is not None:
+        global img_counter
+        img_counter += 1
+        cv2.imwrite(GENERATED_IMAGES_DIR + 'img_%04d.png' % img_counter, input_img)
+
     a = np.frombuffer(buf, np.uint8)
-    a.shape = (h, w, 4)
+
+    if input_img is None:
+        a.shape = (h, w, 4)
     a = a[:, :, 0]  # grab single channel
+
     a = np.expand_dims(a, 0)
-    if rotate:
+    if input_img is None and rotate:
         a = image.random_rotation(a, 7 * (w - top_left_x) / w + 1)
     #if spackle:
     #    a = speckle(a)
@@ -200,10 +226,10 @@ def paint_text(text, w, h,
     #if bool(random.getrandbits(1)):
     #  a = 255-a
 
-#    global img_counter
-#    img_counter += 1
-#    print img_counter, text
-#    cv2.imwrite((u"%s/%s-%s.png" % (GENERATED_IMAGES_DIR, img_counter, font['name'])), a)
+    #    global img_counter
+    #    img_counter += 1
+    #    print img_counter, text
+    #    cv2.imwrite((u"%s/%s-%s.png" % (GENERATED_IMAGES_DIR, img_counter, font['name'])), a)
 
     a = a.astype(np.float32) / 255
     return a
@@ -220,17 +246,39 @@ y = list_eye(LABEL_SIZE)
 
 def next_batch(size, rotate=False, ud=False, lr=False,
                multi_fonts=False, multi_sizes=False, blur=False, save=False):
-
     create_dir_if_missing(GENERATED_IMAGES_DIR)
+    images_paths = []
+    for im_name in os.listdir(TRAIN_IMAGES_DIR):
+        for f_path in os.listdir(u'/'.join((TRAIN_IMAGES_DIR, im_name))):
+            images_paths.append(u'/'.join((TRAIN_IMAGES_DIR, im_name, f_path)))
+
 
     print "Generating {0:d} images...".format(size)
     x_train = np.zeros((size, img_w, img_h))
     y_train = [None] * size
+    if len(images_paths) < 4000:
+        img_number = len(images_paths)
+    else:
+        img_number = 4000
+    count_img = 0
     for i in range(size):
         while True:
             try:
-                char = chars[random.randint(0, LABEL_SIZE - 1)]
-                img = paint_text(char, img_w, img_h,
+                image = None
+
+                if count_img < img_number - 5:
+                    count_img += 1
+                    random_index = random.randint(0, len(images_paths) - 1)
+                    new_img_path = images_paths[random_index]
+                    images_paths.remove(new_img_path)
+                    image = cv2.imread(new_img_path, 0)
+                    if new_img_path.split('/')[1] != 'd':
+                        char = new_img_path.split('/')[1]
+                    else:
+                        char = '.'
+                else:
+                    char = chars[random.randint(0, LABEL_SIZE - 1)]
+                img = paint_text(char, img_w, img_h, input_img=None,
                                  rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
                                  multi_sizes=multi_sizes, blur=blur, save=save)
                 break

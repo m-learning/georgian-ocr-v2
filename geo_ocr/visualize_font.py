@@ -14,6 +14,10 @@ georgian = u'აბგდევზთიკლმნოპჟრსტუფქ�
 numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
+bad_fonts = ['GL Kupiura', 'GL Mkafio', 'GL Parizuli']
+
+bad_font_7 = ['GL Chonchkhi']
+
 font_names = []
 
 GENERATED_IMAGES_FILE = "results/fonts.png"
@@ -43,7 +47,6 @@ def paint():
 		GENERATED_IMAGES_FILE
 	)
 
-
 def parse_fonts_directory(fonts_path):
 	font_files = os.listdir(fonts_path)
 
@@ -68,6 +71,7 @@ def list_available_fonts():
 	               for (name, file_name) in parse_fonts_directory('bulk_fonts/utf-8')]
 
 	font_names = sorted(font_names, key=lambda c: c['file'])
+
 
 	return font_names
 
@@ -115,8 +119,13 @@ def generate_image(font, text, context, index, font_index):
 		text = latingeo[georgian.index(text)]
 
 	context.move_to(index * 64 + 16, font_index * 64 + 48)
+	if font is not None and (text == '/' or text == '\\') and font['name'] in bad_fonts:
+                context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        if font is not None and text == '7' and font['name'] in bad_font_7:
+                context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+        context.show_text(text)
 	# context.set_source_rgb(1, 1, 1)
-	context.show_text(text)
+	
 
 
 if __name__ == '__main__':

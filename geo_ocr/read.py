@@ -138,7 +138,7 @@ def read(image_path, correct_words=False, debug=True):
     changed=True
     while(changed):
         lines,changed=filter.filter_out_of_line(lines)
-    #lines=filter.filter_out_of_line(lines)
+    # lines=filter.filter_out_of_line(lines)
 
     if debug:
         line_debugger(lines, vanished_img)
@@ -156,8 +156,6 @@ def read(image_path, correct_words=False, debug=True):
     print "overall time: "+str(timeit.default_timer()-overall_time)
 
     return read_text 
-
-
 
 
 def read_lines(image_path, debug=True):

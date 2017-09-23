@@ -43,6 +43,22 @@ def crop_char_image(char, img):
     w = char['w']
     h = char['h']
 
+    #TODO: test me !!!
+    # copy_img = img.copy()
+    #
+    # mask1 = np.zeros(img.shape, np.uint8)
+    # mask1.fill(255)
+    #
+    # mask2 = np.zeros((img.shape[0] + 2, img.shape[1] + 2), np.uint8)
+    #
+    # a = cv2.drawContours(mask1, char['contours'], -1, (0, 255, 0), 1)
+    # cv2.imwrite('contour.png', a)
+    # cv2.floodFill(mask1, mask2, (0, 0), 0)
+    # cv2.imwrite('invert.png', mask1)
+    # im_inv = cv2.bitwise_not(copy_img)
+    # final = cv2.bitwise_not(cv2.bitwise_and(a, im_inv))
+    # cv2.imwrite('final.png', final)
+
     crop_img = img[y:y + h, x:x + w]
 
     # define small height and width

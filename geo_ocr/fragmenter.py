@@ -17,6 +17,8 @@ from skimage import filters
 from skimage import img_as_ubyte
 from skimage import util
 
+import numpy as np
+
 
 DEBUG_DIR = "results/debug"
 
@@ -43,7 +45,7 @@ def do_fragmentation(file_path, debug = True):
     file_ops.create_clean_dir(DEBUG_DIR)
 
     # load source image
-    src_img = cv2.imread(file_path);
+    src_img = cv2.imread(file_path)
     # src_img = deskew_image(src_img)
 
     manager=Manager()
@@ -83,7 +85,6 @@ def do_fragmentation(file_path, debug = True):
     # Find the contours
     _, contours, hierarchy = cv2.findContours(src_img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-
     count = 0
     chars = []
     print 'Number of contures', len(contours)
@@ -94,7 +95,7 @@ def do_fragmentation(file_path, debug = True):
             x, y, w, h = cv2.boundingRect(cnt)
 
             # Create meta file
-            char = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count}
+            char = {'x': x, 'y': y, 'w': w, 'h': h, 'id': count, 'contours': cnt}
 
             chars.append(char)
             count += 1
