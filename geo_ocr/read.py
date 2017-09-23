@@ -218,6 +218,10 @@ def read_lines(image_path, debug=True):
     #return char_imgs
     #chars = filter.filter_by_possible_alternatives(chars)
     
+    for char in chars:
+        char['char'] = ''
+        char['score'] = 0
+    
     lines, avg_width, avg_height = export_words.export_lines(chars)
     print 'lines, avg_width, avg_height', lines, avg_width, avg_height
     ms.merge(lines, vanished_img)
@@ -232,18 +236,19 @@ def read_lines(image_path, debug=True):
     #lines=filter.filter_out_of_line(lines)
     
     
-    full_count = 0
     char_imgs = []
     for chars in lines:
         for char in chars:
             try:
+                if char['char'] == u' ':
+                    char_imgs.append('space')
+                    continue
                 char_img = image_ops.crop_char_image(char, vanished_img)
                 char_imgs.append(char_img)
             except Exception, e:
                 print "Could not crop image:", e
                 continue
-
-            full_count += 1
+        char_imgs.append('newline')
     
     print '\n\n\n\n\n\n\n\nlines\n\n', lines
     print '\n\n\n\n\n\n\n\nlen\n\n', len(char_imgs)

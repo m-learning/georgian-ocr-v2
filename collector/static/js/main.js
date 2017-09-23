@@ -18,7 +18,7 @@
 			e.target.blur()
 			selectInput(e.target)
 		})
-		input.id = 'input' + id
+		input.id = 'input-' + id
 		return input
 	}
 	
@@ -34,7 +34,7 @@
 		img.style.display = 'inline-block'
 		img.style.border = DEFAULT_BORDER
 		img.src = src
-		
+		img.id = 'img-' + id
 		return img
 	}
 	
@@ -56,7 +56,14 @@
 		div.image = image
 		div.input = input
 		
+		div.id = 'cell-' + id
 		return div
+	}
+	
+	function addMarginToLastCell () {
+	    var cell = containerDiv.children[containerDiv.children.length - 1]
+	    var margin = parseInt(cell.style.marginRight)
+	    cell.style.marginRight = margin + 64 + 'px'
 	}
 	
 	var keyCodes = {
@@ -181,7 +188,13 @@
 			
 			if (data) {
 				for (var i = 0; i < data.length; i++) {
-					containerDiv.appendChild(createCell(i, data[i]))
+			        if (data[i] === 'space') {
+			            if (i > 0) addMarginToLastCell()
+			        } else if (data[i] === 'newline') {
+			            if (i > 0) addMarginToLastCell()
+			        } else {
+			            containerDiv.appendChild(createCell(i, data[i]))
+		            }
 				}
 				
 				selectFirstInput()

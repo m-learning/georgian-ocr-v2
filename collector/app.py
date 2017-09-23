@@ -71,13 +71,23 @@ def load():
     char_images = read.read_lines(last_image_path)    
     
     for i in range(len(char_images)):
-        filename = os.path.join(RESULT_IMAGES_DIR, str(i) + '.png')
-        filenames.append(filename)
-        cv2.imwrite(filename, char_images[i])
+        if char_images[i] == 'space':
+            filenames.append('space')
+        elif char_images[i] == 'newline':
+            filenames.append('newline')
+        else:
+            filename = os.path.join(RESULT_IMAGES_DIR, str(i) + '.png')
+            filenames.append(filename)
+            cv2.imwrite(filename, char_images[i])
 
     images = []
     for filename in filenames:
-        images.append(read_image(filename))
+        if filename == 'space':
+            images.append('space')
+        elif filename == 'newline':
+            images.append('newline')
+        else:
+            images.append(read_image(filename))
     
     return jsonify(images)
 
