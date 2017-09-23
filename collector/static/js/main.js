@@ -187,19 +187,23 @@
 			}
 			
 			if (data) {
-				for (var i = 0; i < data.length; i++) {
-			        if (data[i] === 'space') {
-			            if (i > 0) addMarginToLastCell()
-			        } else if (data[i] === 'newline') {
-			            if (i > 0) addMarginToLastCell()
-			        } else {
-			            containerDiv.appendChild(createCell(i, data[i]))
-		            }
-				}
-				
-				selectFirstInput()
-				hideMask()
+			    if (data.length) {
+				    for (var i = 0; i < data.length; i++) {
+			            if (data[i] === 'space') {
+			                if (i > 0) addMarginToLastCell()
+			            } else if (data[i] === 'newline') {
+			                if (i > 0) addMarginToLastCell()
+			            } else {
+			                containerDiv.appendChild(createCell(i, data[i]))
+		                }
+				    }
+    				selectFirstInput()
+			    } else {
+			        showMessage(':/')
+			    }
 			}
+			
+			hideMask()
 		})
 		
         containerDiv.innerHTML = ''
@@ -303,9 +307,11 @@
 			clearTimeout(timeout)
 			selectNextInput()
 		} else if (e.key === 'ArrowDown') {
+		    e.preventDefault()
 			clearTimeout(timeout)
 			disableSelectedInput()
 		} else if (e.key === 'ArrowUp') {
+		    e.preventDefault()
 			clearTimeout(timeout)
 			enableSelectedInput()
 		} if (e.key === 'Backspace') {
@@ -330,7 +336,7 @@
 			clearTimeout(timeout)
 		
 			if (value && selectedInput && !finished) {
-				selectedInput.value += value
+				selectedInput.value = value
 				enableSelectedInput()
 				
 				/*
