@@ -9,7 +9,7 @@ import random
 from keras.preprocessing import image
 import os
 import argparse
-import matplotlib.image as mpimg
+#import matplotlib.image as mpimg
 from PIL import ImageFont
 import cv2
 import random
@@ -317,7 +317,7 @@ if __name__ == '__main__':
                          args.width, args.height,
                          rotate=True, ud=True, multi_fonts=True,
                          multi_sizes=True, blur=False, save=False)
-        mpimg.imsave(
-            os.path.join(
-                create_dir_if_missing(args.save_path),
-                'img-%s.png' % word.decode('utf-8')), img[0], cmap="Greys_r")
+        #mpimg.imsave(
+        #    os.path.join(
+        #        create_dir_if_missing(args.save_path),
+        #        'img-%s.png' % word.decode('utf-8')), img[0], cmap="Greys_r")

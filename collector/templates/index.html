@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>OCR</title>
+<link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" />
+</head>
+<body style="border:0; margin: 0;">
+<div id="container" style="margin: 10px;"></div>
+<div id="message-div" class="message"></div>
+<div id="mask-div" class="mask"></div>
+<input id="file-input" type="file" name="image" accept="image/*" style="display:none">
+<div>
+  <button id="new-button" class="button left">ახალი</button>
+  <button id="save-button" class="button right">შენახვა</button>
+</div>
+<script type="text/javascript" src="{{url_for('static', filename='js/main.js')}}"></script>
+</body>
+<html>

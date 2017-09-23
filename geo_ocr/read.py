@@ -5,7 +5,7 @@ from predict_all import *
 import word_corrector as wc
 import filter
 import sys
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import timeit
 import image_operations as image_ops
 import file_operations as file_ops
@@ -147,7 +147,6 @@ def read(image_path, correct_words=False, debug=True):
     word_lines = co.group_meta_as_words(lines)
 
     word_lines = co.merge_split_words(word_lines)
-
     if correct_words:
         read_text = wc.correct_words_with_scores(word_lines)
     else: read_text = co.word_lines_to_text(word_lines)
@@ -160,6 +159,104 @@ def read(image_path, correct_words=False, debug=True):
     print "overall time: "+str(timeit.default_timer()-overall_time)
 
     return read_text 
+
+
+def read_lines(image_path, debug=True):
+    file_ops.create_clean_dir(LETTERS_DIR)
+
+    if not os.path.isfile(image_path):
+        print("Files does not exists")
+        return
+
+    chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(image_path, debug=debug)
+    # TODO: Line detector
+
+    print len(chars), 'chars exist'
+
+    chars = filter.filter_background(chars, full_w, full_h)
+    # chars = filter.filter_overlaps(chars)
+    other_chars = filter.filter_compare(chars, clean_img)
+    chars = filter.filter_unproportional(chars)
+
+    # TODO: Fix for images without noise
+    chars = filter.filter_by_size_distribution(chars, full_w, full_h)
+    # chars = filter.filter_out_of_average(chars)
+
+    # merge filters
+    chars = filter.filter_merge(chars, other_chars)
+    chars = filter.filter_overlaps(chars)
+    chars = filter.filter_too_small(chars)
+
+    # detect % ? ! : symbols
+    # chars = sorted(chars, key=lambda k: k['x'])
+
+    print len(chars), 'chars left after filtering'
+
+    # if you want to see filtered image uncomment next 4 lines
+    # restored_image = restore_image(chars, full_h, full_w)
+    # plt.imshow(restored_image)
+    # cv2.imwrite('/home/shota/image.png', restored_image)
+    # plt.show()
+    
+    '''
+    full_count = 0
+    char_imgs = []
+
+    for char in chars:
+        try:
+            char_img = image_ops.crop_char_image(char, vanished_img)
+            char_imgs.append(char_img)
+        except Exception, e:
+            print "Could not crop image:", e
+            continue
+
+        full_count += 1
+    
+    print '\n\n\n\nfull_count=', full_count
+    print '\n\n\n\n\n\n\n\nchars\n\n', chars
+    '''
+    
+    #return char_imgs
+    #chars = filter.filter_by_possible_alternatives(chars)
+    
+    for char in chars:
+        char['char'] = ''
+        char['score'] = 0
+    
+    lines, avg_width, avg_height = export_words.export_lines(chars)
+   #print 'lines, avg_width, avg_height', lines, avg_width, avg_height
+    ms.merge(lines, vanished_img)
+
+    lines = export_words.addspaces(lines, avg_width)
+    print 'xazebis raodenoba: ', len(lines)
+   
+    changed=True
+    while(changed):
+        lines,changed=filter.filter_out_of_line(lines)
+    #lines=filter.filter_out_of_line(lines)
+    
+    
+    char_imgs = []
+    for chars in lines:
+        for char in chars:
+            try:
+                if char['char'] == u' ':
+                    char_imgs.append('space')
+                    continue
+                char_img = image_ops.crop_char_image(char, vanished_img)
+                char_imgs.append(char_img)
+            except Exception, e:
+                print "Could not crop image:", e
+                continue
+        char_imgs.append('newline')
+
+    if debug:
+        line_debugger(lines, vanished_img)
+        print_symbols(lines, vanished_img)
+
+    restored_image = restore_image(chars, vanished_img)
+    cv2.imwrite('results/debug/filtered.png', restored_image)
+    return char_imgs
 
 
 if __name__ == '__main__':
