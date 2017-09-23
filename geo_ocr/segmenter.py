@@ -5,7 +5,7 @@ import numpy as np
 
 DEBUG_DIR = "results/debug"
 
-DILATE_ITERATIONS = 3
+DILATE_ITERATIONS =20 
 
 
 def calculate_image_roughness(img):
@@ -55,9 +55,9 @@ def find_contours(img, original_img):
 	return cont, original_img
 
 
-def do_segmentation(file_path):
+def do_segmentation(img):
 	create_dir_if_missing(DEBUG_DIR)
-	img = cv2.imread(file_path, 0)
+	#img = cv2.imread(file_path, 0)
 	original_img = img
 
 	img = vanish_image(img)
@@ -66,8 +66,8 @@ def do_segmentation(file_path):
 
 	contours, original_img = find_contours(img, original_img)
 
-	cv2.imwrite(("%s/a1 gray.png" % DEBUG_DIR), original_img)
-	cv2.imwrite(("%s/a2 gray.png" % DEBUG_DIR), img)
+	cv2.imwrite(("%s/a1 segment.png" % DEBUG_DIR), original_img)
+	cv2.imwrite(("%s/a2 segment.png" % DEBUG_DIR), img)
 
 
 if __name__ == "__main__":

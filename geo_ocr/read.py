@@ -4,6 +4,8 @@ import cv2
 from predict_all import *
 import word_corrector as wc
 import filter
+import segmenter
+import vanish
 import sys
 import matplotlib.pyplot as plt
 import timeit
@@ -56,11 +58,22 @@ def read(image_path, correct_words=False, debug=True):
     overall_time = timeit.default_timer()
     file_ops.create_clean_dir(LETTERS_DIR)
 
+    # load source image
+    src_img = cv2.imread(image_path)
+    
     if not os.path.isfile(image_path):
         print("Files does not exists")
         return
+    
+    
+    vanished_img,clean_img,clean_small_img=vanish.vanish_img(src_img)
 
-    chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(image_path, debug=debug)
+    segmenter.do_segmentation(clean_small_img)
+
+    cv2.imwrite('results/debug/clean_small.png', clean_small_img)
+    
+    #chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(src_img, debug=debug)
+    chars, full_w, full_h =  fragmenter.do_fragmentation(vanished_img, debug=debug)
     # TODO: Line detector
 
     print len(chars), 'chars exist'
