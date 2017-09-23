@@ -109,7 +109,7 @@ def save():
                 print 'Could not write image in ' + directory
 
     print 'Training data was saved sucessfully'
-    return ''
+    return 'OK'
 
 
 if __name__ == '__main__':
