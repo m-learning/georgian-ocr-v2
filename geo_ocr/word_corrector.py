@@ -136,8 +136,7 @@ def reorder_word_alternatives(read_word, word_alternatives):
     return without_insert_op
 
 
-def correct_words_with_scores(lines):
-    word_lines = co.group_meta_as_words(lines)
+def correct_words_with_scores(word_lines):
 
     text = ''
     for l in word_lines:

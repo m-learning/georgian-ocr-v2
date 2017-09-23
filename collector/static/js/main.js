@@ -127,17 +127,8 @@
 	
 	document.addEventListener('keydown', keyHandler, false)
 	
-	document.getElementById('new-button').addEventListener('click', function () {
-		var oReq = new XMLHttpRequest()
-		oReq.addEventListener("load", function () {
-			location.href = "/"
-		})
-		oReq.open("GET", "clear")
-		oReq.send()
-	})
-	
 	var saveButton = document.getElementById('save-button')
-//	saveButton.disabled = 'disabled'
+    //saveButton.disabled = 'disabled'
 	saveButton.addEventListener('click', function () {
 		var canvas = document.createElement('canvas')
 		var c = canvas.getContext('2d')
@@ -173,14 +164,21 @@
 	})
 	
     var maskDiv = document.getElementById('mask-div')
-	
-	init()
-	
-	function init () {
-		containerDiv.innerHTML = ''
+    
+    document.getElementById('new-button').addEventListener('mouseup', function () {
+	    document.getElementById('file-input').click()
+	})
+    
+    document.getElementById('file-input').addEventListener('change', function () {
+        var input = this
+        
+		var formData = new FormData
+		formData.append('image', input.files[0])
 		
 		var oReq = new XMLHttpRequest()
 		oReq.addEventListener("load", function () {
+		    input.value = ''
+		    
 			var data
 			try {
 				data = JSON.parse(this.responseText)
@@ -189,24 +187,31 @@
 			}
 			
 			if (data) {
-				for (var i = 0; i < data.length; i++) {
-			        if (data[i] === 'space') {
-			            if (i > 0) addMarginToLastCell()
-			        } else if (data[i] === 'newline') {
-			            if (i > 0) addMarginToLastCell()
-			        } else {
-			            containerDiv.appendChild(createCell(i, data[i]))
-		            }
-				}
-				
-				selectFirstInput()
-				hideMask()
+			    if (data.length) {
+				    for (var i = 0; i < data.length; i++) {
+			            if (data[i] === 'space') {
+			                if (i > 0) addMarginToLastCell()
+			            } else if (data[i] === 'newline') {
+			                if (i > 0) addMarginToLastCell()
+			            } else {
+			                containerDiv.appendChild(createCell(i, data[i]))
+		                }
+				    }
+    				selectFirstInput()
+			    } else {
+			        showMessage(':/')
+			    }
 			}
+			
+			hideMask()
 		})
-		oReq.open("GET", "load")
+		
+        containerDiv.innerHTML = ''
 		showMask('მიმდინარეობს სურათის დამუშავება...')
-		oReq.send()
-	}
+		
+		oReq.open("POST", "upload")
+		oReq.send(formData)
+    })
 	
 	function selectFirstInput () {
 		if (containerDiv.children.length) {
@@ -302,9 +307,11 @@
 			clearTimeout(timeout)
 			selectNextInput()
 		} else if (e.key === 'ArrowDown') {
+		    e.preventDefault()
 			clearTimeout(timeout)
 			disableSelectedInput()
 		} else if (e.key === 'ArrowUp') {
+		    e.preventDefault()
 			clearTimeout(timeout)
 			enableSelectedInput()
 		} if (e.key === 'Backspace') {
@@ -329,7 +336,7 @@
 			clearTimeout(timeout)
 		
 			if (value && selectedInput && !finished) {
-				selectedInput.value += value
+				selectedInput.value = value
 				enableSelectedInput()
 				
 				/*

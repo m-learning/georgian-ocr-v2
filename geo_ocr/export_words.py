@@ -5,7 +5,7 @@ import sys
 import os
 import json
 import codecs
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy
 from scipy.signal import argrelextrema
     
