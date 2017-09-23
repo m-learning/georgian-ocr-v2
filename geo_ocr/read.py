@@ -68,7 +68,9 @@ def read(image_path, correct_words=False, debug=True):
     
     vanished_img,clean_img,clean_small_img=vanish.vanish_img(src_img)
 
-    segmenter.do_segmentation(clean_small_img)
+    segments=segmenter.do_segmentation(clean_small_img)
+    
+    print segments
 
     cv2.imwrite('results/debug/clean_small.png', clean_small_img)
     

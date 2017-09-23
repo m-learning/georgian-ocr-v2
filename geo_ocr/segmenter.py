@@ -1,4 +1,5 @@
 import cv2
+from skimage import util
 import os
 import sys
 import numpy as np
@@ -60,15 +61,32 @@ def do_segmentation(img):
 	#img = cv2.imread(file_path, 0)
 	original_img = img
 
-	img = vanish_image(img)
-
+	#img = vanish_image(img)
+	img =util.invert(img) 
+    
+    
+    #cv2.imwrite(("%s/a2 segmentvanish.png" % DEBUG_DIR), img)
 	img = dilate_image(img)
 
 	contours, original_img = find_contours(img, original_img)
 
 	cv2.imwrite(("%s/a1 segment.png" % DEBUG_DIR), original_img)
 	cv2.imwrite(("%s/a2 segment.png" % DEBUG_DIR), img)
+	segments = []
+	for cnt in contours:
+		try:
+			x, y, w, h = cv2.boundingRect(cnt)
+			# Create meta file
+			segment = {'x': x, 'y': y, 'w': w, 'h': h}
 
+			segments.append(segment)
+		except ValueError, ve:
+			if debug:
+				traceback.print_exc(file=sys.stdout)
+				print "skip fragment:", ve
+    
+
+	return segments 
 
 if __name__ == "__main__":
 	# source file path
