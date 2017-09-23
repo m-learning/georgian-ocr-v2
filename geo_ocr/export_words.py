@@ -96,6 +96,11 @@ def detect_avg_wh(all_meta, samp_chars=200):
             
     numbers_chars = [n[1][1]['w'] for n in avr_chars if n[1][1]['char']
                            in numbers+u''.join(classes)]
+    
+    ##TEMP FIXX
+    if len(numbers_chars)==0 :
+        return 1,1
+    ##
 
     avg_width = float(sum(numbers_chars))/len(numbers_chars)
     
@@ -111,7 +116,13 @@ def detect_avg_wh(all_meta, samp_chars=200):
                       if n[1][1]['char'] in numbers]
     
     full_h = middle_chars + number_list
-    
+   
+   #TEMP FIX
+    if len(full_h)==0 or len(middle_chars)==0:
+        return 1,1
+   ##
+
+
     if len(full_h) < 10:
         avg_height = (sum(full_h) / (1.5 * len(full_h)))
     elif len(middle_chars) < len(number_list):

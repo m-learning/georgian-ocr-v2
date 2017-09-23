@@ -35,6 +35,7 @@ def vanish_img(src_img):
     clean_small_img=img_as_ubyte(imgs["clean"])
     #src_img=img_as_ubyte(imgs["noisy"])
     src_img=img_as_ubyte(imgs["noisy"])
+    src_small_img=img_as_ubyte(imgs["noisy"])
     #clean_img = img_as_ubyte(vanish_image(src_img,201,0.2))
     #src_img = img_as_ubyte(vanish_image(src_img,101,0.04))
 
@@ -57,5 +58,5 @@ def vanish_img(src_img):
     cv2.imwrite(("%s/a1 vainshed.png" % DEBUG_DIR), src_img)
     cv2.imwrite(("%s/a1 clean.png" % DEBUG_DIR), clean_img)
     
-    return src_img,clean_img, clean_small_img
+    return src_img,clean_img,src_small_img,clean_small_img
     

@@ -73,12 +73,13 @@ def do_segmentation(img):
 	cv2.imwrite(("%s/a1 segment.png" % DEBUG_DIR), original_img)
 	cv2.imwrite(("%s/a2 segment.png" % DEBUG_DIR), img)
 	segments = []
+	count=0
 	for cnt in contours:
 		try:
 			x, y, w, h = cv2.boundingRect(cnt)
 			# Create meta file
-			segment = {'x': x, 'y': y, 'w': w, 'h': h}
-
+			segment = {'x': x, 'y': y, 'w': w, 'h': h,'id':count }
+			count+=1
 			segments.append(segment)
 		except ValueError, ve:
 			if debug:

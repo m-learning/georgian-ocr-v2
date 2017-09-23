@@ -14,8 +14,10 @@ import file_operations as file_ops
 import merge_symbols as ms
 import char_operations as co
 
-LETTERS_DIR = "results/letters"
+from skimage import img_as_ubyte
 
+LETTERS_DIR = "results/letters"
+DEBUG_DIR = "results/debug"
 
 def restore_image(chars, original_image):
     full_h, full_w = original_image.shape
@@ -54,26 +56,20 @@ def print_symbols(lines, vanished_img):
             cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, each['id'])), new_each)
 
 
-def read(image_path, correct_words=False, debug=True):
-    overall_time = timeit.default_timer()
-    file_ops.create_clean_dir(LETTERS_DIR)
 
-    # load source image
-    src_img = cv2.imread(image_path)
-    
-    if not os.path.isfile(image_path):
-        print("Files does not exists")
-        return
-    
-    
-    vanished_img,clean_img,clean_small_img=vanish.vanish_img(src_img)
+def read_segment(segment,vanished,clean,text,debug=False,correct_words=False):
+    #vanished_img=img_as_ubyte(image_ops.crop_char_image(segment,vanished))
+    #clean_img=img_as_ubyte(image_ops.crop_char_image(segment,clean))
 
-    segments=segmenter.do_segmentation(clean_small_img)
+    vanished_img=(image_ops.crop_seg_image(segment,vanished))
+    clean_img=(image_ops.crop_seg_image(segment,clean))
     
-    print segments
+    cv2.imwrite(("%s/%s.png" % (DEBUG_DIR, segment['id'])), vanished_img)
 
-    cv2.imwrite('results/debug/clean_small.png', clean_small_img)
-    
+    print vanished_img
+
+    #vanished_img=vanished
+    #clean_img=clean
     #chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(src_img, debug=debug)
     chars, full_w, full_h =  fragmenter.do_fragmentation(vanished_img, debug=debug)
     # TODO: Line detector
@@ -142,11 +138,12 @@ def read(image_path, correct_words=False, debug=True):
     # chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
     
+
     lines, avg_width, avg_height = export_words.export_lines(chars)
     read_text = u''
     # detect ? ! : ; % symbols
     ms.merge(lines, vanished_img)
-
+    
     lines = export_words.addspaces(lines, avg_width)
     print 'xazebis raodenoba: ', len(lines)
    
@@ -164,13 +161,47 @@ def read(image_path, correct_words=False, debug=True):
     else: read_text = co.lines_to_text(lines)
     
     print read_text
+    text+=read_text
+    text+='\n'
+    return text
+
+def read(image_path, correct_words=False, debug=True):
+    overall_time = timeit.default_timer()
+    file_ops.create_clean_dir(LETTERS_DIR)
+
+    # load source image
+    src_img = cv2.imread(image_path)
     
-    restored_image = restore_image(chars, vanished_img)
-    cv2.imwrite('results/debug/filtered.png', restored_image)
+    if not os.path.isfile(image_path):
+        print("Files does not exists")
+        return
+    
+    
+    vanished_img,clean_img,vanished_small_img,clean_small_img=vanish.vanish_img(src_img)
+
+    segments=segmenter.do_segmentation(clean_small_img)
+    
+    print segments
+    
+    cv2.imwrite('results/debug/clean_small.png', clean_small_img)
+  
+    read_text = u''
+
+    leng=len(segments)
+
+    #for segment in segments:
+    for n in range(1,leng+1):
+        print "-------------------------new segment --------------------"
+        #read_text=read_segment(segment,vanished_small_img,clean_small_img,read_text)
+        read_text=read_segment(segments[leng-n],vanished_small_img,clean_small_img,read_text)
+
+    print read_text
+    #restored_image = restore_image(chars, vanished_img)
+    #cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print "overall time: "+str(timeit.default_timer()-overall_time)
 
-    return read_text 
+    #return read_text 
 
 
 if __name__ == '__main__':
