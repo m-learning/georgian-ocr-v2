@@ -7,6 +7,10 @@ logs/
 data/
 tmp/
 web/tmp_uploads/
+collector/results
+collector/uploaded-images
+collector/result-images
+collector/training-data
 
 exported-fragments.svg
 exported-no-bg.svg
