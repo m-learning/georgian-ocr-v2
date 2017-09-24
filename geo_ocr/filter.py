@@ -184,6 +184,50 @@ def filter_overlaps(chars):
     print 'Number of overlapped parts removed', num_of_noise
     return resulting_chars
 
+def filter_connect(chars):
+    num_of_noise = 0
+    resulting_chars = []
+    for m2 in chars:
+        x2=m2['x']
+        w2=m2['x']+m2['w']
+        y2=m2['y']
+        h2=m2['y']+m2['h']
+        
+                
+        removed = False
+        for m1 in chars:
+            x1=m1['x']
+            w1=m1['x']+m1['w']
+            y1=m1['y']
+            h1=m1['y']+m1['h']
+
+            if x2>x1 and x2<w1 and y2>y1 and y2<h1 and h1>y1 and h2<h1:
+                m1['w']=(m2['x']+m2['w'])-m1['x']
+                removed = True
+                break
+            if w2>x1 and w2<w1 and y2>y1 and y2<h1 and h1>y1 and h2<h1:
+                m1['x']=m2['x']
+                removed = True
+                break
+            """
+            if h2>y1 and h2<h1 and x2>x1 and x2<w1 and w1>x1 and w2<w1:
+                m1['h']=(m2['y']+m2['h'])-m1['y']
+                removed = True
+                break
+            if y2>y1 and y2<h1 and x2>x1 and x2<w1 and w1>x1 and w2<w1:
+                m1['y']=m2['y']
+                removed = True
+                break
+            """
+        if not removed:
+            resulting_chars.append(m2)
+
+
+    print 'Number of overlapped parts removed', num_of_noise
+    return resulting_chars
+
+
+
 
 def filter_background(chars, full_w, full_h):
     num_of_noise = 0

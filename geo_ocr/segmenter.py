@@ -87,6 +87,7 @@ def do_segmentation(img):
 				print "skip fragment:", ve
     
 
+
 	return segments 
 
 if __name__ == "__main__":

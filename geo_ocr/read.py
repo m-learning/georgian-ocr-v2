@@ -197,8 +197,9 @@ def read(image_path, correct_words=False, debug=True):
     
     vanished_img,clean_img,vanished_small_img,clean_small_img=vanish.vanish_img(src_img)
 
-    segments=segmenter.do_segmentation(clean_small_img)
-    
+    segments=segmenter.do_segmentation(clean_small_img) 
+    segments=filter.filter_overlaps(segments)
+    segments=filter.filter_connect(segments)
     print segments
     
     cv2.imwrite('results/debug/clean_small.png', clean_small_img)
