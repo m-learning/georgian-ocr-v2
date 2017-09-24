@@ -87,6 +87,9 @@ def filter_by_size_distribution_step(chars):
     height_hist = [0] * hist_size
     width_delta = max_w - min_w
     height_delta = max_h - min_h
+    
+    if width_delta==0 or height_delta==0:
+        return []
 
     num_of_noise = 0
     resulting_chars = []

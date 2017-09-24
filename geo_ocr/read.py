@@ -57,7 +57,7 @@ def print_symbols(lines, vanished_img):
 
 
 
-def read_segment(segment,vanished,clean,text,debug=False,correct_words=False):
+def read_segment(segment,vanished,clean,debug=True,correct_words=False):
     #vanished_img=img_as_ubyte(image_ops.crop_char_image(segment,vanished))
     #clean_img=img_as_ubyte(image_ops.crop_char_image(segment,clean))
 
@@ -125,8 +125,8 @@ def read_segment(segment,vanished,clean,text,debug=False,correct_words=False):
         if debug:
             print char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h'])
 
-        # if debug:
-        #     cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, char['id'])), char_img)
+        if debug:
+            cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, str(segment['id'])+'-'+str(char['id']))), char_img)
 
     if debug:
         print 'Avg score: %d' % (full_score * 100 / full_count)
@@ -159,12 +159,9 @@ def read_segment(segment,vanished,clean,text,debug=False,correct_words=False):
     if correct_words:
         read_text = wc.correct_words_with_scores(lines)
     else: read_text = co.lines_to_text(lines)
-    
+   
     print read_text
     segment["text"]=read_text
-    text+=read_text
-    text+='\n'
-    return text
 
 def read(image_path, correct_words=False, debug=True):
     overall_time = timeit.default_timer()
@@ -190,20 +187,22 @@ def read(image_path, correct_words=False, debug=True):
     pos_coef=3
 
     leng=len(segments)
-    
+    chars=[] 
     for segment in segments:
         print "-------------------------new segment --------------------"
-        read_text=read_segment(segment,vanished_small_img,clean_small_img,read_text)
+        read_segment(segment,vanished_small_img,clean_small_img)
         segment["pos"]=pos_coef*segment['x']+segment['y']
-    #print read_text
     segments = sorted(segments, key=lambda segment: segment['pos']) 
-    #segment=sorted(segment, key=lambda segment: segment["pos"])
     for segment in segments:
-        print segment["text"]
-    #restored_image = restore_image(chars, vanished_img)
-    #cv2.imwrite('results/debug/filtered.png', restored_image)
+        read_text+=segment["text"]
+        read_text+='\n'
+
+    restored_image = restore_image(chars, vanished_img)
+    cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print "overall time: "+str(timeit.default_timer()-overall_time)
+
+    print read_text 
 
     return read_text 
 
