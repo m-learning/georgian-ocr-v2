@@ -18,6 +18,7 @@ from skimage import img_as_ubyte
 
 LETTERS_DIR = "results/letters"
 DEBUG_DIR = "results/debug"
+LETTERS_BCK = "results/letters_bck"
 
 def restore_image(chars, original_image):
     full_h, full_w = original_image.shape
@@ -53,7 +54,8 @@ def print_symbols(lines, vanished_img):
     for i in lines:
         for each in i:
             new_each = image_ops.crop_char_image(ms.converter(each), vanished_img)
-            cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, each['id'])), new_each)
+            #cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, each['id'])), new_each)
+            cv2.imwrite(("%s/%s.png" % (LETTERS_BCK, each['id'])), new_each)
 
 
 
@@ -76,8 +78,16 @@ def read_segment(segment,vanished,clean,debug=True,correct_words=False):
 
     print len(chars), 'chars exist'
 
+
+    for char in chars:
+        char_img = image_ops.crop_char_image(char, vanished_img)
+
+        cv2.imwrite(("%s/%s.png" % (LETTERS_BCK, str(segment['id'])+'og'+str(char['id']))),char_img)
+
+    
     chars = filter.filter_background(chars, full_w, full_h)
     # chars = filter.filter_overlaps(chars)
+    
     other_chars = filter.filter_compare(chars, clean_img)
     chars = filter.filter_unproportional(chars)
 
@@ -87,14 +97,23 @@ def read_segment(segment,vanished,clean,debug=True,correct_words=False):
 
     # merge filters
     chars = filter.filter_merge(chars, other_chars)
+
+
     chars = filter.filter_overlaps(chars)
+
+
     chars = filter.filter_too_small(chars)
 
+    restored_image = restore_image(chars, vanished_img)
+    cv2.imwrite(("%s/%s restored.png" % (DEBUG_DIR, segment['id'])), restored_image)
     # detect % ? ! : symbols
     # chars = sorted(chars, key=lambda k: k['x'])
 
     print len(chars), 'chars left after filtering'
 
+    #restored_image = restore_image(chars, vanished_img)
+    #cv2.imwrite(("%s/%s restored.png" % (DEBUG_DIR, segment['id'])), restored_image)
+    
     # if you want to see filtered image uncomment next 4 lines
     # restored_image = restore_image(chars, full_h, full_w)
     # plt.imshow(restored_image)
@@ -126,9 +145,9 @@ def read_segment(segment,vanished,clean,debug=True,correct_words=False):
             print char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h'])
 
         if debug:
-            cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, str(segment['id'])+'-'+str(char['id']))), char_img)
+            cv2.imwrite(("%s/%s.png" % (LETTERS_BCK, str(segment['id'])+'-'+str(char['id']))), char_img)
 
-    if debug:
+    if debug and full_count:
         print 'Avg score: %d' % (full_score * 100 / full_count)
     recognize_time = timeit.default_timer()-recognize_time
     start_time = timeit.default_timer()
@@ -166,6 +185,7 @@ def read_segment(segment,vanished,clean,debug=True,correct_words=False):
 def read(image_path, correct_words=False, debug=True):
     overall_time = timeit.default_timer()
     file_ops.create_clean_dir(LETTERS_DIR)
+    file_ops.create_clean_dir(LETTERS_BCK)
 
     # load source image
     src_img = cv2.imread(image_path)
@@ -201,7 +221,7 @@ def read(image_path, correct_words=False, debug=True):
     cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print "overall time: "+str(timeit.default_timer()-overall_time)
-
+    read_text=read_text.strip(' \t\n\r')
     print read_text 
 
     return read_text 

@@ -32,9 +32,12 @@ def downscale_proportionally(image, max_w, max_h):
        downscale_ratio = float(max_w) / w
     else:
        downscale_ratio = float(max_h) / h
-
-    crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
-    return crop_img
+    
+    try:
+        crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
+        return crop_img
+    except:
+        return np.array([[0],[0]])
 
 
 def crop_char_image(char, img):

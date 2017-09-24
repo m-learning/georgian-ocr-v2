@@ -13,7 +13,7 @@ def filter_unproportional(chars):
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-            if os.path.isfile(imageFilename): os.remove(imageFilename) 
+            #if os.path.isfile(imageFilename): os.remove(imageFilename) 
         else:
             resulting_chars.append(ch)
 
@@ -25,11 +25,11 @@ def filter_too_small(chars):
     num_of_noise = 0
     resulting_chars = []
     for ch in chars:
-        if ch['w'] < 10 or ch['h'] < 10:
+        if ch['w'] < 5 or ch['h'] < 5:
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-            if os.path.isfile(imageFilename): os.remove(imageFilename)
+            #if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
             resulting_chars.append(ch)
 
@@ -56,7 +56,7 @@ def filter_out_of_average(chars):
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-            if os.path.isfile(imageFilename): os.remove(imageFilename)
+            #if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
             resulting_chars.append(ch)
 
@@ -106,7 +106,7 @@ def filter_by_size_distribution_step(chars):
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-            if os.path.isfile(imageFilename): os.remove(imageFilename)
+            #if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
             resulting_chars.append(ch)
 
@@ -147,7 +147,7 @@ def filter_by_weights(chars):
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-            if os.path.isfile(imageFilename): os.remove(imageFilename)
+            #if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
             resulting_chars.append(ch)
 
@@ -174,7 +174,7 @@ def filter_overlaps(chars):
                 num_of_noise += 1
                 # TODO: Copy to debug dir with filter name
                 imageFilename = "%s/%d.png" % (LETTERS_PATH, m1['id'])
-                if os.path.isfile(imageFilename): os.remove(imageFilename)
+                #if os.path.isfile(imageFilename): os.remove(imageFilename)
                 removed = True
                 break
         if not removed:
@@ -193,7 +193,7 @@ def filter_background(chars, full_w, full_h):
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-            if os.path.isfile(imageFilename): os.remove(imageFilename)
+            #if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
             resulting_chars.append(ch)
 
@@ -214,7 +214,7 @@ def filter_outsized(line_metas, avg_width, avg_height):
                 num_of_noise += 1
                 # TODO: Copy to debug dir with filter name
                 imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
-                if os.path.isfile(imageFilename): os.remove(imageFilename)
+                #if os.path.isfile(imageFilename): os.remove(imageFilename)
             else:
                 resulting_chars.append(ch)
 
@@ -239,11 +239,13 @@ def filter_compare(chars,clean_img):
     return new_chars
 
 def filter_merge(chars_1,chars_2):
+ 
     for char_2 in chars_2:
         in_list=False
         for char_1 in chars_1:
             if char_2["id"]==char_1["id"]:
                 in_list=True
+                #print char_1["id"]
         if not in_list:
             chars_1.append(char_2)
     return chars_1
