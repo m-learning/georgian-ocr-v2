@@ -72,3 +72,28 @@ def group_meta_as_words(lines):
         word_lines.append(words)
 
     return word_lines
+
+def merge_split_words(word_lines):
+    for i in range(1, len(word_lines)):
+        last_word = word_lines[i-1][-1]
+        if last_word[-1]['char'] == '-':
+            first_word = word_lines[i][0]
+            del last_word[-1]
+            last_word += first_word
+            del word_lines[i][0]
+
+            # Move following punctuation with it's word
+            if len(word_lines[i]) == 0: continue
+
+            new_first_word = word_lines[i][0]
+            if new_first_word[0]['char'] in ".,:!?;'":
+                word_lines[i-1].append(new_first_word)
+                del word_lines[i][0]
+
+            # Remove startin space
+            new_first_word = word_lines[i][0]
+            if len(word_lines[i]) == 0: continue
+            if new_first_word[0]['char'] == ' ':
+                del word_lines[i][0]
+
+    return word_lines

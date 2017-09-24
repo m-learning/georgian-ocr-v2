@@ -5,7 +5,10 @@ import sys
 import os
 import json
 import codecs
-
+#import matplotlib.pyplot as plt
+import numpy
+from scipy.signal import argrelextrema
+    
 def read_meta(meta_dir):
     all_meta = []
     # Loop in characters
@@ -69,7 +72,6 @@ def find_font_type(all_meta):
         return 'Mtavruli'
     else:
         return 'Mxedruli'
-
 
 def detect_avg_wh(all_meta, samp_chars=200):
     if len(all_meta) == 0:
@@ -177,7 +179,7 @@ def export_lines(all_meta):
     
     all_meta = char_classify(all_meta)
     #all_meta = all_meta[::-1]
-    
+
     font_type = find_font_type(all_meta)
     
     # pass empty if error is high 
@@ -187,7 +189,6 @@ def export_lines(all_meta):
         # return '--', [all_meta], 0, 0
     else:
         print 'Font Type: ', font_type
-        
     
     avg_width, avg_height =  detect_avg_wh(all_meta, samp_chars = 200)
     #avg_char_width = 30
@@ -198,8 +199,49 @@ def export_lines(all_meta):
     
     
     lines = makelines(all_meta, avg_height, font_type)
+    
+    spaces = []
 
-    #lines = addspaces(lines, avg_width)
+    try:
+        for n in lines:
+            spaces += [n[i+1]['x'] - n[i]['x'] - n[i]['w'] for i in range(len(n)-1)]
+            
+        #print(sorted(spaces))
+        fl = 'doane' ### 'rice'
+        hist = numpy.histogram(spaces, bins=fl)
+        
+        # ----------------------------------
+        
+        # for local maxima
+        #argrelextrema(x, np.greater)
+        
+        # for local minima
+        #minim = argrelextrema(numpy.array(spaces), numpy.less)
+        #print('=========================', minim)
+        # ------------------------------
+        # ------------------------------
     
-    return lines, avg_width, avg_height
-    
+        '''
+        for i in range(len(hist[0])):
+            if hist[0][i] != 0:
+                print(hist[0][i], hist[1][i])
+        '''
+        #print(hist)
+        indexes = numpy.argsort(hist[0])[-2:]
+        
+        #print(hist[1][indexes[0]], hist[1][indexes[1]])
+        avg = (hist[1][indexes[0]] + hist[1][indexes[1]]) / 1.3
+        print('Space treshold', avg)
+        
+        #plt.hist(spaces, bins=fl)  # arguments are passed to np.histogram
+        #plt.title("Histogram with 'auto' bins")
+        #plt.show() 
+        
+        #lines = addspaces(lines, avg_width)
+        if avg < 0 or abs(avg_width / avg) < 0.2 or abs(avg_width / avg) > 1.5:
+            avg = avg_width
+    except IndexError as ierr:
+        avg = avg_width
+            
+    return lines, avg, avg_height #avg_width, avg_height
+
