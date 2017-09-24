@@ -161,6 +161,7 @@ def read_segment(segment,vanished,clean,text,debug=False,correct_words=False):
     else: read_text = co.lines_to_text(lines)
     
     print read_text
+    segment["text"]=read_text
     text+=read_text
     text+='\n'
     return text
@@ -186,22 +187,25 @@ def read(image_path, correct_words=False, debug=True):
     cv2.imwrite('results/debug/clean_small.png', clean_small_img)
   
     read_text = u''
+    pos_coef=3
 
     leng=len(segments)
-
-    #for segment in segments:
-    for n in range(1,leng+1):
+    
+    for segment in segments:
         print "-------------------------new segment --------------------"
-        #read_text=read_segment(segment,vanished_small_img,clean_small_img,read_text)
-        read_text=read_segment(segments[leng-n],vanished_small_img,clean_small_img,read_text)
-
-    print read_text
+        read_text=read_segment(segment,vanished_small_img,clean_small_img,read_text)
+        segment["pos"]=pos_coef*segment['x']+segment['y']
+    #print read_text
+    segments = sorted(segments, key=lambda segment: segment['pos']) 
+    #segment=sorted(segment, key=lambda segment: segment["pos"])
+    for segment in segments:
+        print segment["text"]
     #restored_image = restore_image(chars, vanished_img)
     #cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print "overall time: "+str(timeit.default_timer()-overall_time)
 
-    #return read_text 
+    return read_text 
 
 
 if __name__ == '__main__':
