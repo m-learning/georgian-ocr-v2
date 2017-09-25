@@ -8,11 +8,11 @@ import os
 
 img_w = img_h = 64
 nb_epoch = 1
-TRAINING_SET_SIZE = 2
+TRAINING_SET_SIZE = 20000
 
 SCORE_PATH = "score.txt"
 
-TEST_SET_SIZE = 2
+TEST_SET_SIZE = 2000
 
 final_model = []
 
@@ -22,7 +22,7 @@ if K.image_data_format() == 'channels_first':
 else:
     input_shape = (img_w, img_h, 1)
 
-batch_size_t = [16, 25, 32]
+batch_size = [16, 25, 32]
 nb_epoch_t = [20, 25, 32]
 optimizer = ["adadelta", "adam", "rmsprop"]
 
@@ -39,7 +39,7 @@ def train():
                               histogram_freq=0, write_graph=True,
                               write_images=True)
 
-    for each_batch in batch_size_t:
+    for each_batch in batch_size:
         for each_epoch in nb_epoch_t:
             for each_optimizer in optimizer:
 
@@ -71,6 +71,7 @@ def train():
                 tf.train.write_graph(K.get_session().graph, "results/data", "model.pb", False)
 
                 final_model.append(tmp_model)
+
                 print "\n"
                 print 'Test score: {0:.4g}'.format(score[0])
                 print 'Test accur: {0:.4g}'.format(score[1])
@@ -81,7 +82,6 @@ def train():
         for each in final_model:
             myfile.write(str(each) + "  ")
             myfile.write("\n")
-
 
 if __name__ == '__main__':
     train()
