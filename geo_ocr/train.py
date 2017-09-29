@@ -3,7 +3,7 @@ from keras.callbacks import TensorBoard
 import tensorflow as tf
 import image_generator as ig
 import network
-import shutil
+import file_operations as file_ops
 
 import os
 
@@ -76,7 +76,7 @@ def train():
                 print "\n"
                 print 'Test score: {0:.4g}'.format(score[0])
                 print 'Test accur: {0:.4g}'.format(score[1])
-                shutil.rmtree('results/data')
+                file_ops.create_clean_dir('results/data')
 
     final_model.sort(key=lambda row: row[-1])
 
@@ -85,7 +85,7 @@ def train():
             myfile.write(str(each) + "  ")
             myfile.write("\n")
 
-    shutil.rmtree('results/data')
+    file_ops.create_clean_dir('results/data')
 
     hiper = final_model[0]
 

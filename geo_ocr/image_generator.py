@@ -48,7 +48,7 @@ img_counter = 0
 latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
 georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
 numbers = u'1234567890'
-symbols = u'!*()-+=.,?;:%/\[]{}<>'
+symbols = u"!*()-+=.,?;:'%/\[]{}<>"
 
 bad_fonts = ['GL Kupiura', 'GL Mkafio', 'GL Parizuli']
 
@@ -280,7 +280,7 @@ def next_batch(size, rotate=False, ud=False, lr=False,
                         char = '.'
                 else:
                     char = chars[random.randint(0, LABEL_SIZE - 1)]
-                img = paint_text(char, img_w, img_h, input_img=image,
+                img = paint_text(char, img_w, img_h, input_img=None,
                                  rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
                                  multi_sizes=multi_sizes, blur=blur, save=save)
                 break
