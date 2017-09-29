@@ -9,11 +9,11 @@ import os
 
 img_w = img_h = 64
 nb_epoch = 1
-TRAINING_SET_SIZE = 20000
+TRAINING_SET_SIZE = 2
 
 SCORE_PATH = "secondScore.txt"
 
-TEST_SET_SIZE = 2000
+TEST_SET_SIZE = 2
 
 final_model = []
 

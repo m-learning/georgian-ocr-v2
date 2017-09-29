@@ -206,9 +206,11 @@ def paint_text(text, w, h, input_img=None,
         cv2.imwrite(GENERATED_IMAGES_DIR + 'img_%04d.png' % img_counter, input_img)
 
     a = np.frombuffer(buf, np.uint8)
-
-    a.shape = (h, w, 4)
-    a = a[:, :, 0]  # grab single channel
+    if input_img is None:
+        a.shape = (h, w, 4)
+        a = a[:, :, 0]  # grab single channel
+    elif input_img is not None:
+        a.shape = (h, w)
 
     a = np.expand_dims(a, 0)
 
