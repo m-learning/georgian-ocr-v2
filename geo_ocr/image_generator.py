@@ -207,11 +207,11 @@ def paint_text(text, w, h, input_img=None,
 
     a = np.frombuffer(buf, np.uint8)
 
-    if input_img is None:
-        a.shape = (h, w, 4)
+    a.shape = (h, w, 4)
     a = a[:, :, 0]  # grab single channel
 
     a = np.expand_dims(a, 0)
+
     if input_img is None and rotate:
         a = image.random_rotation(a, 7 * (w - top_left_x) / w + 1)
     #if spackle:
