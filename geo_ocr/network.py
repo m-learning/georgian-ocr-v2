@@ -41,4 +41,3 @@ def init_model(optimizer):
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer, metrics=['accuracy'])
     return model
-

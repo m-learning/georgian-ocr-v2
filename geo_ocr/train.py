@@ -3,6 +3,7 @@ from keras.callbacks import TensorBoard
 import tensorflow as tf
 import image_generator as ig
 import network
+import shutil
 
 import os
 
@@ -10,7 +11,7 @@ img_w = img_h = 64
 nb_epoch = 1
 TRAINING_SET_SIZE = 20000
 
-SCORE_PATH = "score.txt"
+SCORE_PATH = "secondScore.txt"
 
 TEST_SET_SIZE = 2000
 
@@ -75,13 +76,45 @@ def train():
                 print "\n"
                 print 'Test score: {0:.4g}'.format(score[0])
                 print 'Test accur: {0:.4g}'.format(score[1])
+                shutil.rmtree('results/data')
 
-    final_model.sort(key=lambda row: row[3])
+    final_model.sort(key=lambda row: row[-1])
 
     with open(SCORE_PATH, "a") as myfile:
         for each in final_model:
             myfile.write(str(each) + "  ")
             myfile.write("\n")
+
+    shutil.rmtree('results/data')
+
+    hiper = final_model[0]
+
+    model = network.init_model(hiper[2])
+
+    for epoch in range(0, hiper[1], nb_epoch):
+        (x_train, y_train) = ig.next_batch(TRAINING_SET_SIZE,
+                                           rotate=True, ud=True, lr=True,
+                                           multi_fonts=True,
+                                           multi_sizes=True, blur=False)
+        model.fit(x_train, y_train,
+                  batch_size=hiper[0], epochs=epoch + nb_epoch,
+                  verbose=1, validation_split=0.1,
+                  callbacks=[tensorboard], initial_epoch=epoch)
+
+        if not os.path.exists(os.path.join(path, 'results/data')):
+            os.makedirs(os.path.join(path, 'results/data'))
+        model.save_weights(os.path.join(path,
+                                        'results/data/model.h5'))
+
+    (x_test, y_test) = ig.next_batch(TEST_SET_SIZE)
+    score = model.evaluate(x_test, y_test)
+
+    tf.train.write_graph(K.get_session().graph, "results/data", "model.pb", False)
+
+    print "\n"
+    print 'Test score: {0:.4g}'.format(score[0])
+    print 'Test accur: {0:.4g}'.format(score[1])
+
 
 if __name__ == '__main__':
     train()

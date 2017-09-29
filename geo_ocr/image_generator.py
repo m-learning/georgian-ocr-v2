@@ -278,7 +278,7 @@ def next_batch(size, rotate=False, ud=False, lr=False,
                         char = '.'
                 else:
                     char = chars[random.randint(0, LABEL_SIZE - 1)]
-                img = paint_text(char, img_w, img_h, input_img=None,
+                img = paint_text(char, img_w, img_h, input_img=image,
                                  rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
                                  multi_sizes=multi_sizes, blur=blur, save=save)
                 break
