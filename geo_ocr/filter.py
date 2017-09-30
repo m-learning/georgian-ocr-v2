@@ -209,16 +209,15 @@ def filter_connect(chars):
                 m1['x']=m2['x']
                 removed = True
                 break
-            """
-            if h2>y1 and h2<h1 and x2>x1 and x2<w1 and w1>x1 and w2<w1:
+            if y2>y1 and y2<h1 and x2>x1 and x2<w1 and w1>x1 and w2<w1:
                 m1['h']=(m2['y']+m2['h'])-m1['y']
                 removed = True
                 break
-            if y2>y1 and y2<h1 and x2>x1 and x2<w1 and w1>x1 and w2<w1:
+            if h2>y1 and h2<h1 and x2>x1 and x2<w1 and w1>x1 and w2<w1:
                 m1['y']=m2['y']
                 removed = True
                 break
-            """
+                       
         if not removed:
             resulting_chars.append(m2)
 
