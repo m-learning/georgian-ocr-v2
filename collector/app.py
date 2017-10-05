@@ -40,6 +40,28 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/chart', methods=['GET'])
+def chart ():
+    return render_template('chart.html')
+    
+
+@app.route('/chartData', methods=['GET'])
+def chartData ():
+    chartData = []
+    
+    for c in ALLOWED_CHARS:
+        directory = os.path.join(TRAINING_DATA_DIR, c)
+
+        file_count = 0
+        if os.path.isdir(directory):
+            file_count = len(os.walk(directory).next()[2])
+        item = {}
+        item['label'] = c
+        item['count'] = file_count
+        chartData.append(item)
+    return jsonify(chartData)
+    
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.method == 'POST' and 'image' in request.files:
