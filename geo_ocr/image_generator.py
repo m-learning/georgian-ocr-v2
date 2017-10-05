@@ -50,7 +50,7 @@ img_counter = 0
 latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
 georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
 numbers = u'1234567890'
-symbols = u'!*()-+=.,?;:%/\[]{}<>'
+symbols = u"'!*()-+=.,?;:%/\[]{}<>"
 
 GENERATED_IMAGES_DIR = "results/gen_imgs/"
 TRAIN_IMAGES_DIR = "training_data"
@@ -195,6 +195,7 @@ def paint_text(text, w, h, input_image=None,
         a = a[:, :, 0]  # grab single channel
     else:
         a = input_image
+
     a = np.expand_dims(a, 0)
     if input_image is None and rotate:
         a = image.random_rotation(a, 7 * (w - top_left_x) / w + 1)
