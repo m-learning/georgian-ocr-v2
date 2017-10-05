@@ -9,7 +9,7 @@ import random
 from keras.preprocessing import image
 import os
 import argparse
-#import matplotlib.image as mpimg
+import matplotlib.image as mpimg
 from PIL import ImageFont
 import cv2
 import random
@@ -17,6 +17,8 @@ import sys
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+
 random.seed(55)
 np.random.seed(55)
 
@@ -50,13 +52,8 @@ georgian = u'აბგდევზთიკლმნოპჟრსტუფქ�
 numbers = u'1234567890'
 symbols = u'!*()-+=.,?;:%/\[]{}<>'
 
-bad_fonts = ['GL Kupiura', 'GL Mkafio', 'GL Parizuli']
-
-bad_font_7 = ['GL Chonchkhi']
-
-TRAIN_IMAGES_DIR = "training_data"
-
 GENERATED_IMAGES_DIR = "results/gen_imgs/"
+TRAIN_IMAGES_DIR = "training_data"
 
 
 def parse_fonts_directory(fonts_path):
@@ -73,6 +70,7 @@ def parse_fonts_directory(fonts_path):
 def create_font_record(name, font_type):
     return {'name': name, 'type': font_type}
 
+
 font_names = []
 
 
@@ -82,11 +80,11 @@ def list_available_fonts():
     if font_names: return font_names
 
     # TODO: Make directory paths configurable
-    font_names += [create_font_record(name, 'latin') 
-        for name in parse_fonts_directory('bulk_fonts/latin')]
+    font_names += [create_font_record(name, 'latin')
+                   for name in parse_fonts_directory('bulk_fonts/latin')]
 
-    font_names += [create_font_record(name, 'unicode') 
-        for name in parse_fonts_directory('bulk_fonts/utf-8')]
+    font_names += [create_font_record(name, 'unicode')
+                   for name in parse_fonts_directory('bulk_fonts/utf-8')]
 
     return font_names
 
@@ -117,15 +115,17 @@ def find_max_font_size(context, text, max_w, max_h):
 
     return int(font_size)
 
-count = 1
-def paint_text(text, w, h, input_img=None,
+
+def paint_text(text, w, h, input_image=None,
                rotate=False, ud=False, lr=False, multi_fonts=False,
                multi_sizes=False, save=False, spackle=False, blur=False):
-    if input_img is None:
+    top_left_x = 0
+    if input_image is None:
         surface = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h)
         with cairo.Context(surface) as context:
             context.set_source_rgb(1, 1, 1)  # White
             context.paint()
+
         fonts = list_available_fonts()
 
         if multi_fonts:
@@ -147,17 +147,13 @@ def paint_text(text, w, h, input_img=None,
             context.set_font_size(random.randint(25, max_font_size))
         else:
             context.set_font_size(44)
+
         if font['type'] == 'latin' and text in georgian:
             text = latingeo[georgian.index(text)]
-        if font is not None and (text == '/' or text == '\\') and font['name'] in bad_fonts:
-            context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-        if font is not None and text == '7' and font['name'] in bad_font_7:
-            context.select_font_face(font_names[0]['name'], cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-        box = context.text_extents(text)
 
+        box = context.text_extents(text)
         text_w = box[2]
         text_h = box[3]
-
         border_w_h = (4, 4)
         # if box[2] > (w - 2 * border_w_h[1]) or box[3] > (h - 2 * border_w_h[0]):
         #     raise IOError('Could not fit string into image. \
@@ -174,7 +170,6 @@ def paint_text(text, w, h, input_img=None,
         if int(max_shift_y) <= 0:
             max_shift_y = 1
 
-
         if lr:
             top_left_x = np.random.randint(0, int(max_shift_x))
         else:
@@ -185,45 +180,34 @@ def paint_text(text, w, h, input_img=None,
         else:
             top_left_y = h // 2 - text_h // 2
 
-
         context.move_to(top_left_x - int(box[0]), top_left_y - int(box[1]))
-        #context.set_source_rgb(0, 0, 0)
+        # context.set_source_rgb(0, 0, 0)
         context.show_text(text)
+        if save:
+            global img_counter
+            img_counter += 1
+            surface.write_to_png(
+                create_dir_if_missing(GENERATED_IMAGES_DIR) + 'img_%04d.png' % img_counter
+            )
         buf = surface.get_data()
-    else:
-        buf = input_img
-
-
-    if save and input_img is None:
-        global img_counter
-        img_counter += 1
-        surface.write_to_png(
-            create_dir_if_missing(GENERATED_IMAGES_DIR) + 'img_%04d.png' % img_counter
-        )
-    if save and input_img is not None:
-        global img_counter
-        img_counter += 1
-        cv2.imwrite(GENERATED_IMAGES_DIR + 'img_%04d.png' % img_counter, input_img)
-
-    a = np.frombuffer(buf, np.uint8)
-
-    if input_img is None:
+        a = np.frombuffer(buf, np.uint8)
         a.shape = (h, w, 4)
-    a = a[:, :, 0]  # grab single channel
-
+        a = a[:, :, 0]  # grab single channel
+    else:
+        a = input_image
     a = np.expand_dims(a, 0)
-    if input_img is None and rotate:
+    if input_image is None and rotate:
         a = image.random_rotation(a, 7 * (w - top_left_x) / w + 1)
-    #if spackle:
+    # if spackle:
     #    a = speckle(a)
 
     a = np.squeeze(a)
 
-    #if blur:
+    # if blur:
     #    ndimage.gaussian_filter(a, np.random.randint(0, 2), output=a)
 
     # Randomly reverse colors
-    #if bool(random.getrandbits(1)):
+    # if bool(random.getrandbits(1)):
     #  a = 255-a
 
     #    global img_counter
@@ -243,42 +227,46 @@ img_h = 64
 
 y = list_eye(LABEL_SIZE)
 
-
 def next_batch(size, rotate=False, ud=False, lr=False,
                multi_fonts=False, multi_sizes=False, blur=False, save=False):
+
     create_dir_if_missing(GENERATED_IMAGES_DIR)
+
     images_paths = []
+
     for im_name in os.listdir(TRAIN_IMAGES_DIR):
         for f_path in os.listdir(u'/'.join((TRAIN_IMAGES_DIR, im_name))):
             images_paths.append(u'/'.join((TRAIN_IMAGES_DIR, im_name, f_path)))
 
+    if len(images_paths) > 5000:
+        img_len = 5000
+    else:
+        img_len = len(images_paths)
 
     print "Generating {0:d} images...".format(size)
     x_train = np.zeros((size, img_w, img_h))
     y_train = [None] * size
-    if len(images_paths) < 4000:
-        img_number = len(images_paths)
-    else:
-        img_number = 4000
-    count_img = 0
+
+    counter = 0
     for i in range(size):
         while True:
             try:
-                image = None
+                counter += 1
+                real_image = None
 
-                if count_img < img_number - 5:
-                    count_img += 1
+                if counter < img_len - 5:
                     random_index = random.randint(0, len(images_paths) - 1)
                     new_img_path = images_paths[random_index]
                     images_paths.remove(new_img_path)
-                    image = cv2.imread(new_img_path, 0)
+                    real_image = cv2.imread(new_img_path, 0)
                     if new_img_path.split('/')[1] != 'd':
-                        char = new_img_path.split('/')[1]
+                        char = unicode(new_img_path.split('/')[1])
                     else:
-                        char = '.'
+                        char = u'.'
                 else:
                     char = chars[random.randint(0, LABEL_SIZE - 1)]
-                img = paint_text(char, img_w, img_h, input_img=None,
+
+                img = paint_text(char, img_w, img_h, input_image=real_image,
                                  rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
                                  multi_sizes=multi_sizes, blur=blur, save=save)
                 break
@@ -317,7 +305,7 @@ if __name__ == '__main__':
                          args.width, args.height,
                          rotate=True, ud=True, multi_fonts=True,
                          multi_sizes=True, blur=False, save=False)
-        #mpimg.imsave(
-        #    os.path.join(
-        #        create_dir_if_missing(args.save_path),
-        #        'img-%s.png' % word.decode('utf-8')), img[0], cmap="Greys_r")
+        mpimg.imsave(
+            os.path.join(
+                create_dir_if_missing(args.save_path),
+                'img-%s.png' % word.decode('utf-8')), img[0], cmap="Greys_r")

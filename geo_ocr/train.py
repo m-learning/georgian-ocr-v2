@@ -11,7 +11,6 @@ img_w = img_h = 64
 nb_epoch = 1
 iterations = 20
 TRAINING_SET_SIZE = 20000
-
 TEST_SET_SIZE = 1000
 
 K.set_learning_phase(1)
@@ -27,7 +26,7 @@ def train():
     model = network.init_model(ig.LABEL_SIZE, input_shape)
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer='adadelta', metrics=['accuracy'])
+                  optimizer='adam', metrics=['accuracy'])
 
     tensorboard = TensorBoard(log_dir=os.path.join(path, 'logs'),
                               histogram_freq=0, write_graph=True,
