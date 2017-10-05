@@ -1,67 +1,65 @@
 (function () {
-	var timeout;
-	var canvas = document.createElement('canvas')
-	canvas.width = 1050
-	canvas.height = 400
-	canvas.className = 'chart'
-	
-	var chartW = 950
-	var chartH = 330
-	
-	var left = 80
-	var bottom = 360
-	
-	var c = canvas.getContext('2d')
+    var canvas = document.createElement('canvas')
+    canvas.width = 1050
+    canvas.height = 500
+    canvas.className = 'chart'
+    
+    var chartW = 950,
+        chartH = 360,
+        left = 80,
+        bottom = 450;
+    
+    var c = canvas.getContext('2d')
     c.font = "14px monospace"
-	
-	document.body.appendChild(canvas)
-	
+    
+    document.body.appendChild(canvas)
+        
     function loadChartData () {
-		var oReq = new XMLHttpRequest()
-		oReq.addEventListener('load', function () {
-			var data
-			try {
-				data = JSON.parse(this.responseText)
-			} catch (ex) { }
-			
-			data.sort((a, b) => {
-			    return a.label > b.label ? 1 : -1;
-		    })
-			
-		    drawChart(data)
-		})
-		
-		oReq.open('GET', 'chartData')
-		oReq.send()
+        var oReq = new XMLHttpRequest()
+        oReq.addEventListener('load', function () {
+            var data
+            try {
+                data = JSON.parse(this.responseText)
+            } catch (ex) { }
+            
+            data.sort((a, b) => {
+                return a.label > b.label ? 1 : -1;
+            })
+            
+            drawChart(data)
+        })
+        
+        oReq.open('GET', 'chartData')
+        oReq.send()
     }
     
     loadChartData()
     
     function findMaxCount (data) {
-        var m = 0;
+        var m = 0
         data.forEach(d => {
             m = Math.max(m, d.count)
         })
-        return m;
+        return m
     }
     
     function drawBackground () {
         c.save()
         c.fillStyle = '#f0f0f0'
         c.fillRect(0, 0, canvas.width, canvas.height)
+        c.fillStyle = '#000'
+        c.textAlign = 'center'
+        c.fillText('OCR training data ' + formatDate(new Date()), canvas.width / 2, 20)
         c.restore()
     }
     
     function drawX () {
-    
-        c.beginPath()
         c.moveTo(left - 20, bottom)
         c.lineTo(left + chartW, bottom)
         c.stroke()
     }
     
     function drawY () {
-        
         c.moveTo(left, bottom + 20)
         c.lineTo(left, bottom - chartH)
         c.stroke()
@@ -129,12 +127,18 @@
         drawY()
     }
     
-    function drawBar (data) {
-        data.label;
-        data.count;
+    function randomColor () {
+        return '#' + ((1 << 24) * Math.random() | 0).toString(16)
     }
-	
-	function randomColor () {
-	    return '#' + ((1 << 24) * Math.random() | 0).toString(16)
-	}
+    
+    function formatDate (date) {
+        var arr = [date.getDate(), date.getMonth() + 1, date.getFullYear()]
+        return arr.map(d => {
+            return padZero(d)
+        }).join('/')
+    }
+    
+    function padZero (n) {
+        return n > 9 ? n : '0' + n
+    }
 })()

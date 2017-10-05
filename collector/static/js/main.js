@@ -212,6 +212,10 @@
 		oReq.open("POST", "upload")
 		oReq.send(formData)
     })
+    
+	document.getElementById('chart-button').addEventListener('click', function () {
+		window.open('chart')
+	})
 	
 	function selectFirstInput () {
 		if (containerDiv.children.length) {
