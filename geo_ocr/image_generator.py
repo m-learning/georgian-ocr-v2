@@ -18,9 +18,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-
 random.seed(55)
 np.random.seed(55)
+
 
 
 def list_eye(n):
@@ -50,10 +50,10 @@ img_counter = 0
 latingeo = u'abgdevzTiklmnopJrstufqRySCcZwWxjh'
 georgian = u'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ'
 numbers = u'1234567890'
-symbols = u"'!*()-+=.,?;:%/\[]{}<>"
+symbols = u'!*()-+=.,?;:%/\[]{}<>'
+TRAIN_IMAGES_DIR = 'training_data'
 
 GENERATED_IMAGES_DIR = "results/gen_imgs/"
-TRAIN_IMAGES_DIR = "training_data"
 
 
 def parse_fonts_directory(fonts_path):
@@ -195,7 +195,6 @@ def paint_text(text, w, h, input_image=None,
         a = a[:, :, 0]  # grab single channel
     else:
         a = input_image
-
     a = np.expand_dims(a, 0)
     if input_image is None and rotate:
         a = image.random_rotation(a, 7 * (w - top_left_x) / w + 1)
@@ -228,6 +227,7 @@ img_h = 64
 
 y = list_eye(LABEL_SIZE)
 
+
 def next_batch(size, rotate=False, ud=False, lr=False,
                multi_fonts=False, multi_sizes=False, blur=False, save=False):
 
@@ -238,7 +238,7 @@ def next_batch(size, rotate=False, ud=False, lr=False,
     for im_name in os.listdir(TRAIN_IMAGES_DIR):
         for f_path in os.listdir(u'/'.join((TRAIN_IMAGES_DIR, im_name))):
             images_paths.append(u'/'.join((TRAIN_IMAGES_DIR, im_name, f_path)))
-
+    img_len = 0
     if len(images_paths) > 5000:
         img_len = 5000
     else:
@@ -254,7 +254,7 @@ def next_batch(size, rotate=False, ud=False, lr=False,
             try:
                 counter += 1
                 real_image = None
-
+                char = ''
                 if counter < img_len - 5:
                     random_index = random.randint(0, len(images_paths) - 1)
                     new_img_path = images_paths[random_index]
@@ -266,7 +266,6 @@ def next_batch(size, rotate=False, ud=False, lr=False,
                         char = u'.'
                 else:
                     char = chars[random.randint(0, LABEL_SIZE - 1)]
-
                 img = paint_text(char, img_w, img_h, input_image=real_image,
                                  rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
                                  multi_sizes=multi_sizes, blur=blur, save=save)
