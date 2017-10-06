@@ -64,7 +64,7 @@
 		
 		input.checkSuggestion = function (e) {
 		    if (input.value && input.value != input.placeholder) {
-		        image.style.borderBottom = '4px solid red'
+		        image.style.borderBottom = MISMATCHING_BORDER
 		    } else {
 		        image.style.borderBottom = DEFAULT_BORDER
 	        }
@@ -125,6 +125,7 @@
 	
 	var DEFAULT_BORDER = '0.1px solid grey'
 	var SELECTED_BORDER = '2px solid green'
+	var MISMATCHING_BORDER = '4px solid rgb(200, 0, 0)'
 	var COMPLETED_COLOR = 'rgba(142, 230, 142, 0.2)'
 	var SELECTED_COLOR = 'rgba(142, 230, 142, 0.4)'
 	var DISABLED_COLOR = 'rgba(230, 142, 142, 0.3)'

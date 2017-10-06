@@ -1,13 +1,14 @@
 (function () {
     var canvas = document.createElement('canvas')
-    canvas.width = 1050
-    canvas.height = 500
+    canvas.width = 1360
+    canvas.height = 550
     canvas.className = 'chart'
     
-    var chartW = 950,
-        chartH = 360,
+    var chartW = 1240,
+        chartH = 410,
         left = 80,
-        bottom = 450;
+        bottom = 500,
+        barWidth = 42;
     
     var c = canvas.getContext('2d')
     c.font = "14px monospace"
@@ -68,51 +69,64 @@
     function drawXLabels (data, maxCount) {
         c.save()
         c.textAlign = 'center'
-        c.font = "12px monospace"
         c.beginPath()
         data.forEach((d, index) => {
-            c.moveTo(left + (index + 1) * 16, bottom)
-            c.lineTo(left + (index + 1) * 16, bottom + 8)
+            var x = (index + 1) * barWidth / 2;
+            var b = barWidth / 6;
+
+            c.moveTo(left + x, bottom)
+            c.lineTo(left + x, bottom + 8)
             
             var n = Math.floor(d.count * chartH/maxCount)
             
             c.fillStyle = randomColor()
-            c.fillRect(left - 5 + (index + 1) * 16, bottom - n, 10, n)
+            c.fillRect(left - b + x, bottom - n, b * 2, n)
             c.fillStyle = '#000'
             
-            c.moveTo(left - 5 + (index + 1) * 16, bottom)
-            c.lineTo(left - 5 + (index + 1) * 16, bottom - n)
-            c.lineTo(left + 5 + (index + 1) * 16, bottom - n)
-            c.lineTo(left + 5 + (index + 1) * 16, bottom)
+            c.moveTo(left - b + x, bottom)
+            c.lineTo(left - b + x, bottom - n)
+            c.lineTo(left + b + x, bottom - n)
+            c.lineTo(left + b + x, bottom)
 
             if (d.count > 0) {
-                c.fillText(d.count, left + (index + 1) * 16, bottom - 8 - n)
+                if (d.count > 999) {
+                    c.font = '9px monospace'
+                } else {
+                    c.font = '11px monospace'
+                }
+                c.fillText(d.count, left + x, bottom - 8 - n)
             }
             if (d.label == 'd') {
                 d.label = '.'
             }
-            c.fillText(d.label, left + (index + 1) * 16, bottom + 22)
+            c.font = '12px monospace'
+            c.fillText(d.label, left + x, bottom + 22)
         })
         c.stroke()
         c.restore()
     }
     
     function drawYLabels (data, maxCount) {
-        var coef = Math.floor(chartH/maxCount)
+        var coef = Math.floor((chartH/maxCount) * 10) / 10
+        var p = Math.floor(Math.log10(maxCount))
+        var step = Math.pow(10, p)
         
         c.save()
         c.textAlign = 'right'
         c.textBaseline = 'middle'
         c.beginPath()
-        for (var i = 0; i <= maxCount; i++) {
-            var n = i * coef
-            if (i > 0 && i % 10 == 0) {
-                c.moveTo(left - 5, bottom - n)
-                c.lineTo(left, bottom - n)
+        
+        var i = 1;
+        while(i * step < maxCount) {
+            var y = i * step * coef
+            
+            c.moveTo(left - 5, bottom - y)
+            c.lineTo(left, bottom - y)
 
-                c.fillText(i, left - 10, bottom - n)
-            }
+            c.fillText(i * step, left - 10, bottom - y)
+            i++;
         }
+        
         c.stroke()
         c.restore()
     }
