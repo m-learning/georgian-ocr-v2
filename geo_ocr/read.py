@@ -159,9 +159,11 @@ def read(image_path, correct_words=False, debug=True):
     print "overall time: "+str(timeit.default_timer()-overall_time)
 
     return read_text 
+    
+    
 
-
-def read_lines(image_path, debug=True):
+def read_for_tdc(image_path, debug=False):
+    overall_time = timeit.default_timer()
     file_ops.create_clean_dir(LETTERS_DIR)
 
     if not os.path.isfile(image_path):
@@ -169,62 +171,57 @@ def read_lines(image_path, debug=True):
         return
 
     chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(image_path, debug=debug)
-    # TODO: Line detector
 
     print len(chars), 'chars exist'
 
     chars = filter.filter_background(chars, full_w, full_h)
-    # chars = filter.filter_overlaps(chars)
     other_chars = filter.filter_compare(chars, clean_img)
     chars = filter.filter_unproportional(chars)
 
-    # TODO: Fix for images without noise
     chars = filter.filter_by_size_distribution(chars, full_w, full_h)
-    # chars = filter.filter_out_of_average(chars)
 
     # merge filters
     chars = filter.filter_merge(chars, other_chars)
     chars = filter.filter_overlaps(chars)
     chars = filter.filter_too_small(chars)
 
-    # detect % ? ! : symbols
-    # chars = sorted(chars, key=lambda k: k['x'])
-
     print len(chars), 'chars left after filtering'
 
-    # if you want to see filtered image uncomment next 4 lines
-    # restored_image = restore_image(chars, full_h, full_w)
-    # plt.imshow(restored_image)
-    # cv2.imwrite('/home/shota/image.png', restored_image)
-    # plt.show()
-    
-    '''
+    full_score = 0
     full_count = 0
-    char_imgs = []
 
+    recognize_time = timeit.default_timer()
+    recognized_chars = []
     for char in chars:
         try:
             char_img = image_ops.crop_char_image(char, vanished_img)
-            char_imgs.append(char_img)
         except Exception, e:
             print "Could not crop image:", e
             continue
 
+        pairs = recognize_image(char_img.flatten())
+        char['char'] = pairs[0]['char']
+        char['score'] = pairs[0]['score'].item()
+        char["alternatives"] = [pairs[1], pairs[2], pairs[3]]
+
+        full_score += char['score']
         full_count += 1
+
+        recognized_chars.append(char)
+
+        if debug:
+            print char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h'])
+
+    if debug:
+        print 'Avg score: %d' % (full_score * 100 / full_count)
+    recognize_time = timeit.default_timer()-recognize_time
+    start_time = timeit.default_timer()
     
-    print '\n\n\n\nfull_count=', full_count
-    print '\n\n\n\n\n\n\n\nchars\n\n', chars
-    '''
+    chars = recognized_chars
     
-    #return char_imgs
-    #chars = filter.filter_by_possible_alternatives(chars)
-    
-    for char in chars:
-        char['char'] = ''
-        char['score'] = 0
+    chars = filter.filter_by_possible_alternatives(chars)
     
     lines, avg_width, avg_height = export_words.export_lines(chars)
-   #print 'lines, avg_width, avg_height', lines, avg_width, avg_height
     ms.merge(lines, vanished_img)
 
     lines = export_words.addspaces(lines, avg_width)
@@ -233,22 +230,30 @@ def read_lines(image_path, debug=True):
     changed=True
     while(changed):
         lines,changed=filter.filter_out_of_line(lines)
-    #lines=filter.filter_out_of_line(lines)
     
+    result = []
     
-    char_imgs = []
     for chars in lines:
         for char in chars:
             try:
                 if char['char'] == u' ':
-                    char_imgs.append('space')
+                    result.append({
+                        'char': 'space',
+                        'char_img': None 
+                    })
                     continue
                 char_img = image_ops.crop_char_image(char, vanished_img)
-                char_imgs.append(char_img)
+                result.append({
+                    'char': char['char'],
+                    'char_img': char_img
+                })
             except Exception, e:
                 print "Could not crop image:", e
                 continue
-        char_imgs.append('newline')
+        result.append({
+            'char': 'newline',
+            'char_img': None
+        })
 
     if debug:
         line_debugger(lines, vanished_img)
@@ -256,8 +261,9 @@ def read_lines(image_path, debug=True):
 
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
-    return char_imgs
-
+    
+    print "overall time: "+str(timeit.default_timer()-overall_time)
+    return result
 
 if __name__ == '__main__':
     args = init_arguments()

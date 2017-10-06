@@ -1,5 +1,5 @@
 (function () {
-	function createInput (id) {
+	function createInput (id, suggestionChar) {
 		var input = document.createElement('input')
 		
 		input.type = 'text'
@@ -14,10 +14,13 @@
 		input.style.textAlign = 'center'
 		input.style.border = DEFAULT_BORDER
 		
+		input.placeholder = suggestionChar
+		
 		input.addEventListener('focus', function (e) {
 			e.target.blur()
 			selectInput(e.target)
 		})
+		
 		input.id = 'input-' + id
 		return input
 	}
@@ -38,7 +41,10 @@
 		return img
 	}
 	
-	function createCell (id, imageSrc) {
+	function createCell (id, data) {
+	    var imageSrc = data.char_img
+	    var suggestionChar = data.char
+	    
 		var div = document.createElement('div')
 		div.style.position = 'relative'
 		div.style.width = '66px'
@@ -48,13 +54,21 @@
 		div.style.display = 'inline-block'
 		
 		var image = createImage(id, imageSrc)
-		var input = createInput(id)
+		var input = createInput(id, suggestionChar)
 		
 		div.appendChild(image)
 		div.appendChild(input)
 		
 		div.image = image
 		div.input = input
+		
+		input.checkSuggestion = function (e) {
+		    if (input.value && input.value != input.placeholder) {
+		        image.style.borderBottom = '4px solid red'
+		    } else {
+		        image.style.borderBottom = DEFAULT_BORDER
+	        }
+		}
 		
 		div.id = 'cell-' + id
 		return div
@@ -156,7 +170,8 @@
 		var oReq = new XMLHttpRequest()
 		oReq.addEventListener("load", function () {
 			if (this.responseText == 'OK') {
-				showMessage('მონაცემები შენახულია')
+                showMessage('მონაცემები შენახულია')
+			    window.scrollTo(0, document.body.scrollHeight)
 			}
 		})
 		oReq.open("POST", "save")
@@ -189,9 +204,9 @@
 			if (data) {
 			    if (data.length) {
 				    for (var i = 0; i < data.length; i++) {
-			            if (data[i] === 'space') {
+			            if (data[i].char === 'space') {
 			                if (i > 0) addMarginToLastCell()
-			            } else if (data[i] === 'newline') {
+			            } else if (data[i].char === 'newline') {
 			                if (i > 0) addMarginToLastCell()
 			            } else {
 			                containerDiv.appendChild(createCell(i, data[i]))
@@ -279,6 +294,7 @@
 			selectedInput.style.backgroundColor = DISABLED_COLOR
 			selectedInput.parentNode.children[0].style.opacity = 0.8
 			selectedInput.value = ''
+			selectedInput.checkSuggestion()
 			selectNextInput()
 		}
 	}
@@ -322,10 +338,12 @@
 			clearTimeout(timeout)
 			selectPreviousInput()
 			selectedInput.value = ''
+			selectedInput.checkSuggestion()
 		} if (e.key === 'Delete') {
 			clearTimeout(timeout)
 			selectNextInput()
 			selectedInput.value = ''
+			selectedInput.checkSuggestion()
 		} else if (specialKeys.indexOf(e.key) === -1) {
 			if (e.shiftKey) {
 				value = shiftedKeyCodes[e.keyCode]
@@ -341,16 +359,8 @@
 		
 			if (value && selectedInput && !finished) {
 				selectedInput.value = value
+				selectedInput.checkSuggestion()
 				enableSelectedInput()
-				
-				/*
-				timeout = (function (input) {
-					return setTimeout(function () {
-						selectInput(input)
-					}, 1000)
-				})(selectedInput)
-				*/
-				
 				selectNextInput()
 			}
 		}
