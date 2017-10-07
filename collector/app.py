@@ -40,6 +40,28 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/chart', methods=['GET'])
+def chart ():
+    return render_template('chart.html')
+    
+
+@app.route('/chartData', methods=['GET'])
+def chartData ():
+    chartData = []
+    
+    for c in ALLOWED_CHARS:
+        directory = os.path.join(TRAINING_DATA_DIR, c)
+
+        file_count = 0
+        if os.path.isdir(directory):
+            file_count = len(os.walk(directory).next()[2])
+        item = {}
+        item['label'] = c
+        item['count'] = file_count
+        chartData.append(item)
+    return jsonify(chartData)
+    
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.method == 'POST' and 'image' in request.files:
@@ -55,26 +77,44 @@ def upload():
 
     filenames = []
 
-    char_images = read.read_lines(last_image_path)
-        
+    char_images = read.read_for_tdc(last_image_path)
+    
     for i in range(len(char_images)):
-        if isinstance(char_images[i], basestring) and char_images[i] == 'space':
-            filenames.append('space')
-        elif isinstance(char_images[i], basestring) and char_images[i] == 'newline':
-            filenames.append('newline')
+        if isinstance(char_images[i]['char'], basestring) and char_images[i]['char'] == 'space':
+            filenames.append({
+                'char': 'space',
+                'filename': None
+            })
+        elif isinstance(char_images[i]['char'], basestring) and char_images[i]['char'] == 'newline':
+            filenames.append({
+                'char': 'newline',
+                'filename': None
+            })
         else:
             filename = os.path.join(RESULT_IMAGES_DIR, str(i) + '.png')
-            filenames.append(filename)
-            cv2.imwrite(filename, char_images[i])
+            filenames.append({
+                'char': char_images[i]['char'],
+                'filename': filename
+            })
+            cv2.imwrite(filename, char_images[i]['char_img'])
 
     images = []
     for filename in filenames:
-        if filename == 'space':
-            images.append('space')
-        elif filename == 'newline':
-            images.append('newline')
+        if filename['char'] == 'space':
+            images.append({
+                'char': 'space',
+                'char_img': None
+            })
+        elif filename['char'] == 'newline':
+            images.append({
+                'char': 'newline',
+                'char_img': None
+            })
         else:
-            images.append(read_image(filename))
+            images.append({
+                'char': filename['char'],
+                'char_img': read_image(filename['filename'])
+            })
     
     return jsonify(images)
 

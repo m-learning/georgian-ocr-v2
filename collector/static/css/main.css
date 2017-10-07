@@ -4,17 +4,23 @@ body {
 	-ms-user-select: none;
 }
 
+::-webkit-input-placeholder {
+    font-weight: normal;
+    color: rgba(1, 1, 1, 0.3)
+}
+
+::-moz-placeholder {
+    font-weight: normal;
+    color: rgba(1, 1, 1, 0.3)
+}
+
 .message {
     display: none;
     text-align: center;
     background-color: rgba(42, 130, 42, 0.8);
-    padding: 30px;
+    padding: 20px;
+    height: 60px;
     z-index: 1;
-    position: absolute;
-    margin: auto;
-    right:0;
-    bottom: 130px;
-    left:0;
     color: #FFFFFF;
     font-size: 30px;
 }
@@ -38,17 +44,17 @@ body {
 
 .button {
     position: relative;
-    width: 200px;
-    height: 100px;
-    font-size: 30px;
+    width: 150px;
+    height: 60px;
+    font-size: 20px;
+    z-index: 0;
+    margin: 20px;
 }
 
 .left {
     float: left;
-    left: 20px;
 }
 
 .right {
     float: right;
-    right: 20px;
 }
