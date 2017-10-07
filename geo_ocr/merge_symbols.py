@@ -14,6 +14,7 @@ def converter(each):
 
 # recognize ? ! : % symbols
 def merge(lines, vanished_img):
+    newLines=[]
     for i in range(len(lines)):
         j = 0
         while j < len(lines[i]) - 1:
@@ -26,12 +27,14 @@ def merge(lines, vanished_img):
                 second['h'] = max(first['y'] + first['h'], second['y'] + second['h']) - min(first['y'], second['y'])
                 second['x'] = first['x']
                 second['y'] = min(first['y'], second['y'])
-                lines[i].remove(first)
-                
+                newLines.append(second)
+
                 char_img = image_ops.crop_char_image(converter(second), vanished_img)
                 pairs = recognize_image(char_img.flatten())
                 second['char'] = pairs[0]['char']
                 second['score'] = pairs[0]['score'].item()
                 second["alternatives"] = [pairs[1], pairs[2], pairs[3]]
             else:
-                j += 1
+                newLines.append(first)
+            j += 1
+    lines=newLines
