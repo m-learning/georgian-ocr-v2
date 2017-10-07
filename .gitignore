@@ -3,6 +3,7 @@ bulk_fonts/
 logs/
 *.pyc
 .idea
+*.swp
 *.iml
 data/
 tmp/

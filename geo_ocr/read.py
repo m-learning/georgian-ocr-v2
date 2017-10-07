@@ -12,7 +12,7 @@ import timeit
 import image_operations as image_ops
 import file_operations as file_ops
 import merge_symbols as ms
-import char_operations as co
+import char_operations as char_ops
 
 LETTERS_DIR = "results/letters"
 
@@ -99,6 +99,10 @@ def read(image_path, correct_words=False, debug=True):
 
     print len(chars), 'chars left after filtering'
 
+
+    #crops = image_ops.crop_all_char_images(chars, vanished_img)
+    #print('crops ----------------------------------------', crops)
+
     # if you want to see filtered image uncomment next 4 lines
     # restored_image = restore_image(chars, full_h, full_w)
     # plt.imshow(restored_image)
@@ -109,17 +113,28 @@ def read(image_path, correct_words=False, debug=True):
 
     recognize_time = timeit.default_timer()
     recognized_chars = []
-    for char in chars:
-        try:
-            char_img = image_ops.crop_char_image(char, vanished_img)
-        except Exception, e:
-            print "Could not crop image:", e
-            continue
 
-        pairs = recognize_image(char_img.flatten())
-        char['char'] = pairs[0]['char']
-        char['score'] = pairs[0]['score'].item()
-        char["alternatives"] = [pairs[1], pairs[2], pairs[3]]
+    pairs = recognize_chars(chars, vanished_img)
+
+    only_recognize_time = 0
+    for i in range(0, len(pairs)):
+        pair = pairs[i]
+        char = chars[i]
+        #try:
+        #    char_img = image_ops.crop_char_image(char, vanished_img)
+        #except Exception, e:
+        #    print "Could not crop image:", e
+        #    continue
+
+        #flattened = char_img.flatten()
+
+        #only_recognize_time_frag = timeit.default_timer()
+        #pairs = recognize_image(flattened)
+        #only_recognize_time += timeit.default_timer()-only_recognize_time_frag
+
+        char['char'] = pair[0]['char']
+        char['score'] = pair[0]['score'].item()
+        char["alternatives"] = [pair[1], pair[2], pair[3]]
 
         full_score += char['score']
         full_count += 1
@@ -134,7 +149,11 @@ def read(image_path, correct_words=False, debug=True):
 
     if debug:
         print 'Avg score: %d' % (full_score * 100 / full_count)
+
     recognize_time = timeit.default_timer()-recognize_time
+    
+    print('Recognize time: '+str(recognize_time))
+    print('Only Recognize time: '+str(only_recognize_time))
     start_time = timeit.default_timer()
     
     chars = recognized_chars
@@ -159,12 +178,12 @@ def read(image_path, correct_words=False, debug=True):
         line_debugger(lines, vanished_img)
         print_symbols(lines, vanished_img)
 
-    word_lines = co.group_meta_as_words(lines)
+    word_lines = char_ops.group_meta_as_words(lines)
 
-    word_lines = co.merge_split_words(word_lines)
+    word_lines = char_ops.merge_split_words(word_lines)
     if correct_words:
         read_text = wc.correct_words_with_scores(word_lines)
-    else: read_text = co.word_lines_to_text(word_lines)
+    else: read_text = char_ops.word_lines_to_text(word_lines)
     
     print read_text
     
