@@ -56,7 +56,7 @@ def recognize_image(img_arr):
 
 def recognize_chars(chars, image):
     char_images = image_ops.crop_all_char_images(chars, image)
-    print(char_images)
+    #print(char_images)
 
     global model
     path = os.getcwd()
@@ -67,8 +67,8 @@ def recognize_chars(chars, image):
 
     pred = model.predict(char_images, batch_size=len(chars), verbose=0)
 
-    print choose_char(pred[0], ig.chars)[0]['char']
-    print choose_char(pred[1], ig.chars)[0]['char']
+    #print choose_char(pred[0], ig.chars)[0]['char']
+    #print choose_char(pred[1], ig.chars)[0]['char']
 
     chars = []
     for p in pred:

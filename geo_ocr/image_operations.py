@@ -4,6 +4,7 @@ import cv2
 import train
 from scipy import ndimage
 
+DEBUG_DIR = "results/debug"
 def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
     image = np.zeros((height, width, 3), np.uint8)
 
@@ -16,11 +17,10 @@ def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
 
 
 def create_image_for_recognize(image, width=64, height=64):
-    generated_image = np.ones((height, width), np.float32) * 255
+    generated_image = np.zeros((height, width), np.float32) 
     (image_h, image_w) = image.shape
     index_w = (width - image_w) / 2
     index_h = (height - image_h) / 2
-
     generated_image[index_h : image_h + index_h, index_w : image_w + index_w] = image
     return generated_image
 
@@ -33,8 +33,10 @@ def downscale_proportionally(image, max_w, max_h):
        downscale_ratio = float(max_w) / w
     else:
        downscale_ratio = float(max_h) / h
-
-    crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
+    try:
+        crop_img = cv2.resize(image, (0, 0), fx = downscale_ratio, fy = downscale_ratio)
+    except:
+        crop_img = np.zeros((64, 64), np.uint8)
     return crop_img
 
 
@@ -78,10 +80,9 @@ def crop_char_image(char, img):
 
 def crop_all_char_images(chars, img_source):
     ndimage.gaussian_filter(img_source, 0.8, output=img_source)
-    img_source = img_source / 255
+    img_source = img_source / 255.0
     img_source = 1 - img_source
     crops = np.zeros((len(chars),64,64,1)) # FIXME: Static sizing
-
     for i in range(0, len(chars)):
         char = chars[i]
         x = char['x']
@@ -90,20 +91,18 @@ def crop_all_char_images(chars, img_source):
         h = char['h']
 
         crop_img = img_source[y:y + h, x:x + w]
-
         # Shrink if cropped image is oversized
         if h > 64 or w > 64 or h < 20 or w < 20:
             crop_img = downscale_proportionally(crop_img, 45, 45)
 
-        # define background image as large image
         result_img = create_blank_image()
+        crop_img = create_image_for_recognize(crop_img)
 
         # Convert image to 64x64
-        image_to_recognize = create_image_for_recognize(crop_img)
-        image_to_recognize = image_to_recognize.reshape(train.input_shape)
-        image_to_recognize = np.expand_dims(image_to_recognize, 0)
+        crop_img = crop_img.reshape(train.input_shape)
+        crop_img = np.expand_dims(crop_img, 0)
 
-        crops[i] = image_to_recognize
+        crops[i] = crop_img
 
     return crops
 
