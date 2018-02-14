@@ -57,7 +57,7 @@ def find_font_type(all_meta):
     char1 = None
     char2 = None
     
-    print '-------------------------'
+    print ('-------------------------')
     for meta in all_meta[:]:
         if meta['char'] in classes[0] and meta['score'] > 0.5:
             char1 = meta
@@ -132,7 +132,7 @@ def makelines(all_meta, avg_height, font_type):
     
     # Sort and find lines
     m_len = len(all_meta)
-    for i in xrange(m_len):
+    for i in range(m_len):
         
         line.append(all_meta[i])
         line.sort(key=lambda x: x['x'])
@@ -159,7 +159,7 @@ def addspaces(meta_lines, avg_width):
     new_meta_lines = []
     for line in meta_lines:
         tline = []
-        for j in xrange(len(line)):
+        for j in range(len(line)):
             if line[j]['x'] - line[j-1]['x'] - line[j-1]['w'] > avg_width:
                 
                 # add space
@@ -184,18 +184,18 @@ def export_lines(all_meta):
     
     # pass empty if error is high 
     if font_type == None:
-        print "> Error rate for text is to high, can't detect font type"
+        print ("> Error rate for text is to high, can't detect font type")
         # TODO: Construct flat text (word_from_meta_array)
         # return '--', [all_meta], 0, 0
     else:
-        print 'Font Type: ', font_type
+        print ('Font Type: ', font_type)
     
     avg_width, avg_height =  detect_avg_wh(all_meta, samp_chars = 200)
     #avg_char_width = 30
     #avg_line_height = 40
     
-    print 'Char avr width: ', avg_width
-    print 'Char avr height: ', avg_height
+    print ('Char avr width: ', avg_width)
+    print ('Char avr height: ', avg_height)
     
     
     lines = makelines(all_meta, avg_height, font_type)

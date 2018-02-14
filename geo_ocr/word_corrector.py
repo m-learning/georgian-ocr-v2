@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-import urllib2
+import urllib3
 import json
 import Levenshtein as lev
 import copy
@@ -20,7 +20,7 @@ def parse_word_list_file(path):
 
 def find_matching_words(word):
     if len(word) > 20:
-        print 'Word is too long to find alternatives'
+        print ('Word is too long to find alternatives')
         return []
 
     url = "http://localhost:9200/_search"
@@ -80,7 +80,7 @@ def choose_best_match(word_meta, word_alternatives):
 #            print op, source_index, dest_index, read_word, word_alt['word']
             if op == 'replace':
                 if len(modifying_word_meta) <= source_index:
-                    print 'Asking to replace unknown index in word. Skipping alternative word'
+                    print ('Asking to replace unknown index in word. Skipping alternative word')
                     word_alt_is_wrong = True
                     break
 
@@ -91,7 +91,7 @@ def choose_best_match(word_meta, word_alternatives):
                 modifying_word_meta[source_index]['char'] = word_alt['word'][dest_index]
             elif op == 'delete':
                 if len(modifying_word_meta) <= source_index:
-                    print 'Asking to delete unknown index in word. Skipping alternative word'
+                    print ('Asking to delete unknown index in word. Skipping alternative word')
                     word_alt_is_wrong = True
                     break
 
@@ -107,7 +107,7 @@ def choose_best_match(word_meta, word_alternatives):
             # Word alternative passed all the checks, so we replace the original
             chosen_word = word_alt['word']
             if read_word != chosen_word:
-                print 'Word was corrected ' + read_word + ' with ' + chosen_word
+                print ('Word was corrected ' + read_word + ' with ' + chosen_word)
             break
 
     return chosen_word

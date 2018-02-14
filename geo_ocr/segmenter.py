@@ -80,10 +80,10 @@ def do_segmentation(img):
 			segment = {'x': x, 'y': y, 'w': w, 'h': h}
 
 			segments.append(segment)
-		except ValueError, ve:
+		except ValueError as ve:
 			if debug:
 				traceback.print_exc(file=sys.stdout)
-				print "skip fragment:", ve
+				print ("skip fragment:", ve)
     
 
 	return segments 

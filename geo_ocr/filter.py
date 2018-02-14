@@ -17,7 +17,7 @@ def filter_unproportional(chars):
         else:
             resulting_chars.append(ch)
 
-    print 'Number of unproportional parts removed', num_of_noise
+    print ('Number of unproportional parts removed', num_of_noise)
     return resulting_chars
 
 
@@ -33,7 +33,7 @@ def filter_too_small(chars):
         else:
             resulting_chars.append(ch)
 
-    print 'Number of too small parts removed', num_of_noise
+    print ('Number of too small parts removed', num_of_noise)
     return resulting_chars
 
 
@@ -60,14 +60,14 @@ def filter_out_of_average(chars):
         else:
             resulting_chars.append(ch)
 
-    print 'Number of out of average parts removed', num_of_noise
+    print ('Number of out of average parts removed', num_of_noise)
     return resulting_chars
 
 
 def filter_by_size_distribution_step(chars):
     # To remove chars with lowest width and heigth distribution
-    min_w = sys.maxint
-    min_h = sys.maxint
+    min_w = sys.maxsize
+    min_h = sys.maxsize
     max_w = 0
     max_h = 0
 
@@ -107,10 +107,10 @@ def filter_by_size_distribution_step(chars):
         else:
             resulting_chars.append(ch)
 
-    print 'Number of low occurence size parts removed', num_of_noise
+    print ('Number of low occurence size parts removed', num_of_noise)
     #print '---'
-    print 'Width distribution histogram', width_hist
-    print 'Height distribution histogram', height_hist
+    print ('Width distribution histogram', width_hist)
+    print ('Height distribution histogram', height_hist)
     #print '---'
 
     return resulting_chars
@@ -123,7 +123,7 @@ def filter_by_size_distribution(chars, full_w, full_h):
             num_of_too_small += 1
 
     if not num_of_too_small:
-        print 'Number of low occurence size parts removed', 0, 'There is no noise'
+        print ('Number of low occurence size parts removed', 0, 'There is no noise')
         return chars
 
     chars = filter_by_size_distribution_step(chars)
@@ -148,7 +148,7 @@ def filter_by_weights(chars):
         else:
             resulting_chars.append(ch)
 
-    print 'Number of parts removed because of low wight', num_of_noise
+    print ('Number of parts removed because of low wight', num_of_noise)
     return resulting_chars
 
 
@@ -178,7 +178,7 @@ def filter_overlaps(chars):
             resulting_chars.append(m1)
                 
 
-    print 'Number of overlapped parts removed', num_of_noise
+    print ('Number of overlapped parts removed', num_of_noise)
     return resulting_chars
 
 
@@ -194,7 +194,7 @@ def filter_background(chars, full_w, full_h):
         else:
             resulting_chars.append(ch)
 
-    print 'Number of backgrounds removed', num_of_noise
+    print ('Number of backgrounds removed', num_of_noise)
     return resulting_chars
 
 
@@ -217,7 +217,7 @@ def filter_outsized(line_metas, avg_width, avg_height):
 
         resulting_lines.append(resulting_chars)
                 
-    print 'Number of outsized parts removed', num_of_noise
+    print ('Number of outsized parts removed', num_of_noise)
     return resulting_lines
 
 def filter_compare(chars,clean_img):
@@ -232,7 +232,7 @@ def filter_compare(chars,clean_img):
             new_chars.append(char)
         else:
             count+=1
-    print "Clean image compare filter: "+str(count)
+    print ("Clean image compare filter: "+str(count))
     return new_chars
 
 def filter_merge(chars_1,chars_2):
@@ -292,7 +292,7 @@ def filter_out_of_line(lines):
         for i in range(leng):
             if line[i]['char'] == ' ':
                 spaces.append(i)
-        print spaces
+        print (spaces)
     """
     for line in lines:
         spaces=[]

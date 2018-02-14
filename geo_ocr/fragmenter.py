@@ -37,7 +37,7 @@ def do_fragmentation(src_img, debug = True):
 
     count = 0
     chars = []
-    print 'Number of contures', len(contours)
+    print ('Number of contures', len(contours))
     # For each contour, find the bounding rectangle and crop it.
     # put cropped image on a blank background and write to disk
     for cnt in contours:
@@ -49,10 +49,10 @@ def do_fragmentation(src_img, debug = True):
 
             chars.append(char)
             count += 1
-        except ValueError, ve:
+        except ValueError as ve:
             if debug:
                 traceback.print_exc(file=sys.stdout)
-                print "skip fragment:", ve
+                print ("skip fragment:", ve)
     
     full_h, full_w = src_img.shape
     

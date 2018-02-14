@@ -17,10 +17,16 @@ def create_blank_image(width=64, height=64, rgb_color=(255, 255, 255)):
 
 
 def create_image_for_recognize(image, width=64, height=64):
-    generated_image = np.zeros((height, width), np.float32) 
+    generated_image = np.zeros((height, width))#, np.float32 
     (image_h, image_w) = image.shape
     index_w = (width - image_w) / 2
     index_h = (height - image_h) / 2
+    height = int(math.floor(height))
+    width = int(math.floor(width))
+    index_h = int(math.floor(index_h))
+    index_w = int(math.floor(index_w))
+    image_h = int(math.floor(image_h))
+    image_w = int(math.floor(image_w))
     generated_image[index_h : image_h + index_h, index_w : image_w + index_w] = image
     return generated_image
 

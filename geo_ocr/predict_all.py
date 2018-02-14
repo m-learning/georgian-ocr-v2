@@ -93,11 +93,11 @@ if __name__ == '__main__':
         full_score += score
         full_count += 1
         if args.debug:
-            print meta_data, char.encode('utf8'), score
+            print (meta_data, char.encode('utf8'), score)
         meta_data['char'] = char
         meta_data['score'] = score
     if args.debug:
-        print 'Avg score: %d' % (full_score * 100 / full_count)
+        print ('Avg score: %d' % (full_score * 100 / full_count))
 
     # ----- for testing --------
     # use export_word as a module

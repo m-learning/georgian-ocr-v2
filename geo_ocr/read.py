@@ -70,7 +70,7 @@ def read(image_path, correct_words=False, debug=True):
 
     segments=segmenter.do_segmentation(clean_small_img)
     
-    print segments
+    print (segments)    
 
     cv2.imwrite('results/debug/clean_small.png', clean_small_img)
     
@@ -78,7 +78,7 @@ def read(image_path, correct_words=False, debug=True):
     chars, full_w, full_h =  fragmenter.do_fragmentation(vanished_img, debug=debug)
     # TODO: Line detector
 
-    print len(chars), 'chars exist'
+    print (len(chars), 'chars exist')
 
     chars = filter.filter_background(chars, full_w, full_h)
     # chars = filter.filter_overlaps(chars)
@@ -97,7 +97,7 @@ def read(image_path, correct_words=False, debug=True):
     # detect % ? ! : symbols
     # chars = sorted(chars, key=lambda k: k['x'])
 
-    print len(chars), 'chars left after filtering'
+    print (len(chars), 'chars left after filtering')
 
 
     #crops = image_ops.crop_all_char_images(chars, vanished_img)
@@ -142,13 +142,13 @@ def read(image_path, correct_words=False, debug=True):
         recognized_chars.append(char)
 
         if debug:
-            print char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h'])
+            print (char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h']))
 
         # if debug:
         #     cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, char['id'])), char_img)
 
     if debug:
-        print 'Avg score: %d' % (full_score * 100 / full_count)
+        print ('Avg score: %d' % (full_score * 100 / full_count))
 
     recognize_time = timeit.default_timer()-recognize_time
     
@@ -167,7 +167,7 @@ def read(image_path, correct_words=False, debug=True):
     ms.merge(lines, vanished_img)
 
     lines = export_words.addspaces(lines, avg_width)
-    print 'xazebis raodenoba: ', len(lines)
+    print ('xazebis raodenoba: ', len(lines))
    
     changed=True
     while(changed):
@@ -185,12 +185,12 @@ def read(image_path, correct_words=False, debug=True):
         read_text = wc.correct_words_with_scores(word_lines)
     else: read_text = char_ops.word_lines_to_text(word_lines)
     
-    print read_text
+    print (read_text)
     
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
     
-    print "overall time: "+str(timeit.default_timer()-overall_time)
+    print ("overall time: "+str(timeit.default_timer()-overall_time))
 
     return read_text 
     
@@ -206,7 +206,7 @@ def read_for_tdc(image_path, debug=False):
 
     chars, full_w, full_h, clean_img, vanished_img = fragmenter.do_fragmentation(image_path, debug=debug)
 
-    print len(chars), 'chars exist'
+    print (len(chars), 'chars exist')
 
     chars = filter.filter_background(chars, full_w, full_h)
     other_chars = filter.filter_compare(chars, clean_img)
@@ -219,7 +219,7 @@ def read_for_tdc(image_path, debug=False):
     chars = filter.filter_overlaps(chars)
     chars = filter.filter_too_small(chars)
 
-    print len(chars), 'chars left after filtering'
+    print (len(chars), 'chars left after filtering')    
 
     full_score = 0
     full_count = 0
@@ -229,8 +229,8 @@ def read_for_tdc(image_path, debug=False):
     for char in chars:
         try:
             char_img = image_ops.crop_char_image(char, vanished_img)
-        except Exception, e:
-            print "Could not crop image:", e
+        except Exception as e:
+            print ("Could not crop image:", e)
             continue
 
         pairs = recognize_image(char_img.flatten())
@@ -244,10 +244,10 @@ def read_for_tdc(image_path, debug=False):
         recognized_chars.append(char)
 
         if debug:
-            print char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h'])
+            print (char['id'], char['char'], char['score'], pairs[1]['char'], pairs[1]['score'], pairs[2]['char'], pairs[2]['score'], str(char['w'])+'x'+str(char['h']))
 
     if debug:
-        print 'Avg score: %d' % (full_score * 100 / full_count)
+        print ('Avg score: %d' % (full_score * 100 / full_count))
     recognize_time = timeit.default_timer()-recognize_time
     start_time = timeit.default_timer()
     
@@ -259,7 +259,7 @@ def read_for_tdc(image_path, debug=False):
     ms.merge(lines, vanished_img)
 
     lines = export_words.addspaces(lines, avg_width)
-    print 'xazebis raodenoba: ', len(lines)
+    print ('xazebis raodenoba: ', len(lines))
    
     changed=True
     while(changed):
@@ -281,8 +281,8 @@ def read_for_tdc(image_path, debug=False):
                     'char': char['char'],
                     'char_img': char_img
                 })
-            except Exception, e:
-                print "Could not crop image:", e
+            except Exception as e:
+                print ("Could not crop image:", e)
                 continue
         result.append({
             'char': 'newline',
@@ -296,7 +296,7 @@ def read_for_tdc(image_path, debug=False):
     restored_image = restore_image(chars, vanished_img)
     cv2.imwrite('results/debug/filtered.png', restored_image)
     
-    print "overall time: "+str(timeit.default_timer()-overall_time)
+    print ("overall time: "+str(timeit.default_timer()-overall_time))
     return result
 
 if __name__ == '__main__':

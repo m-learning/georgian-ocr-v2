@@ -15,8 +15,8 @@ import cv2
 import random
 import sys
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 random.seed(55)
 np.random.seed(55)
@@ -141,7 +141,7 @@ def paint_text(text, w, h, input_image=None,
         if (multi_sizes):
             max_font_size = find_max_font_size(context, text, img_w, img_h) - 4
             if not max_font_size:
-                print 'Damaged font', font['name'], 'for text', text
+                print ('Damaged font', font['name'], 'for text', text)
                 raise ValueError('Damaged font')
 
             context.set_font_size(random.randint(25, max_font_size))
@@ -244,7 +244,7 @@ def next_batch(size, rotate=False, ud=False, lr=False,
     else:
         img_len = len(images_paths)
 
-    print "Generating {0:d} images...".format(size)
+    print ("Generating {0:d} images...".format(size))
     x_train = np.zeros((size, img_w, img_h))
     y_train = [None] * size
 
@@ -270,9 +270,9 @@ def next_batch(size, rotate=False, ud=False, lr=False,
                                  rotate=rotate, ud=ud, lr=lr, multi_fonts=multi_fonts,
                                  multi_sizes=multi_sizes, blur=blur, save=save)
                 break
-            except ValueError, e:
+            except ValueError as e:
                 # FIXME: Wrong decision!
-                print e
+                print (e)
 
         x_train[i] = 1 - img
         y_train[i] = y[chars.index(char)]
