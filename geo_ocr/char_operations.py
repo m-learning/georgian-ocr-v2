@@ -74,14 +74,18 @@ def group_meta_as_words(lines):
     return word_lines
 
 def merge_split_words(word_lines):
+    count = 0
     for i in range(1, len(word_lines)):
+        count += 1
+        #print (count, i-1, len(word_lines), type(word_lines[7]))
         last_word = word_lines[i-1][-1]
+        
         if last_word[-1]['char'] == '-':
             first_word = word_lines[i][0]
             del last_word[-1]
             last_word += first_word
             del word_lines[i][0]
-
+        
             # Move following punctuation with it's word
             if len(word_lines[i]) == 0: continue
 
@@ -95,5 +99,5 @@ def merge_split_words(word_lines):
             if len(word_lines[i]) == 0: continue
             if new_first_word[0]['char'] == ' ':
                 del word_lines[i][0]
-
+        
     return word_lines

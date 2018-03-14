@@ -180,7 +180,9 @@ def read(image_path, correct_words=False, debug=True):
 
     word_lines = char_ops.group_meta_as_words(lines)
 
-    word_lines = char_ops.merge_split_words(word_lines)
+    #word_lines = char_ops.merge_split_words(word_lines)
+    
+    
     if correct_words:
         read_text = wc.correct_words_with_scores(word_lines)
     else: read_text = char_ops.word_lines_to_text(word_lines)
@@ -191,6 +193,38 @@ def read(image_path, correct_words=False, debug=True):
     cv2.imwrite('results/debug/filtered.png', restored_image)
     
     print ("overall time: "+str(timeit.default_timer()-overall_time))
+
+    #print(word_lines)
+
+    import json
+    
+    rewrited = []
+    
+    for line in word_lines:
+        reline = []
+        for word in line:
+            reword = []
+            for char in word:
+                #print ('x-w:', char['w'])
+                #print ('x-h:', char['h'])
+                #print ('x-x:', char['x'])
+                #print ('x-y:', char['y'])
+                #print ('x-char:', char['char'])
+                reword.append(
+                    {
+                        'w': char['w'],
+                        'h': char['h'],
+                        'x': char['x'],
+                        'y': char['y'],
+                        'lh': char['lh'],
+                        'char': char['char']
+                    }
+                )
+            reline.append(reword)
+        rewrited.append(reline)
+    #print ('x-char:', word_lines[0][0][0])
+    with open('/tmp/test.json', 'w') as f:
+        json.dump(rewrited, f, sort_keys=True, indent=4, ensure_ascii=True)
 
     return read_text 
     
