@@ -22,6 +22,9 @@ def init_arguments():
     parser.add_argument('-d', '--debug',
                         help='Debug mode. Show logs and dump images.',
                         action='store_true')
+    parser.add_argument('-p', '--pdf',
+                        help='export as pdf file.',
+                        action='store_true')
     return parser.parse_args()
 
 

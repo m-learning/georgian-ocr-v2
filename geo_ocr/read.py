@@ -13,6 +13,8 @@ import image_operations as image_ops
 import file_operations as file_ops
 import merge_symbols as ms
 import char_operations as char_ops
+import json
+from topdf import convert
 
 LETTERS_DIR = "results/letters"
 
@@ -54,7 +56,7 @@ def print_symbols(lines, vanished_img):
             cv2.imwrite(("%s/%s.png" % (LETTERS_DIR, each['id'])), new_each)
 
 
-def read(image_path, correct_words=False, debug=True):
+def read(image_path, correct_words=False, debug=True, to_pdf=False):
     overall_time = timeit.default_timer()
     file_ops.create_clean_dir(LETTERS_DIR)
 
@@ -194,37 +196,34 @@ def read(image_path, correct_words=False, debug=True):
     
     print ("overall time: "+str(timeit.default_timer()-overall_time))
 
-    #print(word_lines)
-
-    import json
-    
-    rewrited = []
-    
-    for line in word_lines:
-        reline = []
-        for word in line:
-            reword = []
-            for char in word:
-                #print ('x-w:', char['w'])
-                #print ('x-h:', char['h'])
-                #print ('x-x:', char['x'])
-                #print ('x-y:', char['y'])
-                #print ('x-char:', char['char'])
-                reword.append(
-                    {
-                        'w': char['w'],
-                        'h': char['h'],
-                        'x': char['x'],
-                        'y': char['y'],
-                        'lh': char['lh'],
-                        'char': char['char']
-                    }
-                )
-            reline.append(reword)
-        rewrited.append(reline)
-    #print ('x-char:', word_lines[0][0][0])
-    with open('/tmp/test.json', 'w') as f:
-        json.dump(rewrited, f, sort_keys=True, indent=4, ensure_ascii=True)
+    if to_pdf:
+        rewrited = []
+        for line in word_lines:
+            reline = []
+            for word in line:
+                reword = []
+                for char in word:
+                    #print ('x-w:', char['w'])
+                    #print ('x-h:', char['h'])
+                    #print ('x-x:', char['x'])
+                    #print ('x-y:', char['y'])
+                    #print ('x-char:', char['char'])
+                    reword.append(
+                        {
+                            'w': char['w'],
+                            'h': char['h'],
+                            'x': char['x'],
+                            'y': char['y'],
+                            'lh': char['lh'],
+                            'char': char['char']
+                        }
+                    )
+                reline.append(reword)
+            rewrited.append(reline)
+            
+        convert.topdf(image_path, rewrited)
+        with open('/tmp/data.json', 'w') as f:
+            json.dump(rewrited, f, sort_keys=True, indent=4, ensure_ascii=True)
 
     return read_text 
     
@@ -335,4 +334,4 @@ def read_for_tdc(image_path, debug=False):
 
 if __name__ == '__main__':
     args = init_arguments()
-    read(args.image, args.correct_words, args.debug)
+    read(args.image, args.correct_words, args.debug, args.pdf)
