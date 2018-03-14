@@ -3,6 +3,7 @@ import pdfkit
 import json
 from shutil import copyfile
 import cairo
+from PIL import Image
 
 def find_max_font_size(text, max_w, max_h):
     surface = cairo.SVGSurface("example.svg", max_w, max_h)
@@ -46,6 +47,12 @@ def topdf(image, data):
     image_path = '/tmp/%s' % image_name
     
     copyfile(image, image_path)
+    
+    orientation = 'Portrait'
+    with Image.open(image_path) as im:
+        image_width, image_height = im.size
+    if image_width > image_height:
+        orientation = 'Landscape'
     
     #font-size: calc(100%% - -1.2em);
     css = '<style type="text/css">'
@@ -150,7 +157,11 @@ def topdf(image, data):
     body = '<head><meta charset="utf-8"/>' + css + '</head>'
     body += '<body>' + html + '</body>'
 
-    pdfkit.from_string(body, '/tmp/%s' % pdf_name)
+    options = {
+        'orientation': orientation,
+    }
+    
+    pdfkit.from_string(body, '/tmp/%s' % pdf_name, options=options)
     
 if __name__ == "__main__":
     #python3 convert.py /tmp/image.jpg /tmp/data.json
