@@ -43,20 +43,37 @@ def topdf(image, data):
     img = ''.join(img)
     img = img.replace('.', '_')
     pdf_name = '%s.pdf' % img
+    html_name = '%s.html' % img
     image_name = '%s.%s' % (img, ext)
     image_path = '/tmp/%s' % image_name
+    
+    pdf_width_px = 595
+    pdf_height_px = 842
     
     copyfile(image, image_path)
     
     orientation = 'Portrait'
     with Image.open(image_path) as im:
         image_width, image_height = im.size
+        print (image_width, image_height)
     if image_width > image_height:
+        pdf_width_px, pdf_height_px = pdf_height_px, pdf_width_px
         orientation = 'Landscape'
+    
+    size_proportion = 1
+    if image_width > pdf_width_px:
+        size_proportion = pdf_width_px / image_width
+        image_width = pdf_width_px
+        image_height = image_height * size_proportion
+    if image_height > pdf_height_px:
+        size_proportion = pdf_height_px / image_height
+        image_height = pdf_height_px
+        image_width = image_width * size_proportion
+    print (image_width, image_height)
     
     #font-size: calc(100%% - -1.2em);
     css = '<style type="text/css">'
-    css += "body{background-image: url('./%s');background-repeat: no-repeat; margin:0px; padding: 0px;}" % (image_name,)
+    css += "body{background-image: url('./%s');background-repeat: no-repeat; margin:0px; padding: 0px;background-size:%.2fpx %.2fpx;}" % (image_name, image_width, image_height)
     css += 'span{color: rgba(255,255,255,0);}'
     css += '::selection{background:rgba(120,255,255,0.5);color: rgba(255,255,255, 0);}'
     css += '::-moz-selection{background:rgba(120,255,255,0.5);color: rgba(255,255,255, 0);}'
@@ -79,9 +96,9 @@ def topdf(image, data):
             break
         
         if len(line_word_0):
-            div_start_left = line_word_0[0]['x']/4
-            div_start_top = line_word_0[0]['y']/4
-            div_width = line_word_n[len(line_word_n)-1]['x']/4+line_word_n[len(line_word_n)-1]['w']/4
+            div_start_left = line_word_0[0]['x']/4 * size_proportion
+            #div_start_top = line_word_0[0]['y']/4 * size_proportion
+            div_width = line_word_n[len(line_word_n)-1]['x']/4 * size_proportion + line_word_n[len(line_word_n)-1]['w']/4 * size_proportion
             line_width = div_width - div_start_left
 
         '''
@@ -107,9 +124,9 @@ def topdf(image, data):
             many_word_x = []
             many_word_height = []
             if len(word):
-                span_start_left = word[0]['x']/4
-                span_start_top = word[0]['y']/4
-                span_width = word[len(word)-1]['x']/4+word[len(word)-1]['w']/4-span_start_left
+                span_start_left = word[0]['x']/4 * size_proportion
+                #span_start_top = word[0]['y']/4 * size_proportion
+                span_width = word[len(word)-1]['x']/4*size_proportion + word[len(word)-1]['w']/4* size_proportion - span_start_left
             span = '<span class="%s">%s</span>'
             chars = ''
             for c_num, char in enumerate(word):
@@ -129,6 +146,7 @@ def topdf(image, data):
             max_word_height = max(many_word_height)
             line_font_height = max_word_height - min_word_x
             font_size = find_max_font_size(chars, int(span_width), int(line_font_height))
+            font_size = font_size
             if len(word) == 1:
                 font_size = 'inherit'
             else:
@@ -148,7 +166,8 @@ def topdf(image, data):
         line_font_height = max_x - min_x
         print ('words')
         font_size = find_max_font_size(words, int(line_width), int(line_font_height))
-        css += ' div.%s{position:absolute;top:%dpx;width:%dpx;font-size:%dpx;}' % (div_cls, min_y, div_width, font_size-3)
+        font_size = font_size
+        css += ' div.%s{position:absolute;top:%dpx;width:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, div_width, font_size-3)
 
         html += div % (div_cls, spnas)
 
@@ -162,6 +181,8 @@ def topdf(image, data):
     }
     
     pdfkit.from_string(body, '/tmp/%s' % pdf_name, options=options)
+    with open('/tmp/%s' % html_name, 'w') as f:
+        f.write(body)
     
 if __name__ == "__main__":
     #python3 convert.py /tmp/image.jpg /tmp/data.json
