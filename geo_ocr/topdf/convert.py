@@ -150,10 +150,13 @@ def topdf(image, data):
             if len(word) == 1:
                 font_size = 'inherit'
             else:
-                font_size = '%dpx' % (font_size-2,)
+                size_percent = 5
+                if font_size > 50:
+                    size_percent = 10
+                font_size = '%dpx' % (font_size-(font_size/100*size_percent),)
             words += chars
             cls = 'span-word%d%d' % (l_num,w_num)
-            css += ' span.%s{position:absolute;left:%dpx;font-size:%s;}' % (cls, span_start_left, font_size)
+            css += ' span.%s{position:absolute;left:%dpx;font-size:%s;width:%dpx;}' % (cls, span_start_left, font_size, span_width)
             spnas += span % (cls, chars)
             
             
@@ -167,7 +170,7 @@ def topdf(image, data):
         print ('words')
         font_size = find_max_font_size(words, int(line_width), int(line_font_height))
         font_size = font_size
-        css += ' div.%s{position:absolute;top:%dpx;width:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, div_width, font_size-3)
+        css += ' div.%s{position:absolute;top:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, font_size-(font_size/100*10))
 
         html += div % (div_cls, spnas)
 
