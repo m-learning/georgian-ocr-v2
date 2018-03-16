@@ -51,83 +51,6 @@
     <div class="Authors-content">
       <h2 class="Authors-title">ჩვენი გუნდი</h2>
       <div class="Authors-subtitle">ადამიანები, რომლებმაც შესაძლებელი გახადეს <em>დასკანერებული ნაწერის გაციფრულება</em></div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">ვანო ათაბეგაშვილი</div>
-          <div class="Author-position">ნეირონული ქსელი</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">შოთა ამაშუკელი</div>
-          <div class="Author-position">სასვენი ნიშნები, სურათების დამუშავება</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">აბესალომ გოგატიშვილი</div>
-          <div class="Author-position">სურათების დამუშავება</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">არჩილ იმნაძე</div>
-          <div class="Author-position">ვებ გვერდი</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">რეზო იმნაძე</div>
-          <div class="Author-position">ფილტრაცია</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">დავით კობალაძე</div>
-          <div class="Author-position">სიტყვების სია, ვებ ინტეგრაცია</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">ირაკლი სივსივაძე</div>
-          <div class="Author-position">ტექსტის დაჯგუფება, ოპტიმიზაცია</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">ნინო უთურაშვილი</div>
-          <div class="Author-position">ხარისხის კონტროლი, ვებ ინტეგრაცია</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">გიორგი შველიძე</div>
-          <div class="Author-position">სურათების დაჭრა</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">ლევან ცინაძე</div>
-          <div class="Author-position">ნეირონული ქსელი</div>
-        </div>
-      </div>
-      <div class="Author">
-        <div class="Author-photo"></div>
-        <div class="Author-text">
-          <div class="Author-name">სოსო ხუციშვილი</div>
-          <div class="Author-position">თავმოყრა, სწავლება</div>
-        </div>
-      </div>
     </div>
   </div>
   <div class="Contribute">
@@ -146,6 +69,105 @@
     </div>
   </form>
   <div class="Footer">&copy; 2017</div>
+    <script type="text/javascript">
+        var authors = [
+            {
+                photo: '',
+                name: 'სოსო ხუციშვილი',
+                position: 'თავმოყრა, სწავლება',
+            }, {
+                photo: '',
+                name: 'ლევან ცინაძე',
+                position: 'ნეირონული ქსელი',
+            }, {
+                photo: '',
+                name: 'გიორგი შველიძე',
+                position: 'სურათების დაჭრა',
+            }, {
+                photo: '',
+                name: 'ნინო უთურაშვილი',
+                position: 'ხარისხის კონტროლი, ვებ ინტეგრაცია',
+            }, {
+                photo: '',
+                name: 'ირაკლი სივსივაძე',
+                position: 'ტექსტის დაჯგუფება, ოპტიმიზაცია',
+            }, {
+                photo: '',
+                name: 'დავით კობალაძე',
+                position: 'სიტყვების სია, ვებ ინტეგრაცია',
+            }, {
+                photo: '',
+                name: 'რეზო იმნაძე',
+                position: 'ფილტრაცია',
+            }, {
+                photo: '',
+                name: 'არჩილ იმნაძე',
+                position: 'ვებ გვერდი',
+            }, {
+                photo: '',
+                name: 'აბესალომ გოგატიშვილი',
+                position: 'სურათების დამუშავება',
+            }, {
+                photo: '',
+                name: 'შოთა ამაშუკელი',
+                position: 'სასვენი ნიშნები, სურათების დამუშავება',
+            }, {
+                photo: '',
+                name: 'ვანო ათაბეგაშვილი',
+                position: 'ნეირონული ქსელი',
+            },
+        ];
+        
+        function shuffleArray(array) {
+            let counter = array.length;
+            while (counter > 0) {
+                let index = Math.floor(Math.random() * counter);
+                counter--;
+                let temp = array[counter];
+                array[counter] = array[index];
+                array[index] = temp;
+            }
+            return array;
+        }
+        
+        authors = shuffleArray(authors)
+        console.log('authors', authors)
+        
+        /*<div class="Author">
+            <div class="Author-photo"></div>
+            <div class="Author-text">
+                <div class="Author-name"></div>
+                <div class="Author-position"></div>
+            </div>
+        </div>*/
+        for (var i=0; i<authors.length; i++) {
+            var author = authors[i];
+            var content = document.getElementsByClassName('Authors-content')[0];
+            var divAuthor = document.createElement('div');
+            divAuthor.className = 'Author'
+            var divPhoto = document.createElement('div');
+            divPhoto.className = 'Author-photo'
+            var divText = document.createElement('div');
+            divText.className = 'Author-text'
+            var divName = document.createElement('div');
+            divName.className = 'Author-name'
+            var textName = document.createTextNode(author.name)
+            divName.appendChild(textName)
+            var divPosition = document.createElement('div');
+            divPosition.className = 'Author-position'
+            var textPosition = document.createTextNode(author.position)
+            divPosition.appendChild(textPosition)
+            divText.appendChild(divName)
+            divText.appendChild(divPosition)
+            divAuthor.appendChild(divPhoto)
+            divAuthor.appendChild(divText)
+            content.appendChild(divAuthor)
+            if (i%2 == 0) {
+                content.appendChild(document.createTextNode('    '))
+            }
+        }
+        content.appendChild(document.createTextNode('    '))
+    </script>
 </body>
 
 </html>
