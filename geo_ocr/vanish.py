@@ -5,7 +5,7 @@ from skimage import filters
 from skimage import img_as_ubyte
 from skimage import util
 import cv2
-import file_operations as file_ops
+from . import file_operations as file_ops
 
 DEBUG_DIR = "results/debug"
 

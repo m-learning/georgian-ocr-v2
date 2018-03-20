@@ -18,7 +18,8 @@ setup(name='geo_ocr',
         'opencv-python',
         'scikit-image',
         'elasticsearch',
-        'python-Levenshtein'
+        'python-Levenshtein',
+        'pdfkit'
 #        'cv2'
       ])
 

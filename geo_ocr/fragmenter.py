@@ -5,7 +5,7 @@ import sys
 import json
 import numpy as np
 import traceback
-import file_operations as file_ops
+from . import file_operations as file_ops
 
 from scipy import ndimage
 #from transform import deskew_image
@@ -16,8 +16,8 @@ from skimage import img_as_ubyte
 from skimage import util
 
 import numpy as np
-import segmenter
-import vanish 
+from . import segmenter
+from . import vanish 
 
 
 

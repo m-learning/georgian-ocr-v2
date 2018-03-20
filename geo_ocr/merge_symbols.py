@@ -1,5 +1,5 @@
-import image_operations as image_ops
-from predict_all import *
+from . import image_operations as image_ops
+from .predict_all import *
 
 
 def converter(each):

@@ -1,13 +1,13 @@
 import argparse
 import numpy as np
-import image_generator as ig
-import network
-import train
-import fragmenter
+from . import image_generator as ig
+from . import network
+from . import train
+from . import fragmenter
 import os
-import image_operations as image_ops
+from . import image_operations as image_ops
 
-import export_words
+from . import export_words
 
 model = None
 
@@ -43,7 +43,7 @@ def recognize(array):
     global model
 
     if model is None:
-        model = network.init_model(ig.LABEL_SIZE, train.input_shape)
+        model = network.init_model(ig.LABEL_SIZE, (64, 64, 1))
         model.load_weights(os.path.join(path, 'results/data/model.h5'))
 
     pred = model.predict(array, batch_size=5, verbose=0)
@@ -52,7 +52,7 @@ def recognize(array):
 
 def recognize_image(img_arr):
     img_arr /= 255.0
-    array = img_arr.reshape(train.input_shape)
+    array = img_arr.reshape((64, 64, 1))
 
     array = np.expand_dims(array, 0)
     return recognize(array)
@@ -65,7 +65,7 @@ def recognize_chars(chars, image):
     path = os.getcwd()
 
     if model is None:
-        model = network.init_model(ig.LABEL_SIZE, train.input_shape)
+        model = network.init_model(ig.LABEL_SIZE, (64, 64, 1))
         model.load_weights(os.path.join(path, 'results/data/model.h5'))
 
     pred = model.predict(char_images, batch_size=len(chars), verbose=0)

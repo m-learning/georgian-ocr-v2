@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 import os
 import cv2
-from predict_all import *
-import word_corrector as wc
-import filter
-import segmenter
-import vanish
+from .predict_all import *
+from . import word_corrector as wc
+from . import filter
+from . import segmenter
+from . import vanish
 import sys
 #import matplotlib.pyplot as plt
 import timeit
-import image_operations as image_ops
-import file_operations as file_ops
-import merge_symbols as ms
-import char_operations as char_ops
+from . import image_operations as image_ops
+from . import file_operations as file_ops
+from . import merge_symbols as ms
+from . import char_operations as char_ops
 import json
-from topdf import convert
+from . import convert
 
 LETTERS_DIR = "results/letters"
 

@@ -1,7 +1,7 @@
 import numpy as np
 import math
 import cv2
-import train
+from . import train
 from scipy import ndimage
 
 DEBUG_DIR = "results/debug"
@@ -105,7 +105,7 @@ def crop_all_char_images(chars, img_source):
         crop_img = create_image_for_recognize(crop_img)
 
         # Convert image to 64x64
-        crop_img = crop_img.reshape(train.input_shape)
+        crop_img = crop_img.reshape((64, 64, 1))
         crop_img = np.expand_dims(crop_img, 0)
 
         crops[i] = crop_img
