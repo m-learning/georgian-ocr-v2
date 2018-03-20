@@ -47,8 +47,8 @@ def topdf(image, data):
     image_name = '%s.%s' % (img, ext)
     image_path = '/tmp/%s' % image_name
     
-    pdf_width_px = 595
-    pdf_height_px = 842
+    pdf_width_px = 965#970#940#595
+    pdf_height_px = 1365#1372#1330#842
     
     copyfile(image, image_path)
     
@@ -61,6 +61,7 @@ def topdf(image, data):
         orientation = 'Landscape'
     
     size_proportion = 1
+    
     if image_width > pdf_width_px:
         size_proportion = pdf_width_px / image_width
         image_width = pdf_width_px
@@ -82,10 +83,11 @@ def topdf(image, data):
     for l_num, line in enumerate(data):
         if not len(line):
             continue
-            
+        
         count = len(line)
-        line_word_0 = line[0]
-        line_word_n = line[count-1]
+        line_word_0 = line[0] #first word
+        line_word_n = line[count-1] #last word
+        #get last word more then 1 symbol
         while 1 < count-1:
             last_word = line[count-1]
             line_word_n = last_word
@@ -101,17 +103,6 @@ def topdf(image, data):
             div_width = line_word_n[len(line_word_n)-1]['x']/4 * size_proportion + line_word_n[len(line_word_n)-1]['w']/4 * size_proportion
             line_width = div_width - div_start_left
 
-        '''
-        many_h = []
-        many_y = []
-        for w_num, word in enumerate(line):
-            for char in word:
-                many_y.append(char['y']/4)
-                many_h.append(char['y']/4 + char['h']/4)
-        min_y = min(many_y)
-        max_h = max(many_h)
-        span_height = max_h - min_y
-        '''
         div_cls = 'div-line%d' % l_num
         div = '<div class="%s">%s</div>'
         spnas = ''
@@ -147,6 +138,7 @@ def topdf(image, data):
             line_font_height = max_word_height - min_word_x
             font_size = find_max_font_size(chars, int(span_width), int(line_font_height))
             font_size = font_size
+            
             if len(word) == 1:
                 font_size = 'inherit'
             else:
@@ -156,7 +148,7 @@ def topdf(image, data):
                 font_size = '%dpx' % (font_size-(font_size/100*size_percent),)
             words += chars
             cls = 'span-word%d%d' % (l_num,w_num)
-            css += ' span.%s{position:absolute;left:%dpx;font-size:%s;width:%dpx;}' % (cls, span_start_left, font_size, span_width)
+            css += ' span.%s{position:absolute;left:%dpx;font-size:%s;width:%dpx;}' % (cls, span_start_left, font_size, span_width+(span_width/100*10))
             spnas += span % (cls, chars)
             
             
@@ -185,6 +177,9 @@ def topdf(image, data):
     
     pdfkit.from_string(body, '/tmp/%s' % pdf_name, options=options)
     with open('/tmp/%s' % html_name, 'w') as f:
+        f.write(body)
+    
+    with open('/tmp/body.html', 'w') as f:
         f.write(body)
     
 if __name__ == "__main__":
