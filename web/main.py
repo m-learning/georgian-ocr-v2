@@ -64,8 +64,11 @@ def read():
     os.remove(orpath)
     filename, extension = os.path.splitext(or_filename)
     pdf_file = '/tmp/'+filename+'.pdf'
+    static_pdf = './static/pdf/'+filename+'.pdf'
+    os.makedirs(os.path.dirname(static_pdf), exist_ok=True)
+    os.rename(pdf_file, static_pdf)
     print ('pdf_file:', pdf_file)
-    return send_file(pdf_file, as_attachment=True) 
+    return '/static/pdf/'+filename+'.pdf' 
     #return "<pre>"+recognized_text+"</pre>"
 
 @app.route('/api/read', methods=['POST'])
