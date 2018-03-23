@@ -1,2 +1,2 @@
-from train import *
-from read import *
+from .train import *
+from .read import *

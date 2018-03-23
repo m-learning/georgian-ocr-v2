@@ -4,7 +4,7 @@ import urllib3
 import json
 import Levenshtein as lev
 import copy
-import char_operations as co
+from . import char_operations as co
 
 permitted_chars = u"აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ"
 

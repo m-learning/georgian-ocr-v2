@@ -2,8 +2,8 @@ from keras import backend as K
 from keras.callbacks import TensorBoard
 import tensorflow as tf
 
-import image_generator as ig
-import network
+from . import image_generator as ig
+from . import network
 
 import os
 

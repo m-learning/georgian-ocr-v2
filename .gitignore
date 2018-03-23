@@ -8,6 +8,7 @@ logs/
 data/
 tmp/
 web/tmp_uploads/
+web/static/pdf/
 collector/results
 collector/uploaded-images
 collector/result-images
