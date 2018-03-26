@@ -143,6 +143,7 @@ def correct_words_with_scores(word_lines):
 
     text = ''
     for l in word_lines:
+      corrected_word_line = ''
       for w in l:
         word = co.word_from_meta_array(w)
         if len(w) > 1:
@@ -151,8 +152,10 @@ def correct_words_with_scores(word_lines):
             word = choose_best_match(w, word_alternatives)
           
         text += word
+        corrected_word_line += word
 
       text = text.strip()+'\n'
+      l = corrected_word_line
 
     return text
 
