@@ -11,4 +11,5 @@
         scikit-image
         elasticsearch
         python-Levenshtein
+        urllib3
  

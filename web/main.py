@@ -51,14 +51,14 @@ def read():
         for i in range(num):
             path = os.path.abspath('tmp_uploads/'+str(i)+'.jpg')
             recognized_text += geo_ocr.read(path,
-                correct_words = False,
+                correct_words = True,
                 debug=False,
                 to_pdf=True)
             recognized_text +="\n"
             os.remove(path)
     else:
         recognized_text = geo_ocr.read(orpath,
-            correct_words = False,
+            correct_words = True,
             debug=False,
             to_pdf=True)
     os.remove(orpath)

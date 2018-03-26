@@ -25,11 +25,14 @@ def find_matching_words(word):
 
     url = "http://localhost:9200/_search"
     data = {'size':20, 'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
-    req = urllib2.Request(url, json.dumps(data), {'Content-Type': 'application/json'})
-    f = urllib2.urlopen(req)
-    response = f.read()
-    f.close()
-    json_data = json.loads(response)
+    encoded_data = json.dumps(data).encode('utf-8')
+    http = urllib3.PoolManager()
+    r = http.request(
+            'GET',
+            url,
+            body=encoded_data,
+            headers={'Content-Type': 'application/json'})
+    json_data = json.loads(r.data.decode('utf-8'))['json']
 
     results = []
     for hit in json_data['hits']['hits']:
