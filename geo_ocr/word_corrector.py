@@ -142,7 +142,7 @@ def reorder_word_alternatives(read_word, word_alternatives):
 def correct_words_with_scores(word_lines):
 
     text = ''
-    for l in word_lines:
+    for index, l in enumerate(word_lines):
       corrected_word_line = ''
       for w in l:
         word = co.word_from_meta_array(w)
@@ -155,8 +155,7 @@ def correct_words_with_scores(word_lines):
         corrected_word_line += word
 
       text = text.strip()+'\n'
-      l = corrected_word_line
-
+      word_lines[index] = corrected_word_line
     return text
 
     
