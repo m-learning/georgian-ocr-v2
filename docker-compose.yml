@@ -5,7 +5,7 @@ services:
     external_links:
       - elasticsearch:elasticsearch
     container_name: georgian-ocr
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - 9163:80
     deploy:
