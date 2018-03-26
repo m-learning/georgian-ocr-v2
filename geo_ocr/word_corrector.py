@@ -23,7 +23,7 @@ def find_matching_words(word):
         print ('Word is too long to find alternatives')
         return []
 
-    url = "http://elasticsearch:9200/_search"
+    url = "http://elasticsearch:9200/wordbase/_search"
     data = {'size':20, 'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
     encoded_data = json.dumps(data).encode('utf-8')
     http = urllib3.PoolManager()
