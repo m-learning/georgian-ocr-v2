@@ -114,7 +114,7 @@ def choose_best_match(word_meta, word_alternatives):
                 print ('Word was corrected ' + read_word + ' with ' + chosen_word)
             break
 
-    return chosen_word
+    return chosen_word, modifying_word_meta
 
 
 def reorder_word_alternatives(read_word, word_alternatives):
@@ -143,14 +143,15 @@ def reorder_word_alternatives(read_word, word_alternatives):
 def correct_words_with_scores(word_lines):
 
     text = ''
-    for index, l in enumerate(word_lines):
-      for w in l:
+    for index1, l in enumerate(word_lines):
+      for index2, w in enumerate(l):
         word = co.word_from_meta_array(w)
         if len(w) > 1:
             word_alternatives = find_matching_words(word)
             word_alternatives = reorder_word_alternatives(word, word_alternatives)
-            word = choose_best_match(w, word_alternatives)
-          
+            word, word_meta = choose_best_match(w, word_alternatives)
+
+        word_lines[index1][index2] = word_meta 
         text += word
 
       text = text.strip()+'\n'
