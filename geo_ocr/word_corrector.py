@@ -108,6 +108,7 @@ def choose_best_match(word_meta, word_alternatives):
 
         if not word_alt_is_wrong:
             # Word alternative passed all the checks, so we replace the original
+            word_meta = modifying_word_meta
             chosen_word = word_alt['word']
             if read_word != chosen_word:
                 print ('Word was corrected ' + read_word + ' with ' + chosen_word)
@@ -143,7 +144,6 @@ def correct_words_with_scores(word_lines):
 
     text = ''
     for index, l in enumerate(word_lines):
-      corrected_word_line = ''
       for w in l:
         word = co.word_from_meta_array(w)
         if len(w) > 1:
@@ -152,10 +152,8 @@ def correct_words_with_scores(word_lines):
             word = choose_best_match(w, word_alternatives)
           
         text += word
-        corrected_word_line += word
 
       text = text.strip()+'\n'
-      word_lines[index] = corrected_word_line
     return text
 
     
