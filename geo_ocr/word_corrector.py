@@ -23,7 +23,7 @@ def find_matching_words(word):
         print ('Word is too long to find alternatives')
         return []
 
-    url = "http://localhost:9200/_search"
+    url = "http://elasticsearch:9200/_search"
     data = {'size':20, 'query': {'fuzzy' : { 'word' :{'value':word,'fuzziness': 2}}}}
     encoded_data = json.dumps(data).encode('utf-8')
     http = urllib3.PoolManager()
@@ -32,7 +32,7 @@ def find_matching_words(word):
             url,
             body=encoded_data,
             headers={'Content-Type': 'application/json'})
-    json_data = json.loads(r.data.decode('utf-8'))['json']
+    json_data = json.loads(r.data.decode('utf-8'))
 
     results = []
     for hit in json_data['hits']['hits']:

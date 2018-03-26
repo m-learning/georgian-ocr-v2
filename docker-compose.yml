@@ -4,6 +4,7 @@ services:
     build: ./
     external_links:
       - elasticsearch:elasticsearch
+    network_mode: bridge
     container_name: georgian-ocr
     restart: unless-stopped
     ports:
