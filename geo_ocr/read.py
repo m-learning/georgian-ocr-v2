@@ -208,16 +208,19 @@ def read(image_path, correct_words=False, debug=True, to_pdf=False):
                     #print ('x-x:', char['x'])
                     #print ('x-y:', char['y'])
                     #print ('x-char:', char['char'])
-                    reword.append(
-                        {
-                            'w': char['w'],
-                            'h': char['h'],
-                            'x': char['x'],
-                            'y': char['y'],
-                            'lh': char['lh'],
-                            'char': char['char']
-                        }
-                    )
+                    if char['w']>500 or char['h']>500:
+                        continue
+                    else:
+                        reword.append(
+                            {
+                                'w': char['w'],
+                                'h': char['h'],
+                                'x': char['x'],
+                                'y': char['y'],
+                                'lh': char['lh'],
+                                'char': char['char']
+                            }
+                        )
                 reline.append(reword)
             rewrited.append(reline)
             
