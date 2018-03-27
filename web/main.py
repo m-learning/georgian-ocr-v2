@@ -92,16 +92,6 @@ def send():
     mail.send(msg)
     return "გაგზავნილია."
 
-@app.route("/<file_name>")
-def getFile(file_name):
-    headers = {"Content-Disposition": "attachment; filename=%s" % file_name}
-    try:
-        with open(file_name, 'r') as f:
-            body = f.read()
-    except FileNotFoundError:
-        abort(404)
-    return make_response((body, headers))
-
 def pdf_to_images(pdf, output_dir):
     pdf = file(pdf, "rb").read()
 

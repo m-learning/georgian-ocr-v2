@@ -15,7 +15,6 @@ def find_max_font_size(text, max_w, max_h):
     box = context.text_extents(text)
     w = box[2]
     h = box[3]
-    
     while w > max_w:
         ratio_w = max_w / w
         font_size = font_size * ratio_w
@@ -96,7 +95,6 @@ def topdf(image, data):
     for l_num, line in enumerate(data):
         if not len(line):
             continue
-        
         count = len(line)
         line_word_0 = line[0] #first word
         line_word_n = line[count-1] #last word
@@ -114,6 +112,7 @@ def topdf(image, data):
             div_start_left = line_word_0[0]['x']/4 * size_proportion
             #div_start_top = line_word_0[0]['y']/4 * size_proportion
             div_width = line_word_n[len(line_word_n)-1]['x']/4 * size_proportion + line_word_n[len(line_word_n)-1]['w']/4 * size_proportion
+ )
             line_width = div_width - div_start_left
 
         div_cls = 'div-line%d' % l_num
@@ -177,6 +176,8 @@ def topdf(image, data):
         print ('words')
         font_size = find_max_font_size(words, int(line_width), int(line_font_height))
         font_size = font_size
+        if font_size > 100:
+            continue
         css += ' div.%s{position:absolute;top:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, font_size-(font_size/100*10))
 
         html += div % (div_cls, spnas)
