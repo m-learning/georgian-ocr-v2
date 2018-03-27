@@ -221,8 +221,10 @@ def read(image_path, correct_words=False, debug=True, to_pdf=False):
                                 'char': char['char']
                             }
                         )
-                reline.append(reword)
-            rewrited.append(reline)
+                if len(reword)!=0:
+                    reline.append(reword)
+            if len(reline)!=0:
+                rewrited.append(reline)
             
         convert.topdf(image_path, rewrited)
         with open('/tmp/data.json', 'w') as f:
