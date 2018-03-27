@@ -48,12 +48,11 @@ def filter_out_of_average(chars):
     len_chars = len(chars)
     avg_w = sum_w / len_chars
     avg_h = sum_h / len_chars
-    print(avg_h*15)
 
     num_of_noise = 0
     resulting_chars = []
     for ch in chars:
-        if ch['w'] > avg_w * 15 or ch['h'] > avg_h * 15 or ch['w'] < avg_w / 15 or ch['h'] < avg_h / 15:
+        if ch['w'] > avg_w * 2 or ch['h'] > avg_h * 2:
             num_of_noise += 1
             # TODO: Copy to debug dir with filter name
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
