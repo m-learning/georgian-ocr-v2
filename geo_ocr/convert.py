@@ -112,7 +112,6 @@ def topdf(image, data):
             div_start_left = line_word_0[0]['x']/4 * size_proportion
             #div_start_top = line_word_0[0]['y']/4 * size_proportion
             div_width = line_word_n[len(line_word_n)-1]['x']/4 * size_proportion + line_word_n[len(line_word_n)-1]['w']/4 * size_proportion
- )
             line_width = div_width - div_start_left
 
         div_cls = 'div-line%d' % l_num
