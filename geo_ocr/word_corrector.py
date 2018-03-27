@@ -114,7 +114,7 @@ def choose_best_match(word_meta, word_alternatives):
                 print ('Word was corrected ' + read_word + ' with ' + chosen_word)
             break
 
-    return chosen_word, modifying_word_meta
+    return chosen_word, word_meta
 
 
 def reorder_word_alternatives(read_word, word_alternatives):
