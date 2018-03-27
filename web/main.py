@@ -9,6 +9,7 @@ from flask import request
 from flask import jsonify
 import geo_ocr
 import os
+import shutil
 from flask_mail import Mail, Message
 
 from flask import make_response
@@ -66,7 +67,7 @@ def read():
     pdf_file = '/tmp/'+filename+'.pdf'
     static_pdf = './static/pdf/'+filename+'.pdf'
     os.makedirs(os.path.dirname(static_pdf), exist_ok=True)
-    os.rename(pdf_file, static_pdf)
+    shutil.copyfile(pdf_file, static_pdf)
     print ('pdf_file:', pdf_file)
     return '/static/pdf/'+filename+'.pdf' 
     #return "<pre>"+recognized_text+"</pre>"
@@ -137,3 +138,6 @@ def pdf_to_images(pdf, output_dir):
         njpg += 1
         i = iend
         return njpg
+        
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=True, port=8080)
