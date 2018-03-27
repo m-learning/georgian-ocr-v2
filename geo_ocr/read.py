@@ -89,7 +89,7 @@ def read(image_path, correct_words=False, debug=True, to_pdf=False):
 
     # TODO: Fix for images without noise
     chars = filter.filter_by_size_distribution(chars, full_w, full_h)
-    # chars = filter.filter_out_of_average(chars)
+    chars = filter.filter_out_of_average(chars)
 
     # merge filters
     chars = filter.filter_merge(chars, other_chars)
@@ -208,23 +208,18 @@ def read(image_path, correct_words=False, debug=True, to_pdf=False):
                     #print ('x-x:', char['x'])
                     #print ('x-y:', char['y'])
                     #print ('x-char:', char['char'])
-                    if char['w']>500 or char['h']>500:
-                        continue
-                    else:
-                        reword.append(
-                            {
-                                'w': char['w'],
-                                'h': char['h'],
-                                'x': char['x'],
-                                'y': char['y'],
-                                'lh': char['lh'],
-                                'char': char['char']
-                            }
-                        )
-                if len(reword)!=0:
-                    reline.append(reword)
-            if len(reline)!=0:
-                rewrited.append(reline)
+                    reword.append(
+                        {
+                            'w': char['w'],
+                            'h': char['h'],
+                            'x': char['x'],
+                            'y': char['y'],
+                            'lh': char['lh'],
+                            'char': char['char']
+                        }
+                    )
+                reline.append(reword)
+            rewrited.append(reline)
             
         convert.topdf(image_path, rewrited)
         with open('/tmp/data.json', 'w') as f:
