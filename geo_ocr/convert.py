@@ -47,21 +47,32 @@ def topdf(image, data):
     image_name = '%s.%s' % (img, ext)
     image_path = '/tmp/%s' % image_name
     
-    pdf_width_px = 965#970#940#595
-    pdf_height_px = 1365#1372#1330#842
+    pdf_width_px = 1580#965#970#940#595
+    pdf_height_px = 2235#1365#1372#1330#842
     
     copyfile(image, image_path)
     
     orientation = 'Portrait'
     with Image.open(image_path) as im:
         image_width, image_height = im.size
-        print (image_width, image_height)
+        print ('img original size', image_width, image_height)
     if image_width > image_height:
         pdf_width_px, pdf_height_px = pdf_height_px, pdf_width_px
         orientation = 'Landscape'
     
     size_proportion = 1
     
+    
+    if image_width / pdf_width_px > image_height / pdf_height_px:
+        size_proportion = pdf_width_px / image_width
+        image_width = pdf_width_px
+        image_height = image_height * size_proportion
+    else:
+        size_proportion = pdf_height_px / image_height
+        image_height = pdf_height_px
+        image_width = image_width * size_proportion
+    
+    '''
     if image_width > pdf_width_px:
         size_proportion = pdf_width_px / image_width
         image_width = pdf_width_px
@@ -70,11 +81,13 @@ def topdf(image, data):
         size_proportion = pdf_height_px / image_height
         image_height = pdf_height_px
         image_width = image_width * size_proportion
-    print (image_width, image_height)
+    '''
+    print ('img sizes', image_width, image_height, size_proportion)
     
     #font-size: calc(100%% - -1.2em);
     css = '<style type="text/css">'
-    css += "body{background-image: url('./%s');background-repeat: no-repeat; margin:0px; padding: 0px;background-size:%.2fpx %.2fpx;}" % (image_name, image_width, image_height)
+    css += "body{margin:0px; padding: 0px;}"
+    css += ".div-body{background-image: url('./%s');background-repeat: no-repeat; padding: 0px; margin-left: auto; margin-right: auto; background-size:%.2fpx %.2fpx; width: %.2fpx; height: %.2fpx;}" % (image_name, image_width, image_height, image_width, image_height)
     css += 'span{color: rgba(255,255,255,0);}'
     css += '::selection{background:rgba(120,255,255,0.5);color: rgba(255,255,255, 0);}'
     css += '::-moz-selection{background:rgba(120,255,255,0.5);color: rgba(255,255,255, 0);}'
@@ -121,7 +134,7 @@ def topdf(image, data):
             span = '<span class="%s">%s</span>'
             chars = ''
             for c_num, char in enumerate(word):
-                x, y, w, h = char['x']/4, char['y']/4, char['w']/4, char['h']/4
+                x, y, w, h = char['x']/4, char['y']/4, char['w']/4* size_proportion, char['h']/4* size_proportion
                 
                 many_word_x.append(x)
                 many_word_height.append(x+h)
@@ -143,8 +156,10 @@ def topdf(image, data):
                 font_size = 'inherit'
             else:
                 size_percent = 5
+                '''
                 if font_size > 50:
                     size_percent = 10
+                '''
                 font_size = '%dpx' % (font_size-(font_size/100*size_percent),)
             words += chars
             cls = 'span-word%d%d' % (l_num,w_num)
@@ -169,9 +184,13 @@ def topdf(image, data):
     css += '</style>'
 
     body = '<head><meta charset="utf-8"/>' + css + '</head>'
-    body += '<body>' + html + '</body>'
+    body += '<body><div class="div-body">' + html + '</div></body>'
 
     options = {
+        'margin-bottom': '0mm',
+        'margin-left': '0mm',
+        'margin-right': '0mm',
+        'margin-top': '0mm',
         'orientation': orientation,
     }
     
@@ -188,4 +207,4 @@ if __name__ == "__main__":
     data_file = sys.argv[2]
     with open(data_file, 'r') as f:
         data = json.load(f)
-    convert(image, data)
+    topdf(image, data)
