@@ -177,6 +177,7 @@ def topdf(image, data):
         print ('words')
         font_size = find_max_font_size(words, int(line_width), int(line_font_height))
         font_size = font_size
+        print(mean(line_heights)*2)
         if font_size > mean(line_heights)*2:
             continue
         css += ' div.%s{position:absolute;top:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, font_size-(font_size/100*10))
