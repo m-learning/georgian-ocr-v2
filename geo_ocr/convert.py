@@ -92,6 +92,7 @@ def topdf(image, data):
     css += '::-moz-selection{background:rgba(120,255,255,0.5);color: rgba(255,255,255, 0);}'
 
     html = ''
+    line_heights = []
     for l_num, line in enumerate(data):
         if not len(line):
             continue
@@ -172,10 +173,11 @@ def topdf(image, data):
         max_h = max(many_h)
         line_font_height = max_h - min_y
         line_font_height = max_x - min_x
+        line_heights.append(line_font_height)
         print ('words')
         font_size = find_max_font_size(words, int(line_width), int(line_font_height))
         font_size = font_size
-        if font_size > 100:
+        if font_size > mean(line_heights)*2:
             continue
         css += ' div.%s{position:absolute;top:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, font_size-(font_size/100*10))
 
@@ -200,6 +202,9 @@ def topdf(image, data):
     
     with open('/tmp/body.html', 'w') as f:
         f.write(body)
+
+def mean(numbers):
+    return float(sum(numbers)) / max(len(numbers), 1)
     
 if __name__ == "__main__":
     #python3 convert.py /tmp/image.jpg /tmp/data.json
