@@ -52,6 +52,8 @@ def filter_out_of_average(chars):
     num_of_noise = 0
     resulting_chars = []
     for ch in chars:
+        if ch['char']=='<':
+            print('area of <:', ch['w']*ch['h'])
         if ch['w'] > avg_w * 1.5 or ch['h'] > avg_h * 1.5:
             print('removed char:', ch['w']*ch['h'], ch['char'], ch['x'], ch['y'])
             num_of_noise += 1
