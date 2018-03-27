@@ -59,6 +59,8 @@ def filter_out_of_average(chars):
             imageFilename = "%s/%d.png" % (LETTERS_PATH, ch['id'])
             if os.path.isfile(imageFilename): os.remove(imageFilename)
         else:
+            if ch['char']=='<':
+                print('area of <:', ch['w']*ch['h'])
             resulting_chars.append(ch)
 
     print ('Number of out of average parts removed', num_of_noise)
