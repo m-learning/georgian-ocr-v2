@@ -48,6 +48,7 @@ def filter_out_of_average(chars):
     len_chars = len(chars)
     avg_w = sum_w / len_chars
     avg_h = sum_h / len_chars
+    print(avg_h*15)
 
     num_of_noise = 0
     resulting_chars = []
