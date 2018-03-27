@@ -89,7 +89,6 @@ def read(image_path, correct_words=False, debug=True, to_pdf=False):
 
     # TODO: Fix for images without noise
     chars = filter.filter_by_size_distribution(chars, full_w, full_h)
-    chars = filter.filter_out_of_average(chars)
 
     # merge filters
     chars = filter.filter_merge(chars, other_chars)
@@ -162,6 +161,7 @@ def read(image_path, correct_words=False, debug=True, to_pdf=False):
     
     # chars = filter.filter_by_weights(chars)
     chars = filter.filter_by_possible_alternatives(chars)
+    chars = filter.filter_out_of_average(chars)
     
     lines, avg_width, avg_height = export_words.export_lines(chars)
     read_text = u''
