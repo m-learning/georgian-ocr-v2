@@ -150,8 +150,8 @@ def correct_words_with_scores(word_lines):
             word_alternatives = find_matching_words(word)
             word_alternatives = reorder_word_alternatives(word, word_alternatives)
             word, word_meta = choose_best_match(w, word_alternatives)
+            word_lines[index1][index2] = word_meta 
 
-        word_lines[index1][index2] = word_meta 
         text += word
 
       text = text.strip()+'\n'
