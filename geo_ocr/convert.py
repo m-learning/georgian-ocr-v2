@@ -47,8 +47,8 @@ def topdf(image, data):
     image_name = '%s.%s' % (img, ext)
     image_path = '/tmp/%s' % image_name
     
-    pdf_width_px = 1580#965#970#940#595
-    pdf_height_px = 2235#1365#1372#1330#842
+    pdf_width_px = 1240#1580#965#970#940#595 #size for unknow version 1580
+    pdf_height_px = 1754#2235#1365#1372#1330#842 #size for unknow version 2235
     
     copyfile(image, image_path)
     
