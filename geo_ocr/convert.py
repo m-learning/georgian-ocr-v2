@@ -46,8 +46,8 @@ def topdf(image, data):
     image_name = '%s.%s' % (img, ext)
     image_path = '/tmp/%s' % image_name
     
-    pdf_width_px = 1240#1580#965#970#940#595 #size for unknow version 1580
-    pdf_height_px = 1754#2235#1365#1372#1330#842 #size for unknow version 2235
+    pdf_width_px = 775#1580#965#970#940#595 #size for unknow version 1580 #linefontsize 1240
+    pdf_height_px = 1096#2235#1365#1372#1330#842 #size for unknow version 2235 #linefontsize 1754
     
     copyfile(image, image_path)
     
@@ -92,7 +92,6 @@ def topdf(image, data):
     css += '::-moz-selection{background:rgba(120,255,255,0.5);color: rgba(255,255,255, 0);}'
 
     html = ''
-    font_sizes = []
     for l_num, line in enumerate(data):
         if not len(line):
             continue
@@ -151,15 +150,12 @@ def topdf(image, data):
             font_size = find_max_font_size(chars, int(span_width), int(line_font_height))
             font_size = font_size
             
-            if len(word) == 1:
-                font_size = 'inherit'
-            else:
-                size_percent = 5
-                '''
-                if font_size > 50:
-                    size_percent = 10
-                '''
-                font_size = '%dpx' % (font_size-(font_size/100*size_percent),)
+            size_percent = -len(word)
+            '''
+            if font_size > 50:
+                size_percent = 10
+            '''
+            font_size = '%dpx' % (font_size-(font_size/100*size_percent),)
             words += chars
             cls = 'span-word%d%d' % (l_num,w_num)
             css += ' span.%s{position:absolute;left:%dpx;font-size:%s;width:%dpx;}' % (cls, span_start_left, font_size, span_width+(span_width/100*10))
@@ -171,15 +167,11 @@ def topdf(image, data):
         min_x = min(many_x)
         min_y = min(many_y)
         max_h = max(many_h)
-        line_font_height = max_h - min_y
         line_font_height = max_x - min_x
         print ('words')
         font_size = find_max_font_size(words, int(line_width), int(line_font_height))
-        font_size = font_size
-        font_sizes.append(font_size)
-        if font_size > mean(font_sizes)*1.5:
-            continue
-        css += ' div.%s{position:absolute;top:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, font_size-(font_size/100*10))
+
+        css += ' div.%s{position:absolute;top:%dpx;}' % (div_cls, min_y * size_proportion,)
 
         html += div % (div_cls, spnas)
 
@@ -202,9 +194,6 @@ def topdf(image, data):
     
     with open('/tmp/body.html', 'w') as f:
         f.write(body)
-
-def mean(numbers):
-    return float(sum(numbers)) / max(len(numbers), 1)
     
 if __name__ == "__main__":
     #python3 convert.py /tmp/image.jpg /tmp/data.json
