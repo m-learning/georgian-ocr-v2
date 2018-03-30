@@ -15,7 +15,6 @@ def find_max_font_size(text, max_w, max_h):
     box = context.text_extents(text)
     w = box[2]
     h = box[3]
-    
     while w > max_w:
         ratio_w = max_w / w
         font_size = font_size * ratio_w
@@ -93,10 +92,10 @@ def topdf(image, data):
     css += '::-moz-selection{background:rgba(120,255,255,0.5);color: rgba(255,255,255, 0);}'
 
     html = ''
+    font_sizes = []
     for l_num, line in enumerate(data):
         if not len(line):
             continue
-        
         count = len(line)
         line_word_0 = line[0] #first word
         line_word_n = line[count-1] #last word
@@ -177,6 +176,9 @@ def topdf(image, data):
         print ('words')
         font_size = find_max_font_size(words, int(line_width), int(line_font_height))
         font_size = font_size
+        font_sizes.append(font_size)
+        if font_size > mean(font_sizes)*1.5:
+            continue
         css += ' div.%s{position:absolute;top:%dpx;font-size:%dpx;}' % (div_cls, min_y * size_proportion, font_size-(font_size/100*10))
 
         html += div % (div_cls, spnas)
@@ -200,6 +202,9 @@ def topdf(image, data):
     
     with open('/tmp/body.html', 'w') as f:
         f.write(body)
+
+def mean(numbers):
+    return float(sum(numbers)) / max(len(numbers), 1)
     
 if __name__ == "__main__":
     #python3 convert.py /tmp/image.jpg /tmp/data.json
