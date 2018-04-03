@@ -1,0 +1,24 @@
+Possibly v2                     Possibly v3
+
+mtacebeli.jpg 97.2 %            mtacebeli.jpg 95.1 %
+mtavruli.png 97.7 %             mtavruli.png 95.9 %
+datom.jpg 100.0 %               datom.jpg 100.0 %
+proporciuli.jpg 97.0 %          proporciuli.jpg 95.6 %
+nika.jpg 97.4 %                 nika.jpg 95.1 %
+mnatobi-mini.png 98.2 %         mnatobi-mini.png 95.2 %
+gafrinda.jpg 95.7 %             gafrinda.jpg 88.5 %
+logikuri-msjeloba.jpg 100.0 %   logikuri-msjeloba.jpg 100.0 %
+cxoveli.jpg 95.7 %              cxoveli.jpg 89.7 %
+220.jpg 84.6 %                  220.jpg 87.5 %
+mqsoveli.jpg 97.4 %             mqsoveli.jpg 96.4 %
+mnatobi-lines.png 99.0 %        mnatobi-lines.png 97.4 %
+miigos.jpg 94.7 %               miigos.jpg 85.7 %
+mqsoveli2.jpg 93.7 %            mqsoveli2.jpg 92.7 %
+160.jpg 100.0 %                 160.jpg 100.0 %
+mnatobi-koshmari.png 97.2 %     mnatobi-koshmari.png 92.9 %
+mtavruli-bold.png 100.0 %       mtavruli-bold.png 100.0 %
+logikuri-mcdaria.jpg 97.2 %     logikuri-mcdaria.jpg 96.6 %
+level1 96.8 %                   level1 94.7 %
+
+
+

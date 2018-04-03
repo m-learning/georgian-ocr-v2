@@ -14,11 +14,8 @@ collector/uploaded-images
 collector/result-images
 collector/training-data
 
-exported-fragments.svg
-exported-no-bg.svg
-exported.svg
-
 output.txt
 
 notebook/mnist_test.ipynb
 notebook/text paint.ipynb
+geo_ocr.egg-info/

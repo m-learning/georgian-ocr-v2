@@ -17,7 +17,7 @@ pip install matplotlib
 pip install nose2
 pip install h5py
 
-cp fonts/* /usr/share/fonts/truetype
+cp fonts/* ~/.fonts/
 ```
 
 ### Arch Linux
