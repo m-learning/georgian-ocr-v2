@@ -6,7 +6,7 @@ from PIL import Image
 import cairocffi as cairo
 
 def find_max_font_size(text, max_w, max_h):
-    surface = cairo.SVGSurface("example.svg", max_w, max_h)
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, max_w, max_h)
     context = cairo.Context(surface)
 
     font_size = 1000
